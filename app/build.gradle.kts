@@ -39,6 +39,7 @@ android {
     buildFeatures {
         compose = true
     }
+
 }
 
 dependencies {
@@ -52,6 +53,8 @@ dependencies {
     implementation(libs.androidx.compose.material3)
     implementation("com.woowla.compose.icon.collections:heroicons:2.2.0")
     implementation("androidx.navigation:navigation-compose:2.8.3")
+    implementation("com.google.accompanist:accompanist-navigation-animation:0.36.0")
+
 
     testImplementation(libs.junit)
 

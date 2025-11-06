@@ -2,12 +2,19 @@ package com.example.rocnikova_prace.ui.components
 
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.tween
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBar
-import androidx.compose.material3.NavigationBarItem
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
@@ -28,78 +35,82 @@ import com.woowla.compose.icon.collections.heroicons.heroicons.solid.User
 fun NavBar(navController: NavHostController){
     val navBackStackEntry = navController.currentBackStackEntryAsState()
     val currentDestination = navBackStackEntry.value?.destination?.route
+    NavigationBar(
+    ) {
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceAround
+        ) {
+            NavBarIcon(
+                navController = navController,
+                destination = MainScreen.Questions.name,
+                currentDestination = currentDestination,
+                imageVectorActive = Heroicons.Solid.Folder,
+                imageVectorOutline = Heroicons.Outline.Folder,
+                contentDescription = "folder"
+            )
 
-    NavigationBar {
-        NavigationBarItem(
-            selected = currentDestination == MainScreen.Questions.name,
-            onClick = {
-                navController.navigate(MainScreen.Questions.name)
+            NavBarIcon(
+                navController = navController,
+                destination = MainScreen.Create.name,
+                currentDestination = currentDestination,
+                imageVectorActive = Heroicons.Solid.PlusCircle,
+                imageVectorOutline = Heroicons.Outline.PlusCircle,
+                contentDescription = "create"
+            )
 
-            },
-            icon = {
-                val active = currentDestination == MainScreen.Questions.name
+            NavBarIcon(
+                navController = navController,
+                destination = MainScreen.Profile.name,
+                currentDestination = currentDestination,
+                imageVectorActive = Heroicons.Solid.User,
+                imageVectorOutline = Heroicons.Outline.User,
+                contentDescription = "profile"
+            )
+        }
+    }
+}
 
-                val icon = if(active) Heroicons.Solid.Folder else Heroicons.Outline.Folder
+@Composable
+fun NavBarIcon(
+    navController: NavHostController,
+    destination: String,
+    currentDestination: String?,
+    imageVectorActive: androidx.compose.ui.graphics.vector.ImageVector,
+    imageVectorOutline: androidx.compose.ui.graphics.vector.ImageVector,
+    contentDescription: String
+) {
+    val active = currentDestination == destination
 
-                val iconColor by animateColorAsState(
-                    targetValue = if (active) Color.Blue else Color.Gray,
-                    animationSpec = tween(durationMillis = 300)
-                )
-                Icon(
-                    imageVector = icon,
-                    contentDescription = "folder",
-                    tint = iconColor,
-                    modifier = Modifier.size(32.dp)
-                )
-            }
-        )
-
-        NavigationBarItem(
-            selected = currentDestination == MainScreen.Create.name,
-            onClick = { navController.navigate(MainScreen.Create.name) },
-            icon = {
-                val active = currentDestination == MainScreen.Create.name
-
-                val icon = if(active) Heroicons.Solid.PlusCircle else Heroicons.Outline.PlusCircle
-
-                val iconColor by animateColorAsState(
-                    targetValue = if (active) Color.Blue else Color.Gray,
-                    animationSpec = tween(durationMillis = 300)
-                )
-                Icon(
-                    imageVector = icon,
-                    contentDescription = "create",
-                    tint = iconColor,
-                    modifier = Modifier.size(32.dp)
-                )
-            }
-        )
-
-        NavigationBarItem(
-            selected = currentDestination == MainScreen.Profile.name,
-            onClick = { navController.navigate(MainScreen.Profile.name) },
-            icon = {
-                val active = currentDestination == MainScreen.Profile.name
-
-                val icon = if(active) Heroicons.Solid.User else Heroicons.Outline.User
-
-                val iconColor by animateColorAsState(
-                    targetValue = if (active) Color.Blue else Color.Gray,
-                    animationSpec = tween(durationMillis = 300)
-                )
-
-                Icon(
-                    imageVector = icon,
-                    tint = iconColor,
-                    contentDescription = "profile",
-                    modifier = Modifier.size(32.dp)
-                )
-            }
+    Box(
+        modifier = Modifier
+            .size(56.dp)
+            .clickable(
+                onClick = { navController.navigate(destination) },
+                indication = null,
+                interactionSource = remember { MutableInteractionSource() }
+            ),
+        contentAlignment = Alignment.Center
+    ) {
+        Icon(
+            imageVector = if (active) imageVectorActive else imageVectorOutline,
+            contentDescription = contentDescription,
+            tint = animateColor(active),
+            modifier = Modifier.size(32.dp)
         )
     }
 }
 
 
+@Composable
+private fun animateColor(active: Boolean): Color {
+    val iconColor by animateColorAsState(
+        targetValue = if (active) Color.Blue else Color.Gray,
+        animationSpec = tween(durationMillis = 300)
+    )
+
+    return iconColor
+}
 
 //@Preview
 //@Composable
