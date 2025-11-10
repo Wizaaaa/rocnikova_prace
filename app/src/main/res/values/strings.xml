@@ -1,3 +1,8 @@
 <resources>
     <string name="app_name">rocnikova_prace</string>
+
+    <!--    CreateScreen-->
+    <string name="new_questions">Vytvoř nový seznam otázek</string>
+    <string name="schools_questions">Vybrat otázky podle školy</string>
+    <string name="import_questions">Importovat otázky z dokumentu</string>
 </resources>

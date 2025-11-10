@@ -34,6 +34,7 @@ fun MainScreen(
         bottomBar = { NavBar(navController) }
     ) { innerPadding ->
 
+
         AnimatedNavHost(
             navController = navController,
             startDestination = MainScreen.Create.name,
