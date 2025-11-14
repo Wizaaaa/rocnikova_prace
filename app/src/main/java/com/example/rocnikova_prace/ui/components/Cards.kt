@@ -2,7 +2,10 @@ package com.example.rocnikova_prace.ui.components
 
 import androidx.annotation.StringRes
 import androidx.compose.animation.core.animateDpAsState
+import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
+import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -16,8 +19,10 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
@@ -29,24 +34,37 @@ fun Cards(
     icon: ImageVector,
     @StringRes text: Int,
     onClick: () -> Unit,
-    isClicked: Boolean,
     modifier: Modifier = Modifier
 ) {
+    // InteractionSource sleduje pressed/hovered events
+    val interactionSource = remember { MutableInteractionSource() }
+    val isPressed by interactionSource.collectIsPressedAsState()
+
     val elevation by animateDpAsState(
-        targetValue = if (isClicked) 2.dp else 8.dp,
-        animationSpec = tween(durationMillis = 150)
+        targetValue = if (isPressed) 2.dp else 8.dp,
+        animationSpec = tween(150)
+    )
+
+    val scale by animateFloatAsState(
+        targetValue = if (isPressed) 0.97f else 1f,
+        animationSpec = tween(150)
     )
 
     ElevatedCard(
         onClick = onClick,
+        interactionSource = interactionSource,
         colors = CardDefaults.elevatedCardColors(
             containerColor = MaterialTheme.colorScheme.primaryContainer,
             contentColor = MaterialTheme.colorScheme.onPrimaryContainer
         ),
         modifier = modifier
             .fillMaxWidth()
-            .padding(20.dp),
-        elevation = CardDefaults.elevatedCardElevation(defaultElevation = elevation),
+            .padding(20.dp)
+            .graphicsLayer(
+                scaleX = scale,
+                scaleY = scale
+            ),
+        elevation = CardDefaults.elevatedCardElevation(defaultElevation = elevation)
     ) {
         Row(
             verticalAlignment = Alignment.CenterVertically,

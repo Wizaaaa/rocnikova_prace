@@ -25,21 +25,21 @@ fun CreateScreen(viewModel: AppViewModel = viewModel() ) {
         Cards(
             text = R.string.CS_new_questions,
             icon = Heroicons.Outline.Plus,
-            isClicked = viewModel.isClicked,
+            // isClicked = viewModel.isClicked,
             onClick = { viewModel.createCardOnClick() }
         )
 
         Cards(
             text = R.string.CS_schools_questions,
             icon = Heroicons.Outline.AcademicCap,
-            isClicked = viewModel.isClicked,
+            // isClicked = viewModel.isClicked,
             onClick = {  }
         )
 
         Cards(
             text = R.string.CS_import_questions,
             icon = Heroicons.Outline.ArrowDownTray,
-            isClicked = viewModel.isClicked,
+            // isClicked = viewModel.isClicked,
             onClick = {  }
         )
 

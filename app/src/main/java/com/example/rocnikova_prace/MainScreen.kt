@@ -1,6 +1,5 @@
 package com.example.rocnikova_prace
 
-import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideOutHorizontally
@@ -9,13 +8,13 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
 import com.example.rocnikova_prace.ui.CreateScreen
 import com.example.rocnikova_prace.ui.ProfileScreen
 import com.example.rocnikova_prace.ui.QuestionsScreen
 import com.example.rocnikova_prace.ui.components.NavBar
-import com.google.accompanist.navigation.animation.AnimatedNavHost
-import com.google.accompanist.navigation.animation.composable
-import com.google.accompanist.navigation.animation.rememberAnimatedNavController
 
 
 enum class MainScreen() {
@@ -25,17 +24,16 @@ enum class MainScreen() {
 }
 
 
-@OptIn(ExperimentalAnimationApi::class)
 @Composable
 fun MainScreen(
-    navController: NavHostController = rememberAnimatedNavController()
+    navController: NavHostController = rememberNavController()
 ) {
     Scaffold(
         bottomBar = { NavBar(navController) }
     ) { innerPadding ->
 
 
-        AnimatedNavHost(
+        NavHost(
             navController = navController,
             startDestination = MainScreen.Create.name,
             modifier = Modifier.padding(innerPadding)
@@ -44,13 +42,13 @@ fun MainScreen(
                 route = MainScreen.Create.name,
                 enterTransition = {
                     slideInHorizontally(
-                        initialOffsetX = { it }, // prava
+                        initialOffsetX = { -it }, // prava
                         animationSpec = tween(500)
                     )
                 },
                 exitTransition = {
                     slideOutHorizontally(
-                        targetOffsetX = { -it }, // leva
+                        targetOffsetX = { it }, // leva
                         animationSpec = tween(500)
                     )
                 }
