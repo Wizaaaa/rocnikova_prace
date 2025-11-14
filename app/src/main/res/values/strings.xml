@@ -2,7 +2,13 @@
     <string name="app_name">rocnikova_prace</string>
 
     <!--    CreateScreen-->
-    <string name="new_questions">Vytvoř nový seznam otázek</string>
-    <string name="schools_questions">Vybrat otázky podle školy</string>
-    <string name="import_questions">Importovat otázky z dokumentu</string>
+    <string name="CS_new_questions">Vytvoř nový seznam otázek</string>
+    <string name="CS_schools_questions">Vybrat otázky podle školy</string>
+    <string name="CS_import_questions">Importovat otázky z dokumentu</string>
+
+    <!--    Create Click Card-->
+    <string name="CCC_heading">Nová skupina otázek</string>
+    <string name="CCC_cancel">Zrušit</string>
+    <string name="CCC_continue">Pokračovat</string>
+    <string name="CCC_place_holder">Zadej název skupiny</string>
 </resources>

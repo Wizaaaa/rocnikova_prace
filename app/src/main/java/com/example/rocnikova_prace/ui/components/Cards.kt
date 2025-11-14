@@ -2,7 +2,6 @@ package com.example.rocnikova_prace.ui.components
 
 import androidx.annotation.StringRes
 import androidx.compose.animation.core.animateDpAsState
-import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
@@ -19,7 +18,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
@@ -39,11 +37,6 @@ fun Cards(
         animationSpec = tween(durationMillis = 150)
     )
 
-    val scale by animateFloatAsState(
-        targetValue = if (isClicked) 0.97f else 1f,
-        animationSpec = tween(durationMillis = 150)
-    )
-
     ElevatedCard(
         onClick = onClick,
         colors = CardDefaults.elevatedCardColors(
@@ -52,22 +45,7 @@ fun Cards(
         ),
         modifier = modifier
             .fillMaxWidth()
-            .padding(20.dp)
-
-            // TODO: Get this out od card
-//            .pointerInput(Unit) {
-//                detectTapGestures(
-//                    onPress = {
-//                        isClicked = true
-//                        tryAwaitRelease()  // čeká, dokud uživatel nepustí prst
-//                        isClicked = false
-//                    }
-//                )
-//            }
-            .graphicsLayer(
-                scaleX = scale,
-                scaleY = scale
-            ),
+            .padding(20.dp),
         elevation = CardDefaults.elevatedCardElevation(defaultElevation = elevation),
     ) {
         Row(

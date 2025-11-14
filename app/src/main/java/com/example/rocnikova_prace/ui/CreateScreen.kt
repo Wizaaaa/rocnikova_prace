@@ -4,12 +4,9 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.rocnikova_prace.R
 import com.example.rocnikova_prace.ui.components.Cards
 import com.example.rocnikova_prace.ui.components.ClickCard
@@ -20,53 +17,39 @@ import com.woowla.compose.icon.collections.heroicons.heroicons.outline.ArrowDown
 import com.woowla.compose.icon.collections.heroicons.heroicons.outline.Plus
 
 @Composable
-fun CreateScreen() {
+fun CreateScreen(viewModel: AppViewModel = viewModel() ) {
     Column(
         verticalArrangement = Arrangement.Center,
         modifier = Modifier.fillMaxSize()
     ) {
-        var showDialog by remember { mutableStateOf(false) }
-        var isClicked by remember { mutableStateOf(false) }
-
         Cards(
-            text = R.string.new_questions,
+            text = R.string.CS_new_questions,
             icon = Heroicons.Outline.Plus,
-            isClicked = isClicked,
-            onClick = {
-                isClicked = !isClicked
-                showDialog = !showDialog
-            }
+            isClicked = viewModel.isClicked,
+            onClick = { viewModel.createCardOnClick() }
         )
 
         Cards(
-            text = R.string.schools_questions,
+            text = R.string.CS_schools_questions,
             icon = Heroicons.Outline.AcademicCap,
-            isClicked = isClicked,
-            onClick = {
-                isClicked = !isClicked
-                showDialog = !showDialog
-            }
+            isClicked = viewModel.isClicked,
+            onClick = {  }
         )
 
         Cards(
-            text = R.string.import_questions,
+            text = R.string.CS_import_questions,
             icon = Heroicons.Outline.ArrowDownTray,
-            isClicked = isClicked,
-            onClick = {
-                isClicked = !isClicked
-                showDialog = !showDialog
-            }
+            isClicked = viewModel.isClicked,
+            onClick = {  }
         )
 
-        if (showDialog) {
-            ClickCard(onDismissRequest = { onDismissRequest() })
+        if (viewModel.showDialog) {
+            ClickCard(
+                onDismissRequest = { viewModel.onDismissRequest() },
+                onConfirm = { viewModel.onConfirm() }
+            )
         }
-
     }
-}
-
-private fun onDismissRequest() {
-
 }
 
 @Preview
