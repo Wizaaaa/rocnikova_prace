@@ -18,9 +18,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import com.example.rocnikova_prace.MainScreen
+import com.example.rocnikova_prace.bottomScreens
+import com.example.rocnikova_prace.ui.AppViewModel
 import com.woowla.compose.icon.collections.heroicons.Heroicons
 import com.woowla.compose.icon.collections.heroicons.heroicons.Outline
 import com.woowla.compose.icon.collections.heroicons.heroicons.Solid
@@ -32,7 +35,10 @@ import com.woowla.compose.icon.collections.heroicons.heroicons.solid.PlusCircle
 import com.woowla.compose.icon.collections.heroicons.heroicons.solid.User
 
 @Composable
-fun NavBar(navController: NavHostController){
+fun NavBar(
+    navController: NavHostController,
+    viewModel: AppViewModel = viewModel()
+){
     val navBackStackEntry = navController.currentBackStackEntryAsState()
     val currentDestination = navBackStackEntry.value?.destination?.route
     NavigationBar(
@@ -47,7 +53,8 @@ fun NavBar(navController: NavHostController){
                 currentDestination = currentDestination,
                 imageVectorActive = Heroicons.Solid.Folder,
                 imageVectorOutline = Heroicons.Outline.Folder,
-                contentDescription = "folder"
+                contentDescription = "folder",
+                viewModel = viewModel
             )
 
             NavBarIcon(
@@ -56,7 +63,8 @@ fun NavBar(navController: NavHostController){
                 currentDestination = currentDestination,
                 imageVectorActive = Heroicons.Solid.PlusCircle,
                 imageVectorOutline = Heroicons.Outline.PlusCircle,
-                contentDescription = "create"
+                contentDescription = "create",
+                viewModel = viewModel
             )
 
             NavBarIcon(
@@ -65,7 +73,8 @@ fun NavBar(navController: NavHostController){
                 currentDestination = currentDestination,
                 imageVectorActive = Heroicons.Solid.User,
                 imageVectorOutline = Heroicons.Outline.User,
-                contentDescription = "profile"
+                contentDescription = "profile",
+                viewModel = viewModel
             )
         }
     }
@@ -78,7 +87,8 @@ fun NavBarIcon(
     currentDestination: String?,
     imageVectorActive: androidx.compose.ui.graphics.vector.ImageVector,
     imageVectorOutline: androidx.compose.ui.graphics.vector.ImageVector,
-    contentDescription: String
+    contentDescription: String,
+    viewModel: AppViewModel
 ) {
     val active = currentDestination == destination
 
@@ -86,7 +96,12 @@ fun NavBarIcon(
         modifier = Modifier
             .size(56.dp)
             .clickable(
-                onClick = { navController.navigate(destination) },
+                onClick = {
+                    navController.navigate(destination)
+
+                    val index = bottomScreens.indexOf(MainScreen.valueOf(destination))
+                    viewModel.updateCurrentIndex(index)
+                },
                 indication = null,
                 interactionSource = remember { MutableInteractionSource() }
             ),

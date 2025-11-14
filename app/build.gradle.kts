@@ -52,7 +52,9 @@ dependencies {
     implementation(libs.androidx.compose.ui.tooling.preview)
     implementation(libs.androidx.compose.material3)
     implementation("com.woowla.compose.icon.collections:heroicons:2.2.0")
-    implementation("androidx.navigation:navigation-compose:2.8.3")
+    implementation("androidx.navigation:navigation-compose:2.9.6")
+    implementation("com.google.accompanist:accompanist-navigation-animation:0.36.0")
+
 
 
     testImplementation(libs.junit)
