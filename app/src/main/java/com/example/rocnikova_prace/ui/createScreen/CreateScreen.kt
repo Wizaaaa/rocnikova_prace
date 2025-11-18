@@ -1,4 +1,4 @@
-package com.example.rocnikova_prace.ui
+package com.example.rocnikova_prace.ui.createScreen
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -7,9 +7,13 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
+import com.example.rocnikova_prace.MainScreen
 import com.example.rocnikova_prace.R
 import com.example.rocnikova_prace.ui.components.Cards
 import com.example.rocnikova_prace.ui.components.ClickCard
+import com.example.rocnikova_prace.ui.createInformation.CreateInformationViewModel
 import com.woowla.compose.icon.collections.heroicons.Heroicons
 import com.woowla.compose.icon.collections.heroicons.heroicons.Outline
 import com.woowla.compose.icon.collections.heroicons.heroicons.outline.AcademicCap
@@ -17,7 +21,11 @@ import com.woowla.compose.icon.collections.heroicons.heroicons.outline.ArrowDown
 import com.woowla.compose.icon.collections.heroicons.heroicons.outline.Plus
 
 @Composable
-fun CreateScreen(viewModel: AppViewModel = viewModel() ) {
+fun CreateScreen(
+    navController: NavController,
+    viewModel: CreateScreenViewModel = viewModel(),
+    createInformationViewModel: CreateInformationViewModel
+) {
     Column(
         verticalArrangement = Arrangement.Center,
         modifier = Modifier.fillMaxSize()
@@ -25,28 +33,32 @@ fun CreateScreen(viewModel: AppViewModel = viewModel() ) {
         Cards(
             text = R.string.CS_new_questions,
             icon = Heroicons.Outline.Plus,
-            // isClicked = viewModel.isClicked,
             onClick = { viewModel.createCardOnClick() }
         )
 
         Cards(
             text = R.string.CS_schools_questions,
             icon = Heroicons.Outline.AcademicCap,
-            // isClicked = viewModel.isClicked,
             onClick = {  }
         )
 
         Cards(
             text = R.string.CS_import_questions,
             icon = Heroicons.Outline.ArrowDownTray,
-            // isClicked = viewModel.isClicked,
             onClick = {  }
         )
 
         if (viewModel.showDialog) {
             ClickCard(
-                onDismissRequest = { viewModel.onDismissRequest() },
-                onConfirm = { viewModel.onConfirm() }
+                onDismissRequest = {
+                    viewModel.onDismissRequest()
+                    createInformationViewModel.groupNameReset()
+                },
+                onConfirm = {
+                    viewModel.onConfirm()
+                    navController.navigate(MainScreen.CreateInformation.name)
+                },
+                viewModel = createInformationViewModel
             )
         }
     }
@@ -55,5 +67,5 @@ fun CreateScreen(viewModel: AppViewModel = viewModel() ) {
 @Preview
 @Composable
 fun CreateScreenPreview() {
-    CreateScreen()
+    CreateScreen(navController = rememberNavController(), createInformationViewModel = viewModel())
 }

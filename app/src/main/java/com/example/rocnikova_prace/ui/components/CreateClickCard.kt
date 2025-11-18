@@ -8,23 +8,22 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.rocnikova_prace.R
+import com.example.rocnikova_prace.ui.createInformation.CreateInformationViewModel
 
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ClickCard(
     onDismissRequest: () -> Unit,
-    onConfirm: (String) -> Unit
+    onConfirm: (String) -> Unit,
+    viewModel: CreateInformationViewModel
 ) {
-    var name by remember { mutableStateOf("") }
+    val groupName = viewModel.groupName
 
     AlertDialog(
         onDismissRequest = onDismissRequest,
@@ -34,8 +33,8 @@ fun ClickCard(
         text = {
             Column {
                 TextField(
-                    value = name,
-                    onValueChange = { name = it },
+                    value = groupName,
+                    onValueChange = { viewModel.groupNameChange(it) },
                     placeholder = { Text(stringResource(R.string.CCC_place_holder)) },
                     singleLine = true,
                     modifier = Modifier.fillMaxWidth()
@@ -44,8 +43,8 @@ fun ClickCard(
         },
         confirmButton = {
             TextButton(
-                onClick = { onConfirm(name) },
-                enabled = name.isNotBlank()
+                onClick = { onConfirm(groupName) },
+                enabled = groupName.isNotBlank()
             ) {
                 Text(stringResource(R.string.CCC_continue))
             }
@@ -65,6 +64,7 @@ fun ClickCard(
 fun ClickCardPreview() {
     ClickCard(
         onDismissRequest = {  },
-        onConfirm = {  }
+        onConfirm = {  },
+        viewModel()
     )
 }

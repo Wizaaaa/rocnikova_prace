@@ -18,12 +18,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import com.example.rocnikova_prace.MainScreen
+import com.example.rocnikova_prace.MainScreenViewModel
 import com.example.rocnikova_prace.bottomScreens
-import com.example.rocnikova_prace.ui.AppViewModel
 import com.woowla.compose.icon.collections.heroicons.Heroicons
 import com.woowla.compose.icon.collections.heroicons.heroicons.Outline
 import com.woowla.compose.icon.collections.heroicons.heroicons.Solid
@@ -37,7 +36,7 @@ import com.woowla.compose.icon.collections.heroicons.heroicons.solid.User
 @Composable
 fun NavBar(
     navController: NavHostController,
-    viewModel: AppViewModel = viewModel()
+    viewModel: MainScreenViewModel
 ){
     val navBackStackEntry = navController.currentBackStackEntryAsState()
     val currentDestination = navBackStackEntry.value?.destination?.route
@@ -64,6 +63,7 @@ fun NavBar(
                 imageVectorActive = Heroicons.Solid.PlusCircle,
                 imageVectorOutline = Heroicons.Outline.PlusCircle,
                 contentDescription = "create",
+                createInformation = MainScreen.CreateInformation.name,
                 viewModel = viewModel
             )
 
@@ -88,9 +88,10 @@ fun NavBarIcon(
     imageVectorActive: androidx.compose.ui.graphics.vector.ImageVector,
     imageVectorOutline: androidx.compose.ui.graphics.vector.ImageVector,
     contentDescription: String,
-    viewModel: AppViewModel
+    createInformation: String = "",
+    viewModel: MainScreenViewModel
 ) {
-    val active = currentDestination == destination
+    val active = currentDestination == destination || currentDestination == createInformation
 
     Box(
         modifier = Modifier
