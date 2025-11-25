@@ -11,4 +11,6 @@
     <string name="CCC_cancel">Zrušit</string>
     <string name="CCC_continue">Pokračovat</string>
     <string name="CCC_place_holder">Zadej název skupiny</string>
+
+    <string name="new_question">Vytvořit novou otázku</string>
 </resources>

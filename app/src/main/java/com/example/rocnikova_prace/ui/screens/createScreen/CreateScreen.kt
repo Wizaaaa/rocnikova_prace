@@ -1,4 +1,4 @@
-package com.example.rocnikova_prace.ui.createScreen
+package com.example.rocnikova_prace.ui.screens.createScreen
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -9,8 +9,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.rocnikova_prace.R
 import com.example.rocnikova_prace.ui.components.Cards
-import com.example.rocnikova_prace.ui.createInformation.CreateInformation
-import com.example.rocnikova_prace.ui.createInformation.CreateInformationViewModel
+import com.example.rocnikova_prace.ui.screens.createInformation.CreateInformation
+import com.example.rocnikova_prace.ui.screens.createInformation.CreateInformationViewModel
 import com.woowla.compose.icon.collections.heroicons.Heroicons
 import com.woowla.compose.icon.collections.heroicons.heroicons.Outline
 import com.woowla.compose.icon.collections.heroicons.heroicons.outline.AcademicCap

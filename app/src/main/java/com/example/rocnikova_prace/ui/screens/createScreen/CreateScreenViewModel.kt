@@ -1,4 +1,4 @@
-package com.example.rocnikova_prace.ui.createScreen
+package com.example.rocnikova_prace.ui.screens.createScreen
 
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf

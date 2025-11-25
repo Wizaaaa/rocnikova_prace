@@ -15,13 +15,13 @@ import androidx.compose.ui.Modifier
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
-import com.example.rocnikova_prace.ui.ProfileScreen
-import com.example.rocnikova_prace.ui.QuestionsScreen
+import com.example.rocnikova_prace.ui.screens.ProfileScreen
+import com.example.rocnikova_prace.ui.screens.QuestionsScreen
 import com.example.rocnikova_prace.ui.components.NavBar
-import com.example.rocnikova_prace.ui.createInformation.CreateInformation
-import com.example.rocnikova_prace.ui.createInformation.CreateInformationViewModel
-import com.example.rocnikova_prace.ui.createScreen.CreateScreen
-import com.example.rocnikova_prace.ui.createScreen.CreateScreenViewModel
+import com.example.rocnikova_prace.ui.screens.createInformation.CreateInformation
+import com.example.rocnikova_prace.ui.screens.createInformation.CreateInformationViewModel
+import com.example.rocnikova_prace.ui.screens.createScreen.CreateScreen
+import com.example.rocnikova_prace.ui.screens.createScreen.CreateScreenViewModel
 import com.google.accompanist.navigation.animation.AnimatedNavHost
 import com.google.accompanist.navigation.animation.composable
 

@@ -1,13 +1,11 @@
-package com.example.rocnikova_prace.ui
+package com.example.rocnikova_prace.ui.screens
 
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 
-
 @Composable
-fun ProfileScreen() {
-
+fun QuestionsScreen() {
     Text(
-        text = "Profile"
+        text = "Questions"
     )
 }
