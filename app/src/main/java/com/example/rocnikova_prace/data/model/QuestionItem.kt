@@ -1,11 +1,15 @@
 package com.example.rocnikova_prace.data.model
 
-sealed class QuestionItem {
+import java.util.UUID
+
+sealed class QuestionItem(
+    val id: String = UUID.randomUUID().toString()
+) {
 
     data class MultipleChoiceSingle(
         val question: String,
         val options: List<String>,
-        val correctIndex: Int
+        val correctIndex: Int?
     ) : QuestionItem()
 
     data class MultipleChoiceMultiple(
@@ -24,33 +28,13 @@ sealed class QuestionItem {
         val answer: String
     ) : QuestionItem()
 
-    fun toUiData(): QuestionUiData = when(this) {
-        is MultipleChoiceSingle -> QuestionUiData(
-            question = question,
-            options = options,
-            correctIndex = correctIndex
-        )
-        is MultipleChoiceMultiple -> QuestionUiData(
-            question = question,
-            options = options,
-            correctIndices = correctIndices
-        )
-        is Open -> QuestionUiData(
-            question = question,
-            answer = answer
-        )
-        is FillBlank -> QuestionUiData(
-            question = question,
-            answer = answer
-        )
-    }
 
     companion object {
 
         fun emptyMultipleChoiceSingle() = MultipleChoiceSingle(
             question = "",
             options = listOf("", "", "", ""),
-            correctIndex = 0
+            correctIndex = null
         )
 
         fun emptyMultipleChoiceMultiple() = MultipleChoiceMultiple(

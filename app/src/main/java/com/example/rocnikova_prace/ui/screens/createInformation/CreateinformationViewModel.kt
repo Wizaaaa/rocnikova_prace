@@ -21,6 +21,20 @@ class CreateInformationViewModel: ViewModel() {
         }
     }
 
+    fun updateQuestion(updated: QuestionItem, id: String) {
+        val index = questions.indexOfFirst { it.id == id }
+        if (index != -1) {
+            questions[index] = updated
+        }
+    }
+
+    fun  trueQuestionIsChecked(updated: QuestionItem, id: String) {
+        val index = questions.indexOfFirst { it.id == id }
+        if (index != -1) {
+            questions[index] = updated
+        }
+    }
+
     var groupName by mutableStateOf("")
         private set
 
