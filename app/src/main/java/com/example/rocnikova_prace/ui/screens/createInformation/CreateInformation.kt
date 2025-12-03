@@ -1,15 +1,18 @@
 package com.example.rocnikova_prace.ui.screens.createInformation
 
-import androidx.compose.foundation.gestures.detectTapGestures
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material3.Card
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -18,8 +21,8 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.rocnikova_prace.R
 import com.example.rocnikova_prace.data.model.DropdownItem
@@ -34,6 +37,8 @@ import com.example.rocnikova_prace.ui.components.InformationCard
 import com.example.rocnikova_prace.ui.screens.createScreen.CreateScreenViewModel
 import com.woowla.compose.icon.collections.heroicons.Heroicons
 import com.woowla.compose.icon.collections.heroicons.heroicons.Outline
+import com.woowla.compose.icon.collections.heroicons.heroicons.outline.ChevronDown
+import com.woowla.compose.icon.collections.heroicons.heroicons.outline.ChevronUp
 import com.woowla.compose.icon.collections.heroicons.heroicons.outline.FolderPlus
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -43,36 +48,22 @@ fun CreateInformation(
     createScreenViewModel: CreateScreenViewModel,
     modifier: Modifier = Modifier
 ) {
-    var isContextMenuVisible by rememberSaveable { mutableStateOf(false) }
-
     val items: List<DropdownItem> = listOf(
         DropdownItem(
             label = "MultipleChoiceSingle",
-            onClick = {
-                viewModel.addQuestion(QuestionType.MultipleChoiceSingle)
-                isContextMenuVisible = false
-            }
+            questionType = QuestionType.MultipleChoiceSingle
         ),
         DropdownItem(
             label = "MultipleChoiceMultiple",
-            onClick = {
-                viewModel.addQuestion(QuestionType.MultipleChoiceMultiple)
-                isContextMenuVisible = false
-            }
+            questionType = QuestionType.MultipleChoiceMultiple
         ),
         DropdownItem(
             label = "Open",
-            onClick = {
-                viewModel.addQuestion(QuestionType.Open)
-                isContextMenuVisible = false
-            }
+            questionType = QuestionType.Open
         ),
         DropdownItem(
             label = "FillBlank",
-            onClick = {
-                viewModel.addQuestion(QuestionType.FillBlank)
-                isContextMenuVisible = false
-            }
+            questionType = QuestionType.FillBlank
         )
     )
 
@@ -99,18 +90,55 @@ fun CreateInformation(
                     items = viewModel.questions,
                     key = { _, item -> item.id }
                 ) { index, questionItem ->
+                    var isContextMenuVisible by rememberSaveable { mutableStateOf(false) }
+
                     Card(
                         modifier = Modifier
-                        .fillMaxWidth()
-                        .pointerInput(true) {
-                            detectTapGestures(
-                                onTap = {
-                                    isContextMenuVisible = true
-                                }
-                            )
-                        }
+                            .fillMaxWidth()
                     ) {
 
+                        Column {
+                            Row(modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(start = 20.dp, end = 20.dp, top = 20.dp)
+                            ) {
+                                Text(
+                                    text = "Vyberte druh otázky",
+                                    modifier = Modifier
+                                        .weight(1f)
+                                )
+
+                                Icon(
+                                    imageVector = if (isContextMenuVisible) {
+                                        Heroicons.Outline.ChevronDown
+                                    } else {
+                                        Heroicons.Outline.ChevronUp
+                                    },
+                                    contentDescription = null,
+                                    modifier = Modifier
+                                        .clickable(
+                                            onClick = {
+                                                isContextMenuVisible = true
+                                            }
+                                        )
+                                )
+                            }
+
+                            DropdownMenu(
+                                expanded = isContextMenuVisible,
+                                onDismissRequest = { isContextMenuVisible = false }
+                            ) {
+                                items.forEach {
+                                    DropdownMenuItem(
+                                        text = { Text(it.label) },
+                                        onClick = {
+                                            viewModel.addSpecificQuestion(it.questionType)
+                                            isContextMenuVisible = false
+                                        }
+                                    )
+                                }
+                            }
+                        }
 
                     when (questionItem) {
                         is QuestionItem.MultipleChoiceSingle -> {
@@ -130,18 +158,6 @@ fun CreateInformation(
                         }
                     }
                     }
-                }
-            }
-
-            DropdownMenu(
-                expanded = isContextMenuVisible,
-                onDismissRequest = { isContextMenuVisible = false }
-            ) {
-                items.forEach {
-                    DropdownMenuItem(
-                        text = { Text(it.label) },
-                        onClick = it.onClick
-                    )
                 }
             }
 

@@ -12,7 +12,12 @@ class CreateInformationViewModel: ViewModel() {
     var questions = mutableStateListOf<QuestionItem>()
         private set
 
-    fun addQuestion(type: QuestionType = QuestionType.MultipleChoiceSingle) {
+    fun addQuestion() {
+        questions.add(QuestionItem.emptyMultipleChoiceSingle())
+    }
+
+    fun addSpecificQuestion(type: QuestionType = QuestionType.MultipleChoiceSingle) {
+        questions.removeAt(questions.lastIndex)
         when(type) {
             QuestionType.MultipleChoiceSingle -> questions.add(QuestionItem.emptyMultipleChoiceSingle())
             QuestionType.MultipleChoiceMultiple -> questions.add(QuestionItem.emptyMultipleChoiceMultiple())
