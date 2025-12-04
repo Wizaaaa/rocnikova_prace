@@ -28,8 +28,6 @@ fun DrawMultipleChoiceSingle(
     InformationCard(
         value = questionText,
         onValueChange = { newText ->
-            questionText = newText
-
             viewModel.updateQuestion(
                 updated = question.copy(question = newText),
                 id = question.id
@@ -38,7 +36,7 @@ fun DrawMultipleChoiceSingle(
         label = "Zadejte otázku",
         modifier = Modifier
             .fillMaxWidth()
-            .padding(20.dp)
+            .padding(start = 20.dp, end = 20.dp, bottom = 20.dp)
     )
 
 

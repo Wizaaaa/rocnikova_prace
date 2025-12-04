@@ -1,6 +1,8 @@
 package com.example.rocnikova_prace.ui.screens.createInformation
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
@@ -8,19 +10,16 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
-import androidx.compose.material3.DropdownMenu
-import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -90,20 +89,31 @@ fun CreateInformation(
                     items = viewModel.questions,
                     key = { _, item -> item.id }
                 ) { index, questionItem ->
-                    var isContextMenuVisible by rememberSaveable { mutableStateOf(false) }
+                    val isContextMenuVisible = questionItem.isExpanded
 
                     Card(
                         modifier = Modifier
                             .fillMaxWidth()
                     ) {
 
-                        Column {
-                            Row(modifier = Modifier
+                        Column(modifier = Modifier.padding(10.dp)) {
+                            Row(
+                                modifier = Modifier
                                 .fillMaxWidth()
-                                .padding(start = 20.dp, end = 20.dp, top = 20.dp)
+                                .padding(top = 10.dp)
+                                .clip(RoundedCornerShape(10.dp))
+                                .background(MaterialTheme.colorScheme.surfaceVariant)
+                                .clickable{
+                                    viewModel.updateQuestion(
+                                        updated = questionItem.changeExpanded(!questionItem.isExpanded),
+                                        id = questionItem.id
+                                    )
+                                }
+                                .padding(10.dp)
                             ) {
                                 Text(
                                     text = "Vyberte druh otázky",
+                                    style = MaterialTheme.typography.headlineSmall,
                                     modifier = Modifier
                                         .weight(1f)
                                 )
@@ -114,49 +124,57 @@ fun CreateInformation(
                                     } else {
                                         Heroicons.Outline.ChevronUp
                                     },
-                                    contentDescription = null,
-                                    modifier = Modifier
-                                        .clickable(
-                                            onClick = {
-                                                isContextMenuVisible = true
-                                            }
-                                        )
+                                    contentDescription = null
                                 )
                             }
 
-                            DropdownMenu(
-                                expanded = isContextMenuVisible,
-                                onDismissRequest = { isContextMenuVisible = false }
-                            ) {
-                                items.forEach {
-                                    DropdownMenuItem(
-                                        text = { Text(it.label) },
-                                        onClick = {
-                                            viewModel.addSpecificQuestion(it.questionType)
-                                            isContextMenuVisible = false
+                            if (isContextMenuVisible) {
+                                Column(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                ) {
+                                    items.forEach { item ->
+                                        Box(
+                                            modifier = Modifier
+                                                .fillMaxWidth()
+                                                .clip(RoundedCornerShape(10.dp))
+                                                .background(MaterialTheme.colorScheme.surfaceVariant)
+                                                .clickable {
+                                                    viewModel.changeQuestionType(
+                                                        id = questionItem.id,
+                                                        type = item.questionType
+                                                    )
+                                                    viewModel.updateQuestion(
+                                                        updated = questionItem.changeExpanded(false),
+                                                        id = questionItem.id
+                                                    )
+                                                }
+                                                .padding(10.dp)
+                                        ) {
+                                            Text(item.label)
                                         }
-                                    )
+                                    }
                                 }
                             }
                         }
 
-                    when (questionItem) {
-                        is QuestionItem.MultipleChoiceSingle -> {
-                            DrawMultipleChoiceSingle(
-                                question = questionItem,
-                                viewModel = viewModel
-                            )
+                        when (questionItem) {
+                            is QuestionItem.MultipleChoiceSingle -> {
+                                DrawMultipleChoiceSingle(
+                                    question = questionItem,
+                                    viewModel = viewModel
+                                )
+                            }
+                            is QuestionItem.MultipleChoiceMultiple -> {
+                                DrawMultipleChoiceMultiple()
+                            }
+                            is QuestionItem.Open -> {
+                                DrawOpen()
+                            }
+                            is QuestionItem.FillBlank -> {
+                                DrawFillBlank()
+                            }
                         }
-                        is QuestionItem.MultipleChoiceMultiple -> {
-                            DrawMultipleChoiceMultiple()
-                        }
-                        is QuestionItem.Open -> {
-                            DrawOpen()
-                        }
-                        is QuestionItem.FillBlank -> {
-                            DrawFillBlank()
-                        }
-                    }
                     }
                 }
             }

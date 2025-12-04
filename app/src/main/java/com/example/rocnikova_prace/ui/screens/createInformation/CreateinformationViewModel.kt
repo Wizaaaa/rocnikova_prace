@@ -16,24 +16,22 @@ class CreateInformationViewModel: ViewModel() {
         questions.add(QuestionItem.emptyMultipleChoiceSingle())
     }
 
-    fun addSpecificQuestion(type: QuestionType = QuestionType.MultipleChoiceSingle) {
-        questions.removeAt(questions.lastIndex)
-        when(type) {
-            QuestionType.MultipleChoiceSingle -> questions.add(QuestionItem.emptyMultipleChoiceSingle())
-            QuestionType.MultipleChoiceMultiple -> questions.add(QuestionItem.emptyMultipleChoiceMultiple())
-            QuestionType.Open -> questions.add(QuestionItem.emptyOpen())
-            QuestionType.FillBlank -> questions.add(QuestionItem.emptyFillBlank())
+    fun changeQuestionType(id: String, type: QuestionType) {
+        val index = questions.indexOfFirst { it.id == id }
+
+        if (index == -1) return
+
+        val newQuestion = when(type) {
+            QuestionType.MultipleChoiceSingle -> QuestionItem.emptyMultipleChoiceSingle(id)
+            QuestionType.MultipleChoiceMultiple -> QuestionItem.emptyMultipleChoiceMultiple(id)
+            QuestionType.Open -> QuestionItem.emptyOpen(id)
+            QuestionType.FillBlank -> QuestionItem.emptyFillBlank(id)
         }
+
+        questions[index] = newQuestion
     }
 
     fun updateQuestion(updated: QuestionItem, id: String) {
-        val index = questions.indexOfFirst { it.id == id }
-        if (index != -1) {
-            questions[index] = updated
-        }
-    }
-
-    fun  trueQuestionIsChecked(updated: QuestionItem, id: String) {
         val index = questions.indexOfFirst { it.id == id }
         if (index != -1) {
             questions[index] = updated

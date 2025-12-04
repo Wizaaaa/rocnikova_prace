@@ -28,7 +28,7 @@ fun QuestionCard(
     Row(
         verticalAlignment = Alignment.CenterVertically,
         modifier = modifier
-            .padding(10.dp)
+            .padding(top = 10.dp, bottom = 10.dp)
     ) {
         InformationCard(
             value = text,
@@ -50,7 +50,7 @@ fun QuestionCard(
 
         Checkbox(
             checked = (question.correctIndex == questionIndex),
-            onCheckedChange = { viewModel.trueQuestionIsChecked(
+            onCheckedChange = { viewModel.updateQuestion(
                 updated = if (question.correctIndex == questionIndex) {
                     question.copy(correctIndex = null)
                 } else {
