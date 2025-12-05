@@ -8,25 +8,16 @@ sealed class QuestionItem {
 
     fun changeExpanded(expanded: Boolean): QuestionItem {
         return when (this) {
-            is MultipleChoiceSingle -> this.copy(isExpanded = expanded)
             is MultipleChoiceMultiple -> this.copy(isExpanded = expanded)
             is Open -> this.copy(isExpanded = expanded)
             is FillBlank -> this.copy(isExpanded = expanded)
         }
     }
 
-    data class MultipleChoiceSingle(
-        val question: String,
-        val options: List<String>,
-        val correctIndex: Int?,
-        override var isExpanded: Boolean = false,
-        override val id: String = UUID.randomUUID().toString()
-    ) : QuestionItem()
-
     data class MultipleChoiceMultiple(
         val question: String,
         val options: List<String>,
-        val correctIndices: List<Int>,
+        val correctIndices: List<Boolean>,
         override var isExpanded: Boolean = false,
         override val id: String = UUID.randomUUID().toString()
     ) : QuestionItem()
@@ -47,19 +38,11 @@ sealed class QuestionItem {
 
 
     companion object {
-
-        fun emptyMultipleChoiceSingle(id: String = UUID.randomUUID().toString()) = MultipleChoiceSingle(
-            id = id,
-            question = "",
-            options = listOf("", "", "", ""),
-            correctIndex = null
-        )
-
         fun emptyMultipleChoiceMultiple(id: String = UUID.randomUUID().toString()) = MultipleChoiceMultiple(
             id = id,
             question = "",
             options = listOf("", "", "", ""),
-            correctIndices = emptyList()
+            correctIndices = listOf(false, false, false, false)
         )
 
         fun emptyOpen(id: String = UUID.randomUUID().toString()) = Open(
@@ -73,7 +56,5 @@ sealed class QuestionItem {
             question = "_____",
             answer = ""
         )
-
-
     }
 }

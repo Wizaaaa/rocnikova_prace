@@ -1,5 +1,8 @@
 package com.example.rocnikova_prace.ui.screens.createInformation
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.expandVertically
+import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
@@ -9,7 +12,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -18,6 +20,8 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.foundation.lazy.items
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.tooling.preview.Preview
@@ -30,7 +34,6 @@ import com.example.rocnikova_prace.data.model.QuestionType
 import com.example.rocnikova_prace.ui.components.Cards
 import com.example.rocnikova_prace.ui.components.DrawFillBlank
 import com.example.rocnikova_prace.ui.components.DrawMultipleChoiceMultiple
-import com.example.rocnikova_prace.ui.components.DrawMultipleChoiceSingle
 import com.example.rocnikova_prace.ui.components.DrawOpen
 import com.example.rocnikova_prace.ui.components.InformationCard
 import com.example.rocnikova_prace.ui.screens.createScreen.CreateScreenViewModel
@@ -48,10 +51,6 @@ fun CreateInformation(
     modifier: Modifier = Modifier
 ) {
     val items: List<DropdownItem> = listOf(
-        DropdownItem(
-            label = "MultipleChoiceSingle",
-            questionType = QuestionType.MultipleChoiceSingle
-        ),
         DropdownItem(
             label = "MultipleChoiceMultiple",
             questionType = QuestionType.MultipleChoiceMultiple
@@ -85,10 +84,10 @@ fun CreateInformation(
 
 
             LazyColumn(modifier = Modifier.weight(1f, fill = false)) {
-                itemsIndexed(
+                items (
                     items = viewModel.questions,
-                    key = { _, item -> item.id }
-                ) { index, questionItem ->
+                    key = { item -> item.id }
+                ) { questionItem ->
                     val isContextMenuVisible = questionItem.isExpanded
 
                     Card(
@@ -128,7 +127,11 @@ fun CreateInformation(
                                 )
                             }
 
-                            if (isContextMenuVisible) {
+                            AnimatedVisibility(
+                                visible = isContextMenuVisible,
+                                enter = expandVertically(expandFrom = Alignment.Top),
+                                exit = shrinkVertically(shrinkTowards = Alignment.Top)
+                            ){
                                 Column(
                                     modifier = Modifier
                                         .fillMaxWidth()
@@ -140,13 +143,13 @@ fun CreateInformation(
                                                 .clip(RoundedCornerShape(10.dp))
                                                 .background(MaterialTheme.colorScheme.surfaceVariant)
                                                 .clickable {
-                                                    viewModel.changeQuestionType(
-                                                        id = questionItem.id,
-                                                        type = item.questionType
-                                                    )
                                                     viewModel.updateQuestion(
                                                         updated = questionItem.changeExpanded(false),
                                                         id = questionItem.id
+                                                    )
+                                                    viewModel.changeQuestionType(
+                                                        id = questionItem.id,
+                                                        type = item.questionType
                                                     )
                                                 }
                                                 .padding(10.dp)
@@ -159,14 +162,11 @@ fun CreateInformation(
                         }
 
                         when (questionItem) {
-                            is QuestionItem.MultipleChoiceSingle -> {
-                                DrawMultipleChoiceSingle(
+                            is QuestionItem.MultipleChoiceMultiple -> {
+                                DrawMultipleChoiceMultiple(
                                     question = questionItem,
                                     viewModel = viewModel
                                 )
-                            }
-                            is QuestionItem.MultipleChoiceMultiple -> {
-                                DrawMultipleChoiceMultiple()
                             }
                             is QuestionItem.Open -> {
                                 DrawOpen()

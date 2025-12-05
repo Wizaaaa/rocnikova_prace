@@ -1,5 +1,6 @@
 package com.example.rocnikova_prace.ui.screens.createInformation
 
+import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
@@ -13,7 +14,7 @@ class CreateInformationViewModel: ViewModel() {
         private set
 
     fun addQuestion() {
-        questions.add(QuestionItem.emptyMultipleChoiceSingle())
+        questions.add(QuestionItem.emptyMultipleChoiceMultiple())
     }
 
     fun changeQuestionType(id: String, type: QuestionType) {
@@ -22,13 +23,14 @@ class CreateInformationViewModel: ViewModel() {
         if (index == -1) return
 
         val newQuestion = when(type) {
-            QuestionType.MultipleChoiceSingle -> QuestionItem.emptyMultipleChoiceSingle(id)
             QuestionType.MultipleChoiceMultiple -> QuestionItem.emptyMultipleChoiceMultiple(id)
             QuestionType.Open -> QuestionItem.emptyOpen(id)
             QuestionType.FillBlank -> QuestionItem.emptyFillBlank(id)
         }
-
+        Log.d("fix",questions[index].toString())
         questions[index] = newQuestion
+        Log.d("fix",questions[index].toString())
+
     }
 
     fun updateQuestion(updated: QuestionItem, id: String) {

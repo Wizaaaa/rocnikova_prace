@@ -16,19 +16,20 @@ import com.example.rocnikova_prace.ui.screens.createInformation.CreateInformatio
 
 @Composable
 fun QuestionCard(
-    question: QuestionItem.MultipleChoiceSingle,
+    question: QuestionItem.MultipleChoiceMultiple,
     viewModel: CreateInformationViewModel,
     questionIndex: Int,
     modifier: Modifier = Modifier
 ) {
     var text by remember(question.id, questionIndex) {
-        mutableStateOf(question.options[questionIndex])
+        mutableStateOf<String>(question.options[questionIndex])
     }
+
+    val correctIndices = question.correctIndices.toMutableList()
 
     Row(
         verticalAlignment = Alignment.CenterVertically,
-        modifier = modifier
-            .padding(top = 10.dp, bottom = 10.dp)
+        modifier = modifier.padding(vertical = 10.dp)
     ) {
         InformationCard(
             value = text,
@@ -49,16 +50,14 @@ fun QuestionCard(
         )
 
         Checkbox(
-            checked = (question.correctIndex == questionIndex),
-            onCheckedChange = { viewModel.updateQuestion(
-                updated = if (question.correctIndex == questionIndex) {
-                    question.copy(correctIndex = null)
-                } else {
-                    question.copy(correctIndex = questionIndex)
-                },
-                id = question.id
-            )}
+            checked = (question.correctIndices[questionIndex]),
+            onCheckedChange = {
+                correctIndices[questionIndex] = !correctIndices[questionIndex]
+                viewModel.updateQuestion(
+                    updated = question.copy(correctIndices = correctIndices),
+                    id = question.id
+                )
+            }
         )
-//        Spacer(modifier = Modifier.weight(1f))
     }
 }

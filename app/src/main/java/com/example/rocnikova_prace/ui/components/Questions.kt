@@ -19,8 +19,8 @@ import com.example.rocnikova_prace.ui.screens.createInformation.CreateInformatio
 
 
 @Composable
-fun DrawMultipleChoiceSingle(
-    question: QuestionItem.MultipleChoiceSingle,
+fun DrawMultipleChoiceMultiple(
+    question: QuestionItem.MultipleChoiceMultiple,
     viewModel: CreateInformationViewModel
 ) {
     var questionText by remember(question.id) { mutableStateOf(question.question) }
@@ -44,41 +44,26 @@ fun DrawMultipleChoiceSingle(
 
     Column{
         Row(Modifier.fillMaxWidth()) {
-            QuestionCard(
-                question = question,
-                viewModel = viewModel,
-                questionIndex = 0,
-                modifier = Modifier.weight(1f)
-            )
-
-            QuestionCard(
-                question = question,
-                viewModel = viewModel,
-                questionIndex = 1,
-                modifier = Modifier.weight(1f)
-            )
+            for (i in 0..1) {
+                QuestionCard(
+                    question = question,
+                    viewModel = viewModel,
+                    questionIndex = i,
+                    modifier = Modifier.weight(1f)
+                )
+            }
         }
         Row(Modifier.fillMaxWidth()) {
-            QuestionCard(
-                question = question,
-                viewModel = viewModel,
-                questionIndex = 2,
-                modifier = Modifier.weight(1f)
-            )
-
-            QuestionCard(
-                question = question,
-                viewModel = viewModel,
-                questionIndex = 3,
-                modifier = Modifier.weight(1f)
-            )
+            for (i in 2..3) {
+                QuestionCard(
+                    question = question,
+                    viewModel = viewModel,
+                    questionIndex = i,
+                    modifier = Modifier.weight(1f)
+                )
+            }
         }
     }
-}
-
-@Composable
-fun DrawMultipleChoiceMultiple() {
-    Text("DrawMultipleChoiceMultiple")
 }
 
 @Composable
@@ -94,11 +79,11 @@ fun DrawFillBlank() {
 @Preview
 @Composable
 fun PreviewQuestions() {
-    DrawMultipleChoiceSingle(
-        QuestionItem.MultipleChoiceSingle(
+    DrawMultipleChoiceMultiple(
+        QuestionItem.MultipleChoiceMultiple(
             question = "",
             options = listOf("", "", "", ""),
-            correctIndex = 0
+            correctIndices = emptyList()
         ),
         viewModel = viewModel()
     )
