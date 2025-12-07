@@ -16,7 +16,7 @@ import com.example.rocnikova_prace.ui.screens.createInformation.CreateInformatio
 
 @Composable
 fun QuestionCard(
-    question: QuestionItem.MultipleChoiceMultiple,
+    question: QuestionItem.MultipleChoice,
     viewModel: CreateInformationViewModel,
     questionIndex: Int,
     modifier: Modifier = Modifier

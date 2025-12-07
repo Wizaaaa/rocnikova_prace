@@ -20,7 +20,7 @@ import com.example.rocnikova_prace.ui.screens.createInformation.CreateInformatio
 
 @Composable
 fun DrawMultipleChoiceMultiple(
-    question: QuestionItem.MultipleChoiceMultiple,
+    question: QuestionItem.MultipleChoice,
     viewModel: CreateInformationViewModel
 ) {
     var questionText by remember(question.id) { mutableStateOf(question.question) }
@@ -28,8 +28,10 @@ fun DrawMultipleChoiceMultiple(
     InformationCard(
         value = questionText,
         onValueChange = { newText ->
+            questionText = newText
+
             viewModel.updateQuestion(
-                updated = question.copy(question = newText),
+                updated = question.copy(question = questionText),
                 id = question.id
             )
         },
@@ -38,9 +40,6 @@ fun DrawMultipleChoiceMultiple(
             .fillMaxWidth()
             .padding(start = 20.dp, end = 20.dp, bottom = 20.dp)
     )
-
-
-
 
     Column{
         Row(Modifier.fillMaxWidth()) {
@@ -67,8 +66,44 @@ fun DrawMultipleChoiceMultiple(
 }
 
 @Composable
-fun DrawOpen() {
-    Text("DrawOpen")
+fun DrawOpen(
+    question: QuestionItem.Open,
+    viewModel: CreateInformationViewModel
+) {
+    var questionText by remember(question.id) { mutableStateOf(question.question) }
+    var answerText by remember(question.id) { mutableStateOf(question.answer) }
+
+    InformationCard(
+        value = questionText,
+        onValueChange = { newText ->
+            questionText = newText
+
+            viewModel.updateQuestion(
+                updated = question.copy(question = questionText),
+                id = question.id
+            )
+        },
+        label = "Zadejte otázku",
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(start = 20.dp, end = 20.dp)
+    )
+
+    InformationCard(
+        value = answerText,
+        onValueChange = { newText ->
+            answerText = newText
+
+            viewModel.updateQuestion(
+                updated = question.copy(answer = answerText),
+                id = question.id
+            )
+        },
+        label = "Zadejte odpověď",
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(start = 20.dp, end = 20.dp, bottom = 20.dp)
+    )
 }
 
 @Composable
@@ -80,7 +115,7 @@ fun DrawFillBlank() {
 @Composable
 fun PreviewQuestions() {
     DrawMultipleChoiceMultiple(
-        QuestionItem.MultipleChoiceMultiple(
+        QuestionItem.MultipleChoice(
             question = "",
             options = listOf("", "", "", ""),
             correctIndices = emptyList()

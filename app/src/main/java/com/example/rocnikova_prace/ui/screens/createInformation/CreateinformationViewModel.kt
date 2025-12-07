@@ -14,7 +14,7 @@ class CreateInformationViewModel: ViewModel() {
         private set
 
     fun addQuestion() {
-        questions.add(QuestionItem.emptyMultipleChoiceMultiple())
+        questions.add(QuestionItem.emptyMultipleChoice())
     }
 
     fun changeQuestionType(id: String, type: QuestionType) {
@@ -23,7 +23,7 @@ class CreateInformationViewModel: ViewModel() {
         if (index == -1) return
 
         val newQuestion = when(type) {
-            QuestionType.MultipleChoiceMultiple -> QuestionItem.emptyMultipleChoiceMultiple(id)
+            QuestionType.MultipleChoice -> QuestionItem.emptyMultipleChoice(id)
             QuestionType.Open -> QuestionItem.emptyOpen(id)
             QuestionType.FillBlank -> QuestionItem.emptyFillBlank(id)
         }
@@ -45,9 +45,5 @@ class CreateInformationViewModel: ViewModel() {
 
     fun groupNameChange(text: String) {
         groupName = text
-    }
-
-    fun groupNameReset() {
-        groupName = ""
     }
 }

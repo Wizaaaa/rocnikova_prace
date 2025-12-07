@@ -8,13 +8,13 @@ sealed class QuestionItem {
 
     fun changeExpanded(expanded: Boolean): QuestionItem {
         return when (this) {
-            is MultipleChoiceMultiple -> this.copy(isExpanded = expanded)
+            is MultipleChoice -> this.copy(isExpanded = expanded)
             is Open -> this.copy(isExpanded = expanded)
             is FillBlank -> this.copy(isExpanded = expanded)
         }
     }
 
-    data class MultipleChoiceMultiple(
+    data class MultipleChoice(
         val question: String,
         val options: List<String>,
         val correctIndices: List<Boolean>,
@@ -38,7 +38,7 @@ sealed class QuestionItem {
 
 
     companion object {
-        fun emptyMultipleChoiceMultiple(id: String = UUID.randomUUID().toString()) = MultipleChoiceMultiple(
+        fun emptyMultipleChoice(id: String = UUID.randomUUID().toString()) = MultipleChoice(
             id = id,
             question = "",
             options = listOf("", "", "", ""),

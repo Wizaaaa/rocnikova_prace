@@ -1,7 +1,7 @@
 package com.example.rocnikova_prace.data.model
 
 enum class QuestionType {
-    MultipleChoiceMultiple,
+    MultipleChoice,
     Open,
     FillBlank
 }

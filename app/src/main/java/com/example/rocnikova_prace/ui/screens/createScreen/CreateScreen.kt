@@ -6,11 +6,11 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavHostController
+import androidx.navigation.compose.rememberNavController
+import com.example.rocnikova_prace.MainScreen
 import com.example.rocnikova_prace.R
 import com.example.rocnikova_prace.ui.components.Cards
-import com.example.rocnikova_prace.ui.screens.createInformation.CreateInformation
-import com.example.rocnikova_prace.ui.screens.createInformation.CreateInformationViewModel
 import com.woowla.compose.icon.collections.heroicons.Heroicons
 import com.woowla.compose.icon.collections.heroicons.heroicons.Outline
 import com.woowla.compose.icon.collections.heroicons.heroicons.outline.AcademicCap
@@ -19,8 +19,7 @@ import com.woowla.compose.icon.collections.heroicons.heroicons.outline.Plus
 
 @Composable
 fun CreateScreen(
-    viewModel: CreateScreenViewModel,
-    createInformationViewModel: CreateInformationViewModel
+    navController: NavHostController
 ) {
     Column(
         verticalArrangement = Arrangement.Center,
@@ -29,7 +28,7 @@ fun CreateScreen(
         Cards(
             text = R.string.CS_new_questions,
             icon = Heroicons.Outline.Plus,
-            onClick = { viewModel.createCardOnClick() }
+            onClick = { navController.navigate(MainScreen.CreateInformation.name) }
         )
 
         Cards(
@@ -43,18 +42,11 @@ fun CreateScreen(
             icon = Heroicons.Outline.ArrowDownTray,
             onClick = {  }
         )
-
-        if (viewModel.showDialog) {
-            CreateInformation(
-                createScreenViewModel = viewModel,
-                viewModel = createInformationViewModel
-            )
-        }
     }
 }
 
 @Preview
 @Composable
 fun CreateScreenPreview() {
-    CreateScreen(viewModel(), viewModel())
+    CreateScreen(rememberNavController())
 }
