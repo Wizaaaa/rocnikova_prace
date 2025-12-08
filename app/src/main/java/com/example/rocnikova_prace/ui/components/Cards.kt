@@ -59,7 +59,6 @@ fun Cards(
         ),
         modifier = modifier
             .fillMaxWidth()
-            .padding(20.dp)
             .graphicsLayer(
                 scaleX = scale,
                 scaleY = scale

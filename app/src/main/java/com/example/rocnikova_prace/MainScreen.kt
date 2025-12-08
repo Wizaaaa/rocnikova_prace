@@ -49,21 +49,13 @@ fun MainScreen(navController: NavHostController = rememberNavController()) {
     val createInformationViewModel: CreateInformationViewModel = viewModel()
 
     Scaffold(
-        topBar = {
-            val navBackStackEntry by navController.currentBackStackEntryAsState()
-            val currentRoute = navBackStackEntry?.destination?.route
-
-            if (currentRoute == MainScreen.CreateInformation.name) {
-                TopAppBar(navController)
-            }
-        },
         bottomBar = { NavBar(
             navController,
             viewModel = viewModel()
         ) }
     ) { innerPadding ->
         AnimatedNavHost(
-            modifier = Modifier.padding(innerPadding),
+            modifier = Modifier.padding(bottom = innerPadding.calculateBottomPadding()),
             navController = navController,
             startDestination = MainScreen.Create.name,
             enterTransition = {
@@ -96,7 +88,13 @@ fun MainScreen(navController: NavHostController = rememberNavController()) {
             composable(MainScreen.Profile.name) { ProfileScreen() }
 
 
-            composable(MainScreen.CreateInformation.name) { CreateInformation(viewModel = createInformationViewModel) }
+            composable(MainScreen.CreateInformation.name) {
+                Scaffold(
+                    topBar = { TopAppBar(navController) }
+                ) { padding ->
+                    CreateInformation(viewModel = createInformationViewModel, modifier = Modifier.padding(padding))
+                }
+            }
         }
     }
 }

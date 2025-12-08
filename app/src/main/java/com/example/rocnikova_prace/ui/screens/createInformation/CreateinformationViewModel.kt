@@ -17,6 +17,12 @@ class CreateInformationViewModel: ViewModel() {
         questions.add(QuestionItem.emptyMultipleChoice())
     }
 
+    fun removeQuestion(id: String) {
+        val index = questions.indexOfFirst { it.id == id }
+
+        questions.removeAt(index)
+    }
+
     fun changeQuestionType(id: String, type: QuestionType) {
         val index = questions.indexOfFirst { it.id == id }
 

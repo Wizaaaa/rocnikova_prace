@@ -3,9 +3,11 @@ package com.example.rocnikova_prace.ui.screens.createScreen
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.example.rocnikova_prace.MainScreen
@@ -28,19 +30,22 @@ fun CreateScreen(
         Cards(
             text = R.string.CS_new_questions,
             icon = Heroicons.Outline.Plus,
-            onClick = { navController.navigate(MainScreen.CreateInformation.name) }
+            onClick = { navController.navigate(MainScreen.CreateInformation.name) },
+            modifier = Modifier.padding(20.dp)
         )
 
         Cards(
             text = R.string.CS_schools_questions,
             icon = Heroicons.Outline.AcademicCap,
-            onClick = {  }
+            onClick = {  },
+            modifier = Modifier.padding(20.dp)
         )
 
         Cards(
             text = R.string.CS_import_questions,
             icon = Heroicons.Outline.ArrowDownTray,
-            onClick = {  }
+            onClick = {  },
+            modifier = Modifier.padding(20.dp)
         )
     }
 }

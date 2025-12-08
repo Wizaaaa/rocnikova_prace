@@ -1,5 +1,7 @@
 package com.example.rocnikova_prace.ui.components
 
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
@@ -24,6 +26,7 @@ fun InformationCard(
           Text(label)
         },
         modifier = modifier
+            .fillMaxWidth()
     )
 }
 

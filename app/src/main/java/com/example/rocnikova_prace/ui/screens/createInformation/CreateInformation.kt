@@ -5,9 +5,11 @@ import androidx.compose.animation.expandVertically
 import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -17,6 +19,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -40,11 +43,13 @@ import com.woowla.compose.icon.collections.heroicons.heroicons.Outline
 import com.woowla.compose.icon.collections.heroicons.heroicons.outline.ChevronDown
 import com.woowla.compose.icon.collections.heroicons.heroicons.outline.ChevronUp
 import com.woowla.compose.icon.collections.heroicons.heroicons.outline.FolderPlus
+import com.woowla.compose.icon.collections.heroicons.heroicons.outline.XMark
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CreateInformation(
-    viewModel: CreateInformationViewModel
+    viewModel: CreateInformationViewModel,
+    modifier: Modifier = Modifier
 ) {
     val items: List<DropdownItem> = listOf(
         DropdownItem(
@@ -61,13 +66,12 @@ fun CreateInformation(
         )
     )
 
-    Column(modifier = Modifier.fillMaxSize()) {
-
+    Column(modifier = modifier.fillMaxSize()) {
         InformationCard(
             value = viewModel.groupName,
             onValueChange = { viewModel.groupNameChange(it) },
             label = "Zadejte název skupiny otázek",
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier.padding(start = 20.dp, end = 20.dp)
         )
 
 
@@ -78,12 +82,29 @@ fun CreateInformation(
             ) { questionItem ->
                 val isContextMenuVisible = questionItem.isExpanded
 
-                Card(modifier = Modifier.fillMaxWidth()){
-                    Column(modifier = Modifier.padding(10.dp)) {
+                Card(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(top = 20.dp, start = 20.dp, end = 20.dp)
+                ){
+                    Column(modifier = Modifier.padding(start = 10.dp, end = 10.dp)) {
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.End
+                        ) {
+                            IconButton(onClick = {
+                                viewModel.removeQuestion(questionItem.id)
+                            }) {
+                                Icon(
+                                    imageVector = Heroicons.Outline.XMark,
+                                    contentDescription = "delete question"
+                                )
+                            }
+                        }
+
                         Row(
                             modifier = Modifier
                             .fillMaxWidth()
-                            .padding(top = 10.dp)
                             .clip(RoundedCornerShape(10.dp))
                             .background(MaterialTheme.colorScheme.surfaceVariant)
                             .clickable{
@@ -117,8 +138,7 @@ fun CreateInformation(
                             exit = shrinkVertically(shrinkTowards = Alignment.Top)
                         ){
                             Column(
-                                modifier = Modifier
-                                    .fillMaxWidth()
+                                modifier = Modifier.fillMaxWidth()
                             ) {
                                 items.forEach { item ->
                                     Box(
@@ -169,7 +189,8 @@ fun CreateInformation(
         Cards(
             icon = Heroicons.Outline.FolderPlus,
             text = R.string.new_question,
-            onClick = { viewModel.addQuestion() }
+            onClick = { viewModel.addQuestion() },
+            modifier = Modifier.padding(top = 20.dp, start = 20.dp, end = 20.dp)
         )
     }
 }

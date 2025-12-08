@@ -41,7 +41,7 @@ fun DrawMultipleChoiceMultiple(
             .padding(start = 20.dp, end = 20.dp, bottom = 20.dp)
     )
 
-    Column{
+    Column(modifier = Modifier.padding(bottom = 10.dp)) {
         Row(Modifier.fillMaxWidth()) {
             for (i in 0..1) {
                 QuestionCard(
@@ -115,11 +115,7 @@ fun DrawFillBlank() {
 @Composable
 fun PreviewQuestions() {
     DrawMultipleChoiceMultiple(
-        QuestionItem.MultipleChoice(
-            question = "",
-            options = listOf("", "", "", ""),
-            correctIndices = emptyList()
-        ),
+        QuestionItem.emptyMultipleChoice(),
         viewModel = viewModel()
     )
 }
