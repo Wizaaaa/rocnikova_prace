@@ -53,7 +53,7 @@ sealed class QuestionItem {
 
         fun emptyFillBlank(id: String = UUID.randomUUID().toString()) = FillBlank(
             id = id,
-            question = "_____",
+            question = "",
             answer = ""
         )
     }

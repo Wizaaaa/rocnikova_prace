@@ -4,7 +4,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -70,18 +69,55 @@ fun DrawOpen(
     question: QuestionItem.Open,
     viewModel: CreateInformationViewModel
 ) {
-    var questionText by remember(question.id) { mutableStateOf(question.question) }
-    var answerText by remember(question.id) { mutableStateOf(question.answer) }
+    OpenFillQuestionCards(
+        id = question.id,
+        initialQuestion = question.question,
+        initialAnswer = question.answer,
+        answerLabel = "Zadejte odpověď",
+        onUpdate = { newQuestion, newAnswer ->
+            viewModel.updateQuestion(
+                updated = question.copy(question = newQuestion, answer = newAnswer),
+                id = question.id
+            )
+        }
+    )
+}
+
+@Composable
+fun DrawFillBlank(
+    question: QuestionItem.FillBlank,
+    viewModel: CreateInformationViewModel
+) {
+    OpenFillQuestionCards(
+        id = question.id,
+        initialQuestion = question.question,
+        initialAnswer = question.answer,
+        answerLabel = "Zadejte vynechané slovo",
+        onUpdate = { newQuestion, newAnswer ->
+            viewModel.updateQuestion(
+                updated = question.copy(question = newQuestion, answer = newAnswer),
+                id = question.id
+            )
+        }
+    )
+}
+
+@Composable
+private fun OpenFillQuestionCards(
+    id: String,
+    initialQuestion: String,
+    initialAnswer: String,
+    answerLabel: String,
+    onUpdate: (question: String, answer: String) -> Unit
+) {
+    var questionText by remember(id) { mutableStateOf(initialQuestion) }
+    var answerText by remember(id) { mutableStateOf(initialAnswer) }
 
     InformationCard(
         value = questionText,
         onValueChange = { newText ->
             questionText = newText
-
-            viewModel.updateQuestion(
-                updated = question.copy(question = questionText),
-                id = question.id
-            )
+            onUpdate (newText, answerText)
         },
         label = "Zadejte otázku",
         modifier = Modifier
@@ -93,22 +129,13 @@ fun DrawOpen(
         value = answerText,
         onValueChange = { newText ->
             answerText = newText
-
-            viewModel.updateQuestion(
-                updated = question.copy(answer = answerText),
-                id = question.id
-            )
+            onUpdate(questionText, newText)
         },
-        label = "Zadejte odpověď",
+        label = answerLabel,
         modifier = Modifier
             .fillMaxWidth()
             .padding(start = 20.dp, end = 20.dp, bottom = 20.dp)
     )
-}
-
-@Composable
-fun DrawFillBlank() {
-    Text("DrawFillBlank")
 }
 
 @Preview

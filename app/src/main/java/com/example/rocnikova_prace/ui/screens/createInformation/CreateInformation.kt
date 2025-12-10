@@ -5,11 +5,9 @@ import androidx.compose.animation.expandVertically
 import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -19,7 +17,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -76,7 +73,7 @@ fun CreateInformation(
 
 
         LazyColumn(modifier = Modifier.weight(1f, fill = false)) {
-            items (
+            items(
                 items = viewModel.questions,
                 key = { item -> item.id }
             ) { questionItem ->
@@ -86,101 +83,106 @@ fun CreateInformation(
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(top = 20.dp, start = 20.dp, end = 20.dp)
-                ){
-                    Column(modifier = Modifier.padding(start = 10.dp, end = 10.dp)) {
-                        Row(
-                            modifier = Modifier.fillMaxWidth(),
-                            horizontalArrangement = Arrangement.End
-                        ) {
-                            IconButton(onClick = {
-                                viewModel.removeQuestion(questionItem.id)
-                            }) {
-                                Icon(
-                                    imageVector = Heroicons.Outline.XMark,
-                                    contentDescription = "delete question"
-                                )
-                            }
-                        }
-
-                        Row(
+                ) {
+                    Box(modifier = Modifier.fillMaxWidth()) {
+                        Column(
                             modifier = Modifier
-                            .fillMaxWidth()
-                            .clip(RoundedCornerShape(10.dp))
-                            .background(MaterialTheme.colorScheme.surfaceVariant)
-                            .clickable{
-                                viewModel.updateQuestion(
-                                    updated = questionItem.changeExpanded(!questionItem.isExpanded),
-                                    id = questionItem.id
+                                .padding(start = 10.dp, end = 10.dp, top = 15.dp, bottom = 10.dp)
+                        ) {
+                            Row(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .clip(RoundedCornerShape(10.dp))
+                                    .background(MaterialTheme.colorScheme.surfaceVariant)
+                                    .clickable {
+                                        viewModel.updateQuestion(
+                                            updated = questionItem.changeExpanded(!questionItem.isExpanded),
+                                            id = questionItem.id
+                                        )
+                                    }
+                                    .padding(10.dp)
+                            ) {
+                                Text(
+                                    text = "Vyberte druh otázky",
+                                    style = MaterialTheme.typography.headlineSmall,
+                                    modifier = Modifier.weight(1f)
+                                )
+
+                                Icon(
+                                    imageVector = if (isContextMenuVisible) {
+                                        Heroicons.Outline.ChevronDown
+                                    } else {
+                                        Heroicons.Outline.ChevronUp
+                                    },
+                                    contentDescription = null
                                 )
                             }
-                            .padding(10.dp)
-                        ) {
-                            Text(
-                                text = "Vyberte druh otázky",
-                                style = MaterialTheme.typography.headlineSmall,
-                                modifier = Modifier
-                                    .weight(1f)
-                            )
 
-                            Icon(
-                                imageVector = if (isContextMenuVisible) {
-                                    Heroicons.Outline.ChevronDown
-                                } else {
-                                    Heroicons.Outline.ChevronUp
-                                },
-                                contentDescription = null
-                            )
-                        }
-
-                        AnimatedVisibility(
-                            visible = isContextMenuVisible,
-                            enter = expandVertically(expandFrom = Alignment.Top),
-                            exit = shrinkVertically(shrinkTowards = Alignment.Top)
-                        ){
-                            Column(
-                                modifier = Modifier.fillMaxWidth()
+                            AnimatedVisibility(
+                                visible = isContextMenuVisible,
+                                enter = expandVertically(expandFrom = Alignment.Top),
+                                exit = shrinkVertically(shrinkTowards = Alignment.Top)
                             ) {
-                                items.forEach { item ->
-                                    Box(
-                                        modifier = Modifier
-                                            .fillMaxWidth()
-                                            .clip(RoundedCornerShape(10.dp))
-                                            .background(MaterialTheme.colorScheme.surfaceVariant)
-                                            .clickable {
-                                                viewModel.updateQuestion(
-                                                    updated = questionItem.changeExpanded(false),
-                                                    id = questionItem.id
-                                                )
-                                                viewModel.changeQuestionType(
-                                                    id = questionItem.id,
-                                                    type = item.questionType
-                                                )
-                                            }
-                                            .padding(10.dp)
-                                    ) {
-                                        Text(item.label)
+                                Column(modifier = Modifier.fillMaxWidth()) {
+                                    items.forEach { item ->
+                                        Box(
+                                            modifier = Modifier
+                                                .fillMaxWidth()
+                                                .clip(RoundedCornerShape(10.dp))
+                                                .background(MaterialTheme.colorScheme.surfaceVariant)
+                                                .clickable {
+                                                    viewModel.updateQuestion(
+                                                        updated = questionItem.changeExpanded(false),
+                                                        id = questionItem.id
+                                                    )
+                                                    viewModel.changeQuestionType(
+                                                        id = questionItem.id,
+                                                        type = item.questionType
+                                                    )
+                                                }
+                                                .padding(10.dp)
+                                        ) {
+                                            Text(item.label)
+                                        }
                                     }
                                 }
                             }
-                        }
-                    }
 
-                    when (questionItem) {
-                        is QuestionItem.MultipleChoice -> {
-                            DrawMultipleChoiceMultiple(
-                                question = questionItem,
-                                viewModel = viewModel
-                            )
+                            when (questionItem) {
+                                is QuestionItem.MultipleChoice -> {
+                                    DrawMultipleChoiceMultiple(
+                                        question = questionItem,
+                                        viewModel = viewModel
+                                    )
+                                }
+                                is QuestionItem.Open -> {
+                                    DrawOpen(
+                                        question = questionItem,
+                                        viewModel = viewModel
+                                    )
+                                }
+                                is QuestionItem.FillBlank -> {
+                                    DrawFillBlank(
+                                        question = questionItem,
+                                        viewModel = viewModel
+                                    )
+                                }
+                            }
                         }
-                        is QuestionItem.Open -> {
-                            DrawOpen(
-                                question = questionItem,
-                                viewModel = viewModel
-                            )
-                        }
-                        is QuestionItem.FillBlank -> {
-                            DrawFillBlank()
-                        }
+
+
+                        Icon(
+                            imageVector = Heroicons.Outline.XMark,
+                            contentDescription = "Smazat otázku",
+                            modifier = Modifier
+                                .align(Alignment.TopEnd)
+                                .padding(4.dp)
+
+                                .clip(RoundedCornerShape(50))
+                                .clickable {
+                                    viewModel.removeQuestion(questionItem.id)
+                                }
+                        )
                     }
                 }
             }
