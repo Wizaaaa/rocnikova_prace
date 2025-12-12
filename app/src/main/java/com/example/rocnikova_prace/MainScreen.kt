@@ -12,11 +12,9 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
-import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.example.rocnikova_prace.ui.components.NavBar
 import com.example.rocnikova_prace.ui.components.TopAppBar
@@ -45,9 +43,10 @@ val bottomScreens = listOf(
 
 @OptIn(ExperimentalAnimationApi::class, ExperimentalMaterial3Api::class)
 @Composable
-fun MainScreen(navController: NavHostController = rememberNavController()) {
-    val createInformationViewModel: CreateInformationViewModel = viewModel()
-
+fun MainScreen(
+    navController: NavHostController = rememberNavController(),
+    createInformationViewModel: CreateInformationViewModel
+) {
     Scaffold(
         bottomBar = { NavBar(
             navController,

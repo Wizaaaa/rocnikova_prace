@@ -1,7 +1,9 @@
 package com.example.rocnikova_prace.data.model
 
+import kotlinx.serialization.Serializable
 import java.util.UUID
 
+@Serializable
 sealed class QuestionItem {
     abstract val id: String
     abstract val isExpanded: Boolean
@@ -14,6 +16,7 @@ sealed class QuestionItem {
         }
     }
 
+    @Serializable
     data class MultipleChoice(
         val question: String,
         val options: List<String>,
@@ -22,6 +25,7 @@ sealed class QuestionItem {
         override val id: String = UUID.randomUUID().toString()
     ) : QuestionItem()
 
+    @Serializable
     data class Open(
         val question: String,
         val answer: String,
@@ -29,6 +33,7 @@ sealed class QuestionItem {
         override val id: String = UUID.randomUUID().toString()
     ) : QuestionItem()
 
+    @Serializable
     data class FillBlank(
         val question: String,
         val answer: String,
