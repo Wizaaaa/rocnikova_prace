@@ -43,10 +43,7 @@ class CreateInformationViewModel(
             QuestionType.Open -> QuestionItem.emptyOpen(id)
             QuestionType.FillBlank -> QuestionItem.emptyFillBlank(id)
         }
-        Log.d("fix",questions[index].toString())
         questions[index] = newQuestion
-        Log.d("fix",questions[index].toString())
-
     }
 
     fun updateQuestion(updated: QuestionItem, id: String) {

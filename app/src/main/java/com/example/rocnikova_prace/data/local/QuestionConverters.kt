@@ -3,6 +3,11 @@ package com.example.rocnikova_prace.data.local
 import com.example.rocnikova_prace.data.model.QuestionItem
 import kotlinx.serialization.json.Json
 
+private val jsonConfig = Json {
+    ignoreUnknownKeys = true
+    encodeDefaults = true
+}
+
 fun QuestionItem.toEntity(): QuestionEntity {
     val type = when (this) {
         is QuestionItem.MultipleChoice -> "multiple"
@@ -13,15 +18,15 @@ fun QuestionItem.toEntity(): QuestionEntity {
     return QuestionEntity(
         id = id,
         type = type,
-        data = Json.encodeToString(this)
+        data = jsonConfig.encodeToString(this)
     )
 }
 
 fun QuestionEntity.toQuestionItem(): QuestionItem {
     return when (type) {
-        "multiple" -> Json.decodeFromString<QuestionItem.MultipleChoice>(data)
-        "open" -> Json.decodeFromString<QuestionItem.Open>(data)
-        "fillBlank" -> Json.decodeFromString<QuestionItem.FillBlank>(data)
-        else -> error("Unknown question type")
+        "multiple" -> jsonConfig.decodeFromString<QuestionItem.MultipleChoice>(data)
+        "open" -> jsonConfig.decodeFromString<QuestionItem.Open>(data)
+        "fillBlank" -> jsonConfig.decodeFromString<QuestionItem.FillBlank>(data)
+        else -> error("Unknown question type: $type")
     }
 }

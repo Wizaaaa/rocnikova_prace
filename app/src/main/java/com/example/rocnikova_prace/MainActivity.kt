@@ -17,11 +17,9 @@ class MainActivity : ComponentActivity() {
         val dao = AppDatabase.getDatabase(this).questionDao()
         val repository = QuestionRepository(dao)
 
-        val viewModel = CreateInformationViewModel(repository)
-
         setContent {
             AppTheme {
-                MainScreen(createInformationViewModel = viewModel)
+                MainScreen(repository = repository)
             }
         }
     }

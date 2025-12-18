@@ -13,16 +13,21 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
+import com.example.rocnikova_prace.data.repository.QuestionRepository
 import com.example.rocnikova_prace.ui.components.NavBar
 import com.example.rocnikova_prace.ui.components.TopAppBar
 import com.example.rocnikova_prace.ui.screens.ProfileScreen
-import com.example.rocnikova_prace.ui.screens.QuestionsScreen
+import com.example.rocnikova_prace.ui.screens.questionsScreen.QuestionsScreen
 import com.example.rocnikova_prace.ui.screens.createInformation.CreateInformation
 import com.example.rocnikova_prace.ui.screens.createInformation.CreateInformationViewModel
+import com.example.rocnikova_prace.ui.screens.createInformation.CreateInformationViewModelFactory
 import com.example.rocnikova_prace.ui.screens.createScreen.CreateScreen
+import com.example.rocnikova_prace.ui.screens.questionsScreen.QuestionsScreenViewModel
+import com.example.rocnikova_prace.ui.screens.questionsScreen.QuestionsScreenViewModelFactory
 import com.google.accompanist.navigation.animation.AnimatedNavHost
 import com.google.accompanist.navigation.animation.composable
 
@@ -45,8 +50,16 @@ val bottomScreens = listOf(
 @Composable
 fun MainScreen(
     navController: NavHostController = rememberNavController(),
-    createInformationViewModel: CreateInformationViewModel
+    repository: QuestionRepository
 ) {
+    val createInformationViewModel: CreateInformationViewModel = viewModel(
+        factory = CreateInformationViewModelFactory(repository)
+    )
+
+    val questionsScreenViewModel: QuestionsScreenViewModel = viewModel(
+        factory = QuestionsScreenViewModelFactory(repository)
+    )
+
     Scaffold(
         bottomBar = { NavBar(
             navController,
@@ -81,7 +94,7 @@ fun MainScreen(
             popEnterTransition = { EnterTransition.None },
             popExitTransition = { ExitTransition.None }
         ) {
-            composable(MainScreen.Questions.name) { QuestionsScreen() }
+            composable(MainScreen.Questions.name) { QuestionsScreen(viewModel = questionsScreenViewModel) }
             composable(MainScreen.Create.name) { CreateScreen(navController = navController) }
 
             composable(MainScreen.Profile.name) { ProfileScreen() }
