@@ -4,13 +4,19 @@ import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
+import com.example.rocnikova_prace.data.local.dao.GroupDao
+import com.example.rocnikova_prace.data.local.dao.QuestionDao
+import com.example.rocnikova_prace.data.local.entities.GroupEntity
+import com.example.rocnikova_prace.data.local.entities.QuestionEntity
 
 @Database(
-    entities = [QuestionEntity::class],
-    version = 1
+    entities = [QuestionEntity::class, GroupEntity::class],
+    version = 2,
+    exportSchema = false
 )
 abstract class AppDatabase : RoomDatabase() {
     abstract fun questionDao(): QuestionDao
+    abstract fun groupDao(): GroupDao
 
     companion object {
         @Volatile
@@ -22,7 +28,10 @@ abstract class AppDatabase : RoomDatabase() {
                     context.applicationContext,
                     AppDatabase::class.java,
                     "app_database"
-                ).build()
+                )
+                .fallbackToDestructiveMigration(false)
+                .build()
+
                 INSTANCE = instance
                 instance
             }

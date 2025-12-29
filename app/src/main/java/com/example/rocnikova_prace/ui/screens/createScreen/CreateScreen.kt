@@ -30,7 +30,10 @@ fun CreateScreen(
         Cards(
             text = R.string.CS_new_questions,
             icon = Heroicons.Outline.Plus,
-            onClick = { navController.navigate(MainScreen.CreateInformation.name) },
+            onClick = {
+                val newId = java.util.UUID.randomUUID().toString()
+                navController.navigate("${MainScreen.CreateInformation.name}/$newId")
+            },
             modifier = Modifier.padding(20.dp)
         )
 

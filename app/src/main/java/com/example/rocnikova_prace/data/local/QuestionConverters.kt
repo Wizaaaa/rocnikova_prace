@@ -1,11 +1,13 @@
 package com.example.rocnikova_prace.data.local
 
+import com.example.rocnikova_prace.data.local.entities.QuestionEntity
 import com.example.rocnikova_prace.data.model.QuestionItem
 import kotlinx.serialization.json.Json
 
 private val jsonConfig = Json {
     ignoreUnknownKeys = true
     encodeDefaults = true
+    coerceInputValues = true
 }
 
 fun QuestionItem.toEntity(): QuestionEntity {
@@ -15,10 +17,17 @@ fun QuestionItem.toEntity(): QuestionEntity {
         is QuestionItem.FillBlank -> "fillBlank"
     }
 
+    val jsonData = when (this) {
+        is QuestionItem.MultipleChoice -> jsonConfig.encodeToString(this)
+        is QuestionItem.Open -> jsonConfig.encodeToString(this)
+        is QuestionItem.FillBlank -> jsonConfig.encodeToString(this)
+    }
+
     return QuestionEntity(
         id = id,
+        groupId = groupId,
         type = type,
-        data = jsonConfig.encodeToString(this)
+        data = jsonData
     )
 }
 

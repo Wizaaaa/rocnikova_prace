@@ -1,24 +1,20 @@
-package com.example.rocnikova_prace
+    package com.example.rocnikova_prace
 
-import android.app.Application
-import androidx.room.Room
-import com.example.rocnikova_prace.data.local.AppDatabase
-import com.example.rocnikova_prace.data.repository.QuestionRepository
+    import android.app.Application
+    import com.example.rocnikova_prace.data.local.AppDatabase
+    import com.example.rocnikova_prace.data.repository.QuestionRepository
 
-class App : Application() {
+    class App : Application() {
+        lateinit var repository: QuestionRepository
 
-    lateinit var database: AppDatabase
-    lateinit var repository: QuestionRepository
+        override fun onCreate() {
+            super.onCreate()
 
-    override fun onCreate() {
-        super.onCreate()
+            val database = AppDatabase.getDatabase(this)
 
-        database = Room.databaseBuilder(
-            applicationContext,
-            AppDatabase::class.java,
-            "questions.db"
-        ).build()
-
-        repository = QuestionRepository(database.questionDao())
+            repository = QuestionRepository(
+                questionDao = database.questionDao(),
+                groupDao = database.groupDao()
+            )
+        }
     }
-}

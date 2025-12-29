@@ -142,7 +142,7 @@ private fun OpenFillQuestionCards(
 @Composable
 fun PreviewQuestions() {
     DrawMultipleChoiceMultiple(
-        QuestionItem.emptyMultipleChoice(),
+        QuestionItem.emptyMultipleChoice(""),
         viewModel = viewModel()
     )
 }
