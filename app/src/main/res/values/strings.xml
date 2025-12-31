@@ -2,15 +2,33 @@
     <string name="app_name">rocnikova_prace</string>
 
     <!--    CreateScreen-->
-    <string name="CS_new_questions">Vytvoř nový seznam otázek</string>
-    <string name="CS_schools_questions">Vybrat otázky podle školy</string>
-    <string name="CS_import_questions">Importovat otázky z dokumentu</string>
+    <string name="CS_new_questions">Create new question list</string>
+    <string name="CS_schools_questions">Select questions by school</string>
+    <string name="CS_import_questions">Import questions from document</string>
 
     <!--    Create Click Card-->
-    <string name="CCC_heading">Nová skupina otázek</string>
-    <string name="CCC_cancel">Zrušit</string>
-    <string name="CCC_continue">Pokračovat</string>
-    <string name="CCC_place_holder">Zadej název skupiny</string>
+    <string name="CCC_heading">New Question Group</string>
+    <string name="CCC_cancel">Cancel</string>
+    <string name="CCC_continue">Continue</string>
+    <string name="CCC_place_holder">Enter group name</string>
 
-    <string name="new_question">Vytvořit novou otázku</string>
+    <string name="new_question">Create new question</string>
+    <string name="new_questions_group">Create new question group</string>
+
+    <string name="enter_question">Enter question</string>
+    <string name="enter_response">Enter answer</string>
+    <string name="enter_missing_word">Enter missing word</string>
+
+    <!--    Create Information-->
+    <string name="CI_groupName">Enter question group name</string>
+    <string name="CI_questionType">Select question type</string>
+    <string name="CI_deleteQuestion">Delete question</string>
+
+    <!--    Questions Screen-->
+    <string name="QS_not_existing_group_questions">No question lists created yet</string>
+
+
+    <string name="multipleChoice">Multiple Choice</string>
+    <string name="open">Open-ended</string>
+    <string name="fillBlank">Fill in the blank</string>
 </resources>

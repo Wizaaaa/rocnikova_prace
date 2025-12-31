@@ -40,8 +40,7 @@ fun NavBar(
 ){
     val navBackStackEntry = navController.currentBackStackEntryAsState()
     val currentDestination = navBackStackEntry.value?.destination?.route
-    NavigationBar(
-    ) {
+    NavigationBar {
         Row(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceAround

@@ -8,6 +8,7 @@ sealed class QuestionItem {
     abstract val id: String
     abstract val isExpanded: Boolean
     abstract val groupId: String
+    abstract val question: String
 
     fun changeExpanded(expanded: Boolean): QuestionItem {
         return when (this) {
@@ -27,9 +28,9 @@ sealed class QuestionItem {
 
     @Serializable
     data class MultipleChoice(
-        val question: String,
         val options: List<String>,
         val correctIndices: List<Boolean>,
+        override val question: String,
         override val groupId: String,
         override var isExpanded: Boolean = false,
         override val id: String = UUID.randomUUID().toString()
@@ -37,8 +38,8 @@ sealed class QuestionItem {
 
     @Serializable
     data class Open(
-        val question: String,
         val answer: String,
+        override val question: String,
         override val groupId: String,
         override var isExpanded: Boolean = false,
         override val id: String = UUID.randomUUID().toString()
@@ -46,8 +47,8 @@ sealed class QuestionItem {
 
     @Serializable
     data class FillBlank(
-        val question: String,
         val answer: String,
+        override val question: String,
         override val groupId: String,
         override var isExpanded: Boolean = false,
         override val id: String = UUID.randomUUID().toString()
@@ -58,31 +59,34 @@ sealed class QuestionItem {
         fun emptyMultipleChoice(
             groupId: String,
             id: String = UUID.randomUUID().toString(),
+            question: String = ""
         ) = MultipleChoice(
             id = id,
             groupId = groupId,
-            question = "",
+            question = question,
             options = listOf("", "", "", ""),
             correctIndices = listOf(false, false, false, false)
         )
 
         fun emptyOpen(
             groupId: String,
-            id: String = UUID.randomUUID().toString()
+            id: String = UUID.randomUUID().toString(),
+            question: String = ""
         ) = Open(
             id = id,
             groupId = groupId,
-            question = "",
+            question = question,
             answer = ""
         )
 
         fun emptyFillBlank(
             groupId: String,
-            id: String = UUID.randomUUID().toString()
+            id: String = UUID.randomUUID().toString(),
+            question: String = ""
         ) = FillBlank(
             id = id,
             groupId = groupId,
-            question = "",
+            question = question,
             answer = ""
         )
     }

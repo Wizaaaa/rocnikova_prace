@@ -17,6 +17,8 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
@@ -30,9 +32,6 @@ import com.example.rocnikova_prace.ui.screens.createScreen.CreateScreen
 import com.example.rocnikova_prace.ui.screens.questionsScreen.GroupsViewModel
 import com.example.rocnikova_prace.ui.screens.questionsScreen.GroupsViewModelFactory
 import com.example.rocnikova_prace.ui.screens.questionsScreen.QuestionsScreen
-import com.google.accompanist.navigation.animation.AnimatedNavHost
-import com.google.accompanist.navigation.animation.composable
-
 
 enum class MainScreen {
     Create,
@@ -79,7 +78,7 @@ fun MainScreen(
             }
         }
     ) { innerPadding ->
-        AnimatedNavHost(
+        NavHost(
             modifier = Modifier.padding(bottom = innerPadding.calculateBottomPadding()),
             navController = navController,
             startDestination = MainScreen.Create.name,
@@ -122,7 +121,8 @@ fun MainScreen(
                     viewModel = questionsScreenViewModel,
                     onGroupClick = { groupId ->
                         navController.navigate("${MainScreen.CreateInformation.name}/$groupId")
-                    }
+                    },
+                    navController = navController
                 )
             }
 

@@ -36,7 +36,6 @@ fun Cards(
     onClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    // InteractionSource sleduje pressed/hovered events
     val interactionSource = remember { MutableInteractionSource() }
     val isPressed by interactionSource.collectIsPressedAsState()
 

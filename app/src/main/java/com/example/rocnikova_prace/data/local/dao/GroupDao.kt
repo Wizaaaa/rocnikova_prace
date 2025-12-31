@@ -2,9 +2,8 @@ package com.example.rocnikova_prace.data.local.dao
 
 import androidx.room.Dao
 import androidx.room.Delete
-import androidx.room.Insert
-import androidx.room.OnConflictStrategy
 import androidx.room.Query
+import androidx.room.Upsert
 import com.example.rocnikova_prace.data.local.entities.GroupEntity
 import kotlinx.coroutines.flow.Flow
 
@@ -16,7 +15,7 @@ interface GroupDao {
     @Query("SELECT * FROM question_groups WHERE id = :id")
     suspend fun getGroupById(id: String): GroupEntity?
 
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    @Upsert
     suspend fun insertGroup(group: GroupEntity)
 
     @Delete

@@ -23,6 +23,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -50,15 +51,15 @@ fun CreateInformation(
 ) {
     val items: List<DropdownItem> = listOf(
         DropdownItem(
-            label = "MultipleChoice",
+            label = stringResource(R.string.multipleChoice),
             questionType = QuestionType.MultipleChoice
         ),
         DropdownItem(
-            label = "Open",
+            label = stringResource(R.string.open),
             questionType = QuestionType.Open
         ),
         DropdownItem(
-            label = "FillBlank",
+            label = stringResource(R.string.fillBlank),
             questionType = QuestionType.FillBlank
         )
     )
@@ -67,7 +68,7 @@ fun CreateInformation(
         InformationCard(
             value = viewModel.groupName,
             onValueChange = { viewModel.groupNameChange(it) },
-            label = "Zadejte název skupiny otázek",
+            label = stringResource(R.string.CI_groupName),
             modifier = Modifier.padding(start = 20.dp, end = 20.dp)
         )
 
@@ -103,7 +104,7 @@ fun CreateInformation(
                                     .padding(10.dp)
                             ) {
                                 Text(
-                                    text = "Vyberte druh otázky",
+                                    text = stringResource(R.string.CI_questionType),
                                     style = MaterialTheme.typography.headlineSmall,
                                     modifier = Modifier.weight(1f)
                                 )
@@ -131,13 +132,10 @@ fun CreateInformation(
                                                 .clip(RoundedCornerShape(10.dp))
                                                 .background(MaterialTheme.colorScheme.surfaceVariant)
                                                 .clickable {
-                                                    viewModel.updateQuestion(
-                                                        updated = questionItem.changeExpanded(false),
-                                                        id = questionItem.id
-                                                    )
                                                     viewModel.changeQuestionType(
                                                         id = questionItem.id,
-                                                        type = item.questionType
+                                                        type = item.questionType,
+                                                        question = questionItem.question
                                                     )
                                                 }
                                                 .padding(10.dp)
@@ -173,11 +171,10 @@ fun CreateInformation(
 
                         Icon(
                             imageVector = Heroicons.Outline.XMark,
-                            contentDescription = "Smazat otázku",
+                            contentDescription = stringResource(R.string.CI_deleteQuestion),
                             modifier = Modifier
                                 .align(Alignment.TopEnd)
                                 .padding(4.dp)
-
                                 .clip(RoundedCornerShape(50))
                                 .clickable {
                                     viewModel.removeQuestion(questionItem.id)

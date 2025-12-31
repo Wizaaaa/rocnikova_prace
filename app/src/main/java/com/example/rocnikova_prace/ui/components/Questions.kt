@@ -10,9 +10,11 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.rocnikova_prace.R
 import com.example.rocnikova_prace.data.model.QuestionItem
 import com.example.rocnikova_prace.ui.screens.createInformation.CreateInformationViewModel
 
@@ -34,7 +36,7 @@ fun DrawMultipleChoiceMultiple(
                 id = question.id
             )
         },
-        label = "Zadejte otázku",
+        label = stringResource(R.string.enter_question),
         modifier = Modifier
             .fillMaxWidth()
             .padding(start = 20.dp, end = 20.dp, bottom = 20.dp)
@@ -73,7 +75,7 @@ fun DrawOpen(
         id = question.id,
         initialQuestion = question.question,
         initialAnswer = question.answer,
-        answerLabel = "Zadejte odpověď",
+        answerLabel = stringResource(R.string.enter_response),
         onUpdate = { newQuestion, newAnswer ->
             viewModel.updateQuestion(
                 updated = question.copy(question = newQuestion, answer = newAnswer),
@@ -92,7 +94,7 @@ fun DrawFillBlank(
         id = question.id,
         initialQuestion = question.question,
         initialAnswer = question.answer,
-        answerLabel = "Zadejte vynechané slovo",
+        answerLabel = stringResource(R.string.enter_missing_word),
         onUpdate = { newQuestion, newAnswer ->
             viewModel.updateQuestion(
                 updated = question.copy(question = newQuestion, answer = newAnswer),
@@ -117,9 +119,9 @@ private fun OpenFillQuestionCards(
         value = questionText,
         onValueChange = { newText ->
             questionText = newText
-            onUpdate (newText, answerText)
+            onUpdate(newText, answerText)
         },
-        label = "Zadejte otázku",
+        label = stringResource(R.string.enter_question),
         modifier = Modifier
             .fillMaxWidth()
             .padding(start = 20.dp, end = 20.dp)

@@ -10,7 +10,9 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import com.example.rocnikova_prace.R
 import com.example.rocnikova_prace.data.model.QuestionItem
 import com.example.rocnikova_prace.ui.screens.createInformation.CreateInformationViewModel
 
@@ -22,7 +24,7 @@ fun QuestionCard(
     modifier: Modifier = Modifier
 ) {
     var text by remember(question.id, questionIndex) {
-        mutableStateOf<String>(question.options[questionIndex])
+        mutableStateOf(question.options[questionIndex])
     }
 
     val correctIndices = question.correctIndices.toMutableList()
@@ -43,7 +45,7 @@ fun QuestionCard(
                     id = question.id
                 )
             },
-            label = "Zadejte otázku",
+            label = stringResource(R.string.enter_question),
             modifier = Modifier
                 .weight(1f)
                 .padding(start = 20.dp)

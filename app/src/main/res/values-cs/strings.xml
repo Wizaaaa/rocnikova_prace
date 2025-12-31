@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">rocnikova_prace</string>
+
+    <!--    CreateScreen-->
+    <string name="CS_new_questions">Vytvoř nový seznam otázek</string>
+    <string name="CS_schools_questions">Vybrat otázky podle školy</string>
+    <string name="CS_import_questions">Importovat otázky z dokumentu</string>
+
+    <!--    Create Click Card-->
+    <string name="CCC_heading">Nová skupina otázek</string>
+    <string name="CCC_cancel">Zrušit</string>
+    <string name="CCC_continue">Pokračovat</string>
+    <string name="CCC_place_holder">Zadej název skupiny</string>
+
+    <string name="new_question">Vytvořit novou otázku</string>
+    <string name="new_questions_group">Vytvořte novou skupinu otázek</string>
+
+    <string name="enter_question">Zadejte otázku</string>
+    <string name="enter_response">Zadejte odpověď</string>
+    <string name="enter_missing_word">Zadejte vynechané slovo</string>
+
+    <!--    Create Information-->
+    <string name="CI_groupName">Zadejte název skupiny otázek</string>
+    <string name="CI_questionType">Vyberte druh otázky</string>
+    <string name="CI_deleteQuestion">Smazat otázku</string>
+
+    <!--    Questions Screen-->
+    <string name="QS_not_existing_group_questions">Zatím nemáte vytvořený žádný seznam otázek</string>
+
+    <string name="multipleChoice">Více správných možností</string>
+    <string name="open">Otevřená</string>
+    <string name="fillBlank">Doplň větu</string>
+</resources>

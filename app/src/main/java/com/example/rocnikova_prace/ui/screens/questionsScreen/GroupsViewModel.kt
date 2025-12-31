@@ -15,7 +15,6 @@ import kotlinx.coroutines.launch
 class GroupsViewModel(
     private val repository: QuestionRepository
 ) : ViewModel() {
-
     var isLoading by mutableStateOf(true)
         private set
 
@@ -34,6 +33,12 @@ class GroupsViewModel(
 
                 isLoading = false
             }
+        }
+    }
+
+    fun deleteGroup(group: GroupEntity) {
+        viewModelScope.launch {
+            repository.deleteGroup(group)
         }
     }
 }
