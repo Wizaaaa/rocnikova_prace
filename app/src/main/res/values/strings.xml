@@ -6,12 +6,6 @@
     <string name="CS_schools_questions">Select questions by school</string>
     <string name="CS_import_questions">Import questions from document</string>
 
-    <!--    Create Click Card-->
-    <string name="CCC_heading">New Question Group</string>
-    <string name="CCC_cancel">Cancel</string>
-    <string name="CCC_continue">Continue</string>
-    <string name="CCC_place_holder">Enter group name</string>
-
     <string name="new_question">Create new question</string>
     <string name="new_questions_group">Create new question group</string>
 

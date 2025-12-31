@@ -34,5 +34,5 @@ fun InformationCard(
 @Preview
 @Composable
 fun InformationCardPreview() {
-    InformationCard("", { }, stringResource(R.string.CCC_place_holder))
+    InformationCard("", { }, stringResource(R.string.new_questions_group))
 }

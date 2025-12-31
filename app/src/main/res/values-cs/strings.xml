@@ -7,12 +7,6 @@
     <string name="CS_schools_questions">Vybrat otázky podle školy</string>
     <string name="CS_import_questions">Importovat otázky z dokumentu</string>
 
-    <!--    Create Click Card-->
-    <string name="CCC_heading">Nová skupina otázek</string>
-    <string name="CCC_cancel">Zrušit</string>
-    <string name="CCC_continue">Pokračovat</string>
-    <string name="CCC_place_holder">Zadej název skupiny</string>
-
     <string name="new_question">Vytvořit novou otázku</string>
     <string name="new_questions_group">Vytvořte novou skupinu otázek</string>
 
