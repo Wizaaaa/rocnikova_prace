@@ -16,6 +16,8 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -24,7 +26,9 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.example.rocnikova_prace.MainScreen
 import com.example.rocnikova_prace.R
+import com.example.rocnikova_prace.data.local.entities.GroupEntity
 import com.example.rocnikova_prace.ui.components.Cards
+import com.example.rocnikova_prace.ui.components.DeleteDialog
 import com.woowla.compose.icon.collections.heroicons.Heroicons
 import com.woowla.compose.icon.collections.heroicons.heroicons.Outline
 import com.woowla.compose.icon.collections.heroicons.heroicons.outline.Plus
@@ -36,9 +40,11 @@ fun QuestionsScreen(
     navController: NavHostController,
     onGroupClick: (String) -> Unit
 ) {
+    val (groupToDelete, setGroupToDelete) = remember { mutableStateOf<GroupEntity?>(null) }
+
     when {
         viewModel.isLoading -> {
-
+//            TODO
         }
 
         viewModel.groups.isEmpty() -> {
@@ -66,7 +72,10 @@ fun QuestionsScreen(
 
         else -> {
             LazyColumn(modifier = Modifier.safeDrawingPadding()) {
-                items(viewModel.groups) { group ->
+                items(
+                    items = viewModel.groups,
+                    key = { group -> group.id }
+                ) { group ->
                     Box {
                         Card(
                             modifier = Modifier
@@ -88,11 +97,22 @@ fun QuestionsScreen(
                                 .padding(top = 12.dp, end = 12.dp)
                                 .clip(RoundedCornerShape(50))
                                 .clickable {
-                                    viewModel.deleteGroup(group)
+                                    setGroupToDelete(group)
                                 }
                         )
                     }
                 }
+            }
+            if (groupToDelete != null) {
+                DeleteDialog(
+                    onDismissRequest = {
+                        setGroupToDelete(null)
+                    },
+                    onConfirmation = {
+                        viewModel.deleteGroup(groupToDelete)
+                        setGroupToDelete(null)
+                    }
+                )
             }
         }
     }

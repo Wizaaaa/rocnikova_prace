@@ -25,4 +25,9 @@
     <string name="multipleChoice">Více správných možností</string>
     <string name="open">Otevřená</string>
     <string name="fillBlank">Doplň větu</string>
+
+    <!--    Delete Dialog-->
+    <string name="DD_text">Opravdu chcete smazat tuto skupinu? Tuto akci nelze vrátit zpět.</string>
+    <string name="DD_delete">Smazat</string>
+    <string name="DD_cancel">Zrušit</string>
 </resources>
