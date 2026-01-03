@@ -3,6 +3,9 @@ package com.example.rocnikova_prace.ui.components
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Checkbox
+import androidx.compose.material3.CheckboxDefaults
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -21,11 +24,14 @@ fun QuestionCard(
     question: QuestionItem.MultipleChoice,
     viewModel: CreateInformationViewModel,
     questionIndex: Int,
+    isCheckboxError: Boolean,
     modifier: Modifier = Modifier
 ) {
     var text by remember(question.id, questionIndex) {
         mutableStateOf(question.options[questionIndex])
     }
+
+    val isTextError = viewModel.showErrors && text.isBlank()
 
     val correctIndices = question.correctIndices.toMutableList()
 
@@ -42,13 +48,22 @@ fun QuestionCard(
                 newOptions[questionIndex] = it
                 viewModel.updateQuestion(
                     updated = question.copy(options = newOptions),
-                    id = question.id
                 )
             },
-            label = stringResource(R.string.enter_question),
+            isError = isTextError,
+            supportingText = {
+                if (isTextError) {
+                    Text(
+                        text = "Vyplňte možnost",
+                        color = MaterialTheme.colorScheme.error
+                    )
+                }
+            },
+            label = stringResource(R.string.enter_response),
             modifier = Modifier
                 .weight(1f)
                 .padding(start = 20.dp)
+                .shake(isTextError, trigger = viewModel.validationErrorTrigger)
         )
 
         Checkbox(
@@ -57,9 +72,10 @@ fun QuestionCard(
                 correctIndices[questionIndex] = !correctIndices[questionIndex]
                 viewModel.updateQuestion(
                     updated = question.copy(correctIndices = correctIndices),
-                    id = question.id
                 )
-            }
+            },
+            colors = if (isCheckboxError) CheckboxDefaults.colors(uncheckedColor = MaterialTheme.colorScheme.error) else CheckboxDefaults.colors(),
+            modifier = Modifier.shake(isCheckboxError, trigger = viewModel.validationErrorTrigger)
         )
     }
 }

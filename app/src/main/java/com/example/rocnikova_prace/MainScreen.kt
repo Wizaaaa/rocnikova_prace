@@ -143,7 +143,7 @@ fun MainScreen(
                 )
 
                 Scaffold(
-                    topBar = { TopAppBar(navController) }
+                    topBar = { TopAppBar(navController, createInfoViewModel) }
                 ) { padding ->
                     CreateInformation(viewModel = createInfoViewModel, modifier = Modifier.padding(padding))
                 }

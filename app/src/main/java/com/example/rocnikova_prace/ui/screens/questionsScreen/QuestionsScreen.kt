@@ -1,28 +1,42 @@
 package com.example.rocnikova_prace.ui.screens.questionsScreen
 
+import androidx.compose.animation.core.LinearEasing
+import androidx.compose.animation.core.animateFloat
+import androidx.compose.animation.core.infiniteRepeatable
+import androidx.compose.animation.core.rememberInfiniteTransition
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawingPadding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.ElevatedCard
+import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
 import com.example.rocnikova_prace.MainScreen
 import com.example.rocnikova_prace.R
@@ -40,14 +54,26 @@ fun QuestionsScreen(
     navController: NavHostController,
     onGroupClick: (String) -> Unit
 ) {
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+
     val (groupToDelete, setGroupToDelete) = remember { mutableStateOf<GroupEntity?>(null) }
 
     when {
-        viewModel.isLoading -> {
-//            TODO
+        uiState.isLoading -> {
+            Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                val angle by rememberInfiniteTransition().animateFloat(
+                    initialValue = 0f, targetValue = 360f,
+                    animationSpec = infiniteRepeatable(tween(1000, easing = LinearEasing))
+                )
+
+                CircularProgressIndicator(
+                    progress = { 0.75f },
+                    modifier = Modifier.size(64.dp).rotate(angle)
+                )
+            }
         }
 
-        viewModel.groups.isEmpty() -> {
+        uiState.groups.isEmpty() -> {
             Column(
                 modifier = Modifier.fillMaxSize(),
                 verticalArrangement = Arrangement.Center,
@@ -73,20 +99,46 @@ fun QuestionsScreen(
         else -> {
             LazyColumn(modifier = Modifier.safeDrawingPadding()) {
                 items(
-                    items = viewModel.groups,
+                    items = uiState.groups,
                     key = { group -> group.id }
                 ) { group ->
                     Box {
-                        Card(
+                        ElevatedCard(
+                            elevation = CardDefaults.elevatedCardElevation(defaultElevation = 8.dp),
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .padding(8.dp)
-                                .clickable { onGroupClick(group.id) }
+                                .padding(20.dp)
                         ) {
-                            Text(
-                                text = group.name,
-                                modifier = Modifier.padding(16.dp)
-                            )
+                            Column(modifier = Modifier.padding(10.dp)) {
+                                Text(
+                                    text = group.name,
+                                    modifier = Modifier.padding(6.dp)
+                                )
+
+                                Row {
+                                    OutlinedButton(
+                                        onClick = {
+                                            onGroupClick(group.id)
+                                        },
+                                        modifier = Modifier
+                                            .weight(1f)
+                                            .padding(5.dp)
+                                    ) {
+                                        Text(stringResource(R.string.QS_edit))
+                                    }
+
+                                    FilledTonalButton(
+                                        onClick = {
+    //                                            TODO
+                                        },
+                                        modifier = Modifier
+                                            .weight(1f)
+                                            .padding(5.dp)
+                                    ) {
+                                        Text(stringResource(R.string.QS_practice))
+                                    }
+                                }
+                            }
                         }
 
                         Icon(
@@ -94,7 +146,7 @@ fun QuestionsScreen(
                             contentDescription = "delete questions",
                             modifier = Modifier
                                 .align(Alignment.TopEnd)
-                                .padding(top = 12.dp, end = 12.dp)
+                                .padding(top = 24.dp, end = 24.dp)
                                 .clip(RoundedCornerShape(50))
                                 .clickable {
                                     setGroupToDelete(group)

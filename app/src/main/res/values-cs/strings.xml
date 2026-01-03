@@ -21,6 +21,8 @@
 
     <!--    Questions Screen-->
     <string name="QS_not_existing_group_questions">Zatím nemáte vytvořený žádný seznam otázek</string>
+    <string name="QS_edit">Upravit</string>
+    <string name="QS_practice">Trénovat</string>
 
     <string name="multipleChoice">Více správných možností</string>
     <string name="open">Otevřená</string>
@@ -30,4 +32,8 @@
     <string name="DD_text">Opravdu chcete smazat tuto skupinu? Tuto akci nelze vrátit zpět.</string>
     <string name="DD_delete">Smazat</string>
     <string name="DD_cancel">Zrušit</string>
+
+    <!--    Errors-->
+    <string name="questions_cannot_be_blank">Zadejte otázku</string>
+    <string name="response_cannot_be_blank">Vyplňte odpověď</string>
 </resources>

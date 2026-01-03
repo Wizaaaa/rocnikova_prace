@@ -36,6 +36,7 @@ import com.example.rocnikova_prace.ui.components.DrawFillBlank
 import com.example.rocnikova_prace.ui.components.DrawMultipleChoiceMultiple
 import com.example.rocnikova_prace.ui.components.DrawOpen
 import com.example.rocnikova_prace.ui.components.InformationCard
+import com.example.rocnikova_prace.ui.components.shake
 import com.woowla.compose.icon.collections.heroicons.Heroicons
 import com.woowla.compose.icon.collections.heroicons.heroicons.Outline
 import com.woowla.compose.icon.collections.heroicons.heroicons.outline.ChevronDown
@@ -64,12 +65,25 @@ fun CreateInformation(
         )
     )
 
+    val groupNameError = viewModel.showErrors && viewModel.groupName.isBlank()
+
     Column(modifier = modifier.fillMaxSize()) {
         InformationCard(
             value = viewModel.groupName,
             onValueChange = { viewModel.groupNameChange(it) },
             label = stringResource(R.string.CI_groupName),
-            modifier = Modifier.padding(start = 20.dp, end = 20.dp)
+            isError = groupNameError,
+            supportingText = {
+                if (groupNameError) {
+                    Text(
+                        text = "Musíte vyplnit název skupiny",
+                        color = MaterialTheme.colorScheme.error
+                    )
+                }
+            },
+            modifier = Modifier
+                .padding(start = 20.dp, end = 20.dp)
+                .shake(groupNameError, trigger = viewModel.validationErrorTrigger)
         )
 
 
@@ -98,7 +112,6 @@ fun CreateInformation(
                                     .clickable {
                                         viewModel.updateQuestion(
                                             updated = questionItem.changeExpanded(!questionItem.isExpanded),
-                                            id = questionItem.id
                                         )
                                     }
                                     .padding(10.dp)
@@ -135,7 +148,6 @@ fun CreateInformation(
                                                     viewModel.changeQuestionType(
                                                         id = questionItem.id,
                                                         type = item.questionType,
-                                                        question = questionItem.question
                                                     )
                                                 }
                                                 .padding(10.dp)
@@ -167,7 +179,6 @@ fun CreateInformation(
                                 }
                             }
                         }
-
 
                         Icon(
                             imageVector = Heroicons.Outline.XMark,

@@ -11,22 +11,27 @@ import com.example.rocnikova_prace.data.local.entities.GroupEntity
 import com.example.rocnikova_prace.data.model.QuestionItem
 import com.example.rocnikova_prace.data.model.QuestionType
 import com.example.rocnikova_prace.data.repository.QuestionRepository
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
 class CreateInformationViewModel(
     private val repository: QuestionRepository,
     val groupId: String
 ): ViewModel() {
-    private var saveQuestionJob: Job? = null
-    private var saveGroupJob: Job? = null
+    var isLoading by mutableStateOf(true)
+        private set
+
+    var showErrors by mutableStateOf(false)
+        private set
 
     var questions = mutableStateListOf<QuestionItem>()
         private set
 
+    private val questionsToDelete = mutableListOf<QuestionItem>()
+
     var groupName by mutableStateOf("")
+        private set
+
+    var validationErrorTrigger by mutableStateOf(0L)
         private set
 
     init {
@@ -34,91 +39,104 @@ class CreateInformationViewModel(
             val group = repository.getGroupById(groupId)
             if (group != null) {
                 groupName = group.name
-            } else {
-                saveGroupToDb()
             }
-        }
-        viewModelScope.launch {
-            repository.getQuestionsForGroup(groupId).collectLatest { dbQuestions ->
+
+            repository.getQuestionsForGroup(groupId).collect { dbQuestions ->
                 questions.clear()
                 questions.addAll(dbQuestions)
+                isLoading = false
+                return@collect
             }
+            isLoading = false
         }
     }
 
     // --- WORK WITH GROUP ---
     fun groupNameChange(text: String) {
         groupName = text
-
-        saveGroupJob?.cancel()
-        saveGroupJob = viewModelScope.launch {
-            delay(500)
-            saveGroupToDb()
-        }
-    }
-
-    private suspend fun saveGroupToDb() {
-        repository.saveGroup(
-            GroupEntity(
-                id = groupId,
-                name = groupName
-            )
-        )
     }
 
     // --- WORK WITH QUESTIONS ---
     fun addQuestion() {
-        viewModelScope.launch {
-            val newQuestion = QuestionItem.emptyMultipleChoice(groupId = groupId)
-            repository.saveQuestion(newQuestion)
-        }
+        showErrors = false
+
+        val newQuestion = QuestionItem.emptyMultipleChoice(groupId = groupId)
+        questions.add(newQuestion)
     }
 
     fun removeQuestion(id: String) {
-        val questionToDelete = questions.find { it.id == id }
-        if (questionToDelete != null) {
-            viewModelScope.launch {
-                repository.deleteQuestion(questionToDelete)
-            }
+        val question = questions.find { it.id == id }
+        if (question != null) {
+            questions.remove(question)
+            questionsToDelete.add(question)
         }
     }
 
-    fun changeQuestionType(
-        id: String,
-        type: QuestionType,
-        question: String = ""
-    ) {
-        saveQuestionJob?.cancel()
-
+    fun changeQuestionType(id: String, type: QuestionType) {
         val index = questions.indexOfFirst { it.id == id }
         if (index == -1) return
 
+        val oldQuestion = questions[index]
+
         val newQuestion = when (type) {
-            QuestionType.MultipleChoice -> QuestionItem.emptyMultipleChoice(groupId = groupId, id = id, question = question)
-            QuestionType.Open -> QuestionItem.emptyOpen(groupId = groupId, id = id, question = question)
-            QuestionType.FillBlank -> QuestionItem.emptyFillBlank(groupId = groupId, id = id, question = question)
+            QuestionType.MultipleChoice -> QuestionItem.emptyMultipleChoice(groupId = groupId, id = id, question = oldQuestion.question)
+            QuestionType.Open -> QuestionItem.emptyOpen(groupId = groupId, id = id, question = oldQuestion.question)
+            QuestionType.FillBlank -> QuestionItem.emptyFillBlank(groupId = groupId, id = id, question = oldQuestion.question)
         }
 
-        updateQuestionInDb(newQuestion)
+        questions[index] = newQuestion
     }
 
-    fun updateQuestion(updated: QuestionItem, id: String) {
-        val index = questions.indexOfFirst { it.id == id }
+    fun updateQuestion(updated: QuestionItem) {
+        val index = questions.indexOfFirst { it.id == updated.id }
         if (index != -1) {
             questions[index] = updated
         }
+    }
 
-        saveQuestionJob?.cancel()
-        saveQuestionJob = viewModelScope.launch {
-            delay(400)
-            val finalQuestion = updated.copyWithGroupId(groupId)
-            repository.saveQuestion(finalQuestion)
+    fun saveInformation(onSuccess: () -> Unit) {
+        if (!isValid()) {
+            showErrors = true
+            validationErrorTrigger = System.currentTimeMillis()
+            return
+        }
+
+        viewModelScope.launch {
+            repository.saveGroup(GroupEntity(id = groupId, name = groupName))
+
+            questionsToDelete.forEach { repository.deleteQuestion(it) }
+            questionsToDelete.clear()
+
+            questions.forEach { repository.saveQuestion(it) }
+
+            onSuccess()
         }
     }
 
-    private fun updateQuestionInDb(question: QuestionItem) {
-        viewModelScope.launch {
-            repository.saveQuestion(question)
+    // --- VALIDATION LOGIC ---
+    private fun isValid(): Boolean {
+        if (groupName.isBlank()) return false
+
+        return questions.all { question ->
+            val isQuestionTextValid = question.question.isNotBlank()
+
+            val isAnswerValid = when (question) {
+                is QuestionItem.MultipleChoice -> {
+                    val hasCorrectSelection = question.correctIndices.contains(true)
+
+                    val areOptionsFilled = question.options.all { it.isNotBlank() }
+
+                    hasCorrectSelection && areOptionsFilled
+                }
+                is QuestionItem.Open -> {
+                    question.answer.isNotBlank()
+                }
+                is QuestionItem.FillBlank -> {
+                    question.answer.isNotBlank()
+                }
+            }
+
+            isQuestionTextValid && isAnswerValid
         }
     }
 }

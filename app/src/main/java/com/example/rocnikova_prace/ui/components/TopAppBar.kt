@@ -8,10 +8,9 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.NavController
-import androidx.navigation.compose.rememberNavController
 import com.example.rocnikova_prace.R
+import com.example.rocnikova_prace.ui.screens.createInformation.CreateInformationViewModel
 import com.woowla.compose.icon.collections.heroicons.Heroicons
 import com.woowla.compose.icon.collections.heroicons.heroicons.Outline
 import com.woowla.compose.icon.collections.heroicons.heroicons.outline.ArrowLeft
@@ -19,14 +18,17 @@ import com.woowla.compose.icon.collections.heroicons.heroicons.outline.ArrowLeft
 @OptIn(ExperimentalAnimationApi::class, ExperimentalMaterial3Api::class)
 @Composable
 fun TopAppBar(
-    navController: NavController
+    navController: NavController,
+    viewmodel: CreateInformationViewModel
 ) {
     CenterAlignedTopAppBar(
         title = { Text(stringResource(R.string.new_questions_group)) },
         navigationIcon = {
             IconButton(
                 onClick = {
-                    navController.popBackStack()
+                    viewmodel.saveInformation (
+                        onSuccess = { navController.popBackStack() }
+                    )
                 }
             ) {
                 Icon(
@@ -36,10 +38,4 @@ fun TopAppBar(
             }
         }
     )
-}
-
-@Preview
-@Composable
-fun PreviewTopAppBar() {
-    TopAppBar(rememberNavController())
 }

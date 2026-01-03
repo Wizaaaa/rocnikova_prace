@@ -16,7 +16,9 @@ fun InformationCard(
     value: String,
     onValueChange: (String) -> Unit,
     label: String,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    isError: Boolean = false,
+    supportingText: @Composable (() -> Unit)? = null
 ) {
 
     OutlinedTextField(
@@ -26,6 +28,8 @@ fun InformationCard(
         label = {
           Text(label)
         },
+        isError = isError,
+        supportingText = supportingText,
         modifier = modifier
             .fillMaxWidth()
     )
