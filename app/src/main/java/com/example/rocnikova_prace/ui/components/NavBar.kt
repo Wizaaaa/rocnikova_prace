@@ -18,11 +18,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import androidx.navigation.NavHostController
-import androidx.navigation.compose.currentBackStackEntryAsState
 import com.example.rocnikova_prace.MainScreen
-import com.example.rocnikova_prace.MainScreenViewModel
-import com.example.rocnikova_prace.bottomScreens
 import com.woowla.compose.icon.collections.heroicons.Heroicons
 import com.woowla.compose.icon.collections.heroicons.heroicons.Outline
 import com.woowla.compose.icon.collections.heroicons.heroicons.Solid
@@ -35,45 +31,39 @@ import com.woowla.compose.icon.collections.heroicons.heroicons.solid.User
 
 @Composable
 fun NavBar(
-    navController: NavHostController,
-    viewModel: MainScreenViewModel
+    selectedScreen: MainScreen,
+    onScreenSelected: (MainScreen) -> Unit
 ){
-    val navBackStackEntry = navController.currentBackStackEntryAsState()
-    val currentDestination = navBackStackEntry.value?.destination?.route
     NavigationBar {
         Row(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceAround
         ) {
             NavBarIcon(
-                navController = navController,
-                destination = MainScreen.Questions.name,
-                currentDestination = currentDestination,
+                screen = MainScreen.Questions,
+                selectedScreen = selectedScreen,
                 imageVectorActive = Heroicons.Solid.Folder,
                 imageVectorOutline = Heroicons.Outline.Folder,
                 contentDescription = "folder",
-                viewModel = viewModel
+                onClick = onScreenSelected
             )
 
             NavBarIcon(
-                navController = navController,
-                destination = MainScreen.Create.name,
-                currentDestination = currentDestination,
+                screen = MainScreen.Create,
+                selectedScreen = selectedScreen,
                 imageVectorActive = Heroicons.Solid.PlusCircle,
                 imageVectorOutline = Heroicons.Outline.PlusCircle,
                 contentDescription = "create",
-                createInformation = MainScreen.CreateInformation.name,
-                viewModel = viewModel
+                onClick = onScreenSelected
             )
 
             NavBarIcon(
-                navController = navController,
-                destination = MainScreen.Profile.name,
-                currentDestination = currentDestination,
+                screen = MainScreen.Profile,
+                selectedScreen = selectedScreen,
                 imageVectorActive = Heroicons.Solid.User,
                 imageVectorOutline = Heroicons.Outline.User,
                 contentDescription = "profile",
-                viewModel = viewModel
+                onClick = onScreenSelected
             )
         }
     }
@@ -81,27 +71,20 @@ fun NavBar(
 
 @Composable
 fun NavBarIcon(
-    navController: NavHostController,
-    destination: String,
-    currentDestination: String?,
+    screen: MainScreen,
+    selectedScreen: MainScreen,
     imageVectorActive: androidx.compose.ui.graphics.vector.ImageVector,
     imageVectorOutline: androidx.compose.ui.graphics.vector.ImageVector,
     contentDescription: String,
-    createInformation: String = "",
-    viewModel: MainScreenViewModel
+    onClick: (MainScreen) -> Unit
 ) {
-    val active = currentDestination == destination || currentDestination == createInformation
+    val active = selectedScreen == screen
 
     Box(
         modifier = Modifier
             .size(56.dp)
             .clickable(
-                onClick = {
-                    navController.navigate(destination)
-
-                    val index = bottomScreens.indexOf(MainScreen.valueOf(destination))
-                    viewModel.updateCurrentIndex(index)
-                },
+                onClick = { onClick(screen) },
                 indication = null,
                 interactionSource = remember { MutableInteractionSource() }
             ),
@@ -126,9 +109,3 @@ private fun animateColor(active: Boolean): Color {
 
     return iconColor
 }
-
-//@Preview
-//@Composable
-//fun NavBarPreview(){
-//    NavBar()
-//}

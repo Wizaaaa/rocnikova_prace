@@ -1,17 +1,17 @@
 package com.example.rocnikova_prace
 
-import androidx.compose.animation.EnterTransition
-import androidx.compose.animation.ExitTransition
-import androidx.compose.animation.ExperimentalAnimationApi
+import androidx.activity.compose.BackHandler
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.foundation.pager.HorizontalPager
+import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -19,7 +19,6 @@ import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.example.rocnikova_prace.ui.components.NavBar
@@ -32,6 +31,7 @@ import com.example.rocnikova_prace.ui.screens.createScreen.CreateScreen
 import com.example.rocnikova_prace.ui.screens.questionsScreen.GroupsViewModel
 import com.example.rocnikova_prace.ui.screens.questionsScreen.GroupsViewModelFactory
 import com.example.rocnikova_prace.ui.screens.questionsScreen.QuestionsScreen
+import kotlinx.coroutines.launch
 
 enum class MainScreen {
     Create,
@@ -40,23 +40,12 @@ enum class MainScreen {
     CreateInformation
 }
 
-val bottomScreens = listOf(
+val pagerScreens = listOf(
     MainScreen.Questions,
     MainScreen.Create,
     MainScreen.Profile
 )
 
-fun getScreenFromRoute(route: String?): MainScreen? {
-    if (route == null) return null
-    val routeName = route.substringBefore("/")
-    return try {
-        MainScreen.valueOf(routeName)
-    } catch (_: IllegalArgumentException) {
-        null
-    }
-}
-
-@OptIn(ExperimentalAnimationApi::class, ExperimentalMaterial3Api::class)
 @Composable
 fun MainScreen(
     navController: NavHostController = rememberNavController()
@@ -65,88 +54,94 @@ fun MainScreen(
     val app = context.applicationContext as App
     val repository = app.repository
 
-    val navBackStackEntry = navController.currentBackStackEntryAsState()
-    val currentRoute = navBackStackEntry.value?.destination?.route
+    NavHost(
+        navController = navController,
+        startDestination = "home_wrapper",
+        enterTransition = { slideInHorizontally(tween(300)) { it } + fadeIn() },
+        exitTransition = { slideOutHorizontally(tween(300)) { -it } + fadeOut() },
+        popEnterTransition = { slideInHorizontally(tween(300)) { -it } + fadeIn() },
+        popExitTransition = { slideOutHorizontally(tween(300)) { it } + fadeOut() }
+    ) {
+        composable("home_wrapper") {
+            val pagerState = rememberPagerState(initialPage = 1, pageCount = { pagerScreens.size })
+            val scope = rememberCoroutineScope()
 
-    Scaffold(
-        bottomBar = {
-            if (currentRoute?.startsWith(MainScreen.CreateInformation.name) != true) {
-                NavBar(
-                    navController,
-                    viewModel = viewModel()
-                )
+            BackHandler(enabled = pagerState.currentPage != 1) {
+                scope.launch {
+                    pagerState.animateScrollToPage(1)
+                }
+            }
+
+            Scaffold(
+                bottomBar = {
+                    NavBar(
+                        selectedScreen = pagerScreens[pagerState.currentPage],
+                        onScreenSelected = { screen ->
+                            val index = pagerScreens.indexOf(screen)
+                            if (index != -1) {
+                                scope.launch {
+                                    pagerState.animateScrollToPage(index)
+                                }
+                            }
+                        }
+                    )
+                }
+            ) { innerPadding ->
+                HorizontalPager(
+                    state = pagerState,
+                    modifier = Modifier.padding(bottom = innerPadding.calculateBottomPadding())
+                ) { pageIndex ->
+
+                    when (pagerScreens[pageIndex]) {
+                        MainScreen.Questions -> {
+                            val questionsViewModel: GroupsViewModel = viewModel(
+                                factory = GroupsViewModelFactory(repository)
+                            )
+                            QuestionsScreen(
+                                viewModel = questionsViewModel,
+                                navController = navController,
+                                onGroupClick = { groupId ->
+                                    navController.navigate("${MainScreen.CreateInformation.name}/$groupId")
+                                }
+                            )
+                        }
+                        MainScreen.Create -> {
+                            CreateScreen(navController = navController)
+                        }
+                        MainScreen.Profile -> {
+                            ProfileScreen()
+                        }
+                        else -> { /* Nic */ }
+                    }
+                }
             }
         }
-    ) { innerPadding ->
-        NavHost(
-            modifier = Modifier.padding(bottom = innerPadding.calculateBottomPadding()),
-            navController = navController,
-            startDestination = MainScreen.Create.name,
-            enterTransition = {
-                val fromScreen = getScreenFromRoute(initialState.destination.route)
-                val toScreen = getScreenFromRoute(targetState.destination.route)
 
-                val prevIndex = if (fromScreen != null) bottomScreens.indexOf(fromScreen) else -1
-                val newIndex = if (toScreen != null) bottomScreens.indexOf(toScreen) else -1
 
-                if (newIndex > prevIndex) {
-                    slideInHorizontally(tween(300)) { it } + fadeIn()
-                } else {
-                    slideInHorizontally(tween(300)) { -it } + fadeIn()
+        composable(
+            route = "${MainScreen.CreateInformation.name}/{groupId}",
+            arguments = listOf(navArgument("groupId") { type = NavType.StringType }),
+            enterTransition = { slideInHorizontally(tween(300)) { it } },
+            exitTransition = { slideOutHorizontally(tween(300)) { -it } },
+            popEnterTransition = { slideInHorizontally(tween(300)) { -it } },
+            popExitTransition = { slideOutHorizontally(tween(300)) { it } }
+        ) { backStackEntry ->
+            val groupId = backStackEntry.arguments?.getString("groupId")
+                ?: return@composable
+
+            val createInfoViewModel: CreateInformationViewModel = viewModel(
+                factory = CreateInformationViewModelFactory(repository, groupId)
+            )
+
+            Scaffold(
+                topBar = {
+                    TopAppBar(navController, createInfoViewModel)
                 }
-            },
-
-            exitTransition = {
-                val fromScreen = getScreenFromRoute(initialState.destination.route)
-                val toScreen = getScreenFromRoute(targetState.destination.route)
-
-                val prevIndex = if (fromScreen != null) bottomScreens.indexOf(fromScreen) else -1
-                val newIndex = if (toScreen != null) bottomScreens.indexOf(toScreen) else -1
-
-                if (newIndex > prevIndex) {
-                    slideOutHorizontally(tween(300)) { -it } + fadeOut()
-                } else {
-                    slideOutHorizontally(tween(300)) { it } + fadeOut()
-                }
-            },
-            popEnterTransition = { EnterTransition.None },
-            popExitTransition = { ExitTransition.None }
-        ) {
-            composable(MainScreen.Questions.name) {
-                val questionsScreenViewModel: GroupsViewModel = viewModel(
-                    factory = GroupsViewModelFactory(repository)
+            ) { padding ->
+                CreateInformation(
+                    viewModel = createInfoViewModel,
+                    modifier = Modifier.padding(padding)
                 )
-
-                QuestionsScreen(
-                    viewModel = questionsScreenViewModel,
-                    onGroupClick = { groupId ->
-                        navController.navigate("${MainScreen.CreateInformation.name}/$groupId")
-                    },
-                    navController = navController
-                )
-            }
-
-            composable(MainScreen.Create.name) { CreateScreen(navController = navController) }
-
-            composable(MainScreen.Profile.name) { ProfileScreen() }
-
-
-            composable(
-                route = "${MainScreen.CreateInformation.name}/{groupId}",
-                arguments = listOf(navArgument("groupId") { type = NavType.StringType })
-            ) { backStackEntry ->
-                val groupId = backStackEntry.arguments?.getString("groupId")
-                    ?: return@composable
-
-                val createInfoViewModel: CreateInformationViewModel = viewModel(
-                    factory = CreateInformationViewModelFactory(repository, groupId)
-                )
-
-                Scaffold(
-                    topBar = { TopAppBar(navController, createInfoViewModel) }
-                ) { padding ->
-                    CreateInformation(viewModel = createInfoViewModel, modifier = Modifier.padding(padding))
-                }
             }
         }
     }
