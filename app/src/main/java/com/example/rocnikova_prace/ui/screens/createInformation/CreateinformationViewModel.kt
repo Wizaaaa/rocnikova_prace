@@ -11,6 +11,7 @@ import com.example.rocnikova_prace.data.local.entities.GroupEntity
 import com.example.rocnikova_prace.data.model.QuestionItem
 import com.example.rocnikova_prace.data.model.QuestionType
 import com.example.rocnikova_prace.data.repository.QuestionRepository
+import com.example.rocnikova_prace.ui.screens.practiceScreen.PracticeScreenViewModel
 import kotlinx.coroutines.launch
 
 class CreateInformationViewModel(
@@ -141,15 +142,20 @@ class CreateInformationViewModel(
     }
 }
 
-class CreateInformationViewModelFactory(
+class QuestionGroupViewModelFactory(
     private val repository: QuestionRepository,
     private val groupId: String
 ) : ViewModelProvider.Factory {
+    @Suppress("UNCHECKED_CAST")
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
-        if (modelClass.isAssignableFrom(CreateInformationViewModel::class.java)) {
-            @Suppress("UNCHECKED_CAST")
-            return CreateInformationViewModel(repository, groupId) as T
+        return when {
+            modelClass.isAssignableFrom(CreateInformationViewModel::class.java) -> {
+                CreateInformationViewModel(repository, groupId) as T
+            }
+            modelClass.isAssignableFrom(PracticeScreenViewModel::class.java) -> {
+                PracticeScreenViewModel(repository, groupId) as T
+            }
+            else -> throw IllegalArgumentException("Unknown ViewModel class: ${modelClass.name}")
         }
-        throw IllegalArgumentException("Unknown ViewModel class")
     }
 }

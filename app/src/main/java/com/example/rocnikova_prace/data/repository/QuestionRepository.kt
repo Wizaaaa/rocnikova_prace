@@ -3,6 +3,7 @@ package com.example.rocnikova_prace.data.repository
 import com.example.rocnikova_prace.data.local.dao.GroupDao
 import com.example.rocnikova_prace.data.local.dao.QuestionDao
 import com.example.rocnikova_prace.data.local.entities.GroupEntity
+import com.example.rocnikova_prace.data.local.entities.QuestionEntity
 import com.example.rocnikova_prace.data.local.toEntity
 import com.example.rocnikova_prace.data.local.toQuestionItem
 import com.example.rocnikova_prace.data.model.QuestionItem
@@ -21,8 +22,8 @@ class QuestionRepository(
         return groupDao.getGroupById(id)
     }
 
-    suspend fun saveGroup(group: GroupEntity) {
-        groupDao.insertGroup(group)
+    suspend fun getQuestionsOnce(id: String): List<QuestionEntity> {
+        return questionDao.getQuestionsForPractice(id)
     }
 
     suspend fun deleteGroup(group: GroupEntity) {
@@ -33,6 +34,10 @@ class QuestionRepository(
         return questionDao.getQuestionsForGroup(groupId).map { entities ->
             entities.map { it.toQuestionItem() }
         }
+    }
+
+    suspend fun saveGroup(group: GroupEntity) {
+        groupDao.insertGroup(group)
     }
 
     suspend fun saveQuestion(item: QuestionItem) {

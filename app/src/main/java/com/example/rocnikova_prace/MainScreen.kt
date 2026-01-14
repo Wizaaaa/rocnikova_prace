@@ -26,8 +26,10 @@ import com.example.rocnikova_prace.ui.components.TopAppBar
 import com.example.rocnikova_prace.ui.screens.ProfileScreen
 import com.example.rocnikova_prace.ui.screens.createInformation.CreateInformation
 import com.example.rocnikova_prace.ui.screens.createInformation.CreateInformationViewModel
-import com.example.rocnikova_prace.ui.screens.createInformation.CreateInformationViewModelFactory
+import com.example.rocnikova_prace.ui.screens.createInformation.QuestionGroupViewModelFactory
 import com.example.rocnikova_prace.ui.screens.createScreen.CreateScreen
+import com.example.rocnikova_prace.ui.screens.practiceScreen.PracticeScreen
+import com.example.rocnikova_prace.ui.screens.practiceScreen.PracticeScreenViewModel
 import com.example.rocnikova_prace.ui.screens.questionsScreen.GroupsViewModel
 import com.example.rocnikova_prace.ui.screens.questionsScreen.GroupsViewModelFactory
 import com.example.rocnikova_prace.ui.screens.questionsScreen.QuestionsScreen
@@ -37,7 +39,8 @@ enum class MainScreen {
     Create,
     Questions,
     Profile,
-    CreateInformation
+    CreateInformation,
+    PracticeScreen
 }
 
 val pagerScreens = listOf(
@@ -111,7 +114,7 @@ fun MainScreen(
                         MainScreen.Profile -> {
                             ProfileScreen()
                         }
-                        else -> { /* Nic */ }
+                        else -> {  }
                     }
                 }
             }
@@ -130,7 +133,7 @@ fun MainScreen(
                 ?: return@composable
 
             val createInfoViewModel: CreateInformationViewModel = viewModel(
-                factory = CreateInformationViewModelFactory(repository, groupId)
+                factory = QuestionGroupViewModelFactory(repository, groupId)
             )
 
             Scaffold(
@@ -143,6 +146,19 @@ fun MainScreen(
                     modifier = Modifier.padding(padding)
                 )
             }
+        }
+
+        composable(
+            route = "${MainScreen.PracticeScreen.name}/{groupId}"
+        ) { backStackEntry ->
+            val groupId = backStackEntry.arguments?.getString("groupId")
+                ?: return@composable
+
+            val practiceViewModel: PracticeScreenViewModel = viewModel(
+                factory = QuestionGroupViewModelFactory(repository, groupId)
+            )
+
+            PracticeScreen(practiceViewModel)
         }
     }
 }

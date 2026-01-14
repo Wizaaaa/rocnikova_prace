@@ -129,7 +129,7 @@ fun QuestionsScreen(
 
                                     FilledTonalButton(
                                         onClick = {
-    //                                            TODO
+                                            navController.navigate("${MainScreen.PracticeScreen.name}/$group.id")
                                         },
                                         modifier = Modifier
                                             .weight(1f)
