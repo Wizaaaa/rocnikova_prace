@@ -18,6 +18,7 @@
     <string name="CI_groupName">Zadejte název skupiny otázek</string>
     <string name="CI_questionType">Vyberte druh otázky</string>
     <string name="CI_deleteQuestion">Smazat otázku</string>
+    <string name="CI_group_name_cannot_empty">Musíte vyplnit název skupiny</string>
 
     <!--    Questions Screen-->
     <string name="QS_not_existing_group_questions">Zatím nemáte vytvořený žádný seznam otázek</string>
@@ -36,4 +37,7 @@
     <!--    Errors-->
     <string name="questions_cannot_be_blank">Zadejte otázku</string>
     <string name="response_cannot_be_blank">Vyplňte odpověď</string>
+
+    <!--    Question Card-->
+    <string name="QC_option_required">Vyplňte možnost</string>
 </resources>

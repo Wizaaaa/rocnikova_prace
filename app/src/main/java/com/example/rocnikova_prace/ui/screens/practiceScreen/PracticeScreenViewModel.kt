@@ -16,9 +16,13 @@ class PracticeScreenViewModel(
     private val repository: QuestionRepository,
     private val groupId: String
 ): ViewModel() {
-    private var allQuestions: List<QuestionEntity> = emptyList()
+    var allQuestions by mutableStateOf<List<QuestionEntity>>(emptyList())
+        private set
 
     var currentQuestionIndex by mutableIntStateOf(0)
+        private set
+
+    var groupName by mutableStateOf("")
         private set
 
     var isRunning = mutableStateOf(false)
@@ -28,6 +32,10 @@ class PracticeScreenViewModel(
         private set
 
     private var timerJob: Job? = null
+
+    init {
+        loadData()
+    }
 
     fun startTimer() {
         if (isRunning.value) return
@@ -45,6 +53,11 @@ class PracticeScreenViewModel(
 
     private fun loadData() {
         viewModelScope.launch {
+            val group = repository.getGroupById(groupId)
+            if (group != null) {
+                groupName = group.name
+            }
+
             allQuestions = repository.getQuestionsOnce(groupId).shuffled()
 
             currentQuestionIndex = 0

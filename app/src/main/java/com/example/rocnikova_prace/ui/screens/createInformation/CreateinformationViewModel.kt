@@ -1,6 +1,7 @@
 package com.example.rocnikova_prace.ui.screens.createInformation
 
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -32,7 +33,7 @@ class CreateInformationViewModel(
     var groupName by mutableStateOf("")
         private set
 
-    var validationErrorTrigger by mutableStateOf(0L)
+    var validationErrorTrigger by mutableLongStateOf(0L)
         private set
 
     init {

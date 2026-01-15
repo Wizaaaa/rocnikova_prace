@@ -76,7 +76,7 @@ fun CreateInformation(
             supportingText = {
                 if (groupNameError) {
                     Text(
-                        text = "Musíte vyplnit název skupiny",
+                        text = stringResource(R.string.CI_group_name_cannot_empty),
                         color = MaterialTheme.colorScheme.error
                     )
                 }
@@ -200,7 +200,7 @@ fun CreateInformation(
             icon = Heroicons.Outline.FolderPlus,
             text = R.string.new_question,
             onClick = { viewModel.addQuestion() },
-            modifier = Modifier.padding(top = 20.dp, start = 20.dp, end = 20.dp)
+            modifier = Modifier.padding(start = 20.dp, end = 20.dp)
         )
     }
 }

@@ -23,6 +23,7 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
@@ -34,6 +35,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.rotate
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -46,6 +48,7 @@ import com.example.rocnikova_prace.ui.components.DeleteDialog
 import com.woowla.compose.icon.collections.heroicons.Heroicons
 import com.woowla.compose.icon.collections.heroicons.heroicons.Outline
 import com.woowla.compose.icon.collections.heroicons.heroicons.outline.Plus
+import com.woowla.compose.icon.collections.heroicons.heroicons.outline.PlusCircle
 import com.woowla.compose.icon.collections.heroicons.heroicons.outline.XMark
 
 @Composable
@@ -91,7 +94,7 @@ fun QuestionsScreen(
                         val newId = java.util.UUID.randomUUID().toString()
                         navController.navigate("${MainScreen.CreateInformation.name}/$newId")
                     },
-                    modifier = Modifier.padding(20.dp)
+                    modifier = Modifier.padding(start = 20.dp, end = 20.dp)
                 )
             }
         }
@@ -129,7 +132,7 @@ fun QuestionsScreen(
 
                                     FilledTonalButton(
                                         onClick = {
-                                            navController.navigate("${MainScreen.PracticeScreen.name}/$group.id")
+                                            navController.navigate("${MainScreen.PracticeScreen.name}/${group.id}")
                                         },
                                         modifier = Modifier
                                             .weight(1f)
@@ -152,6 +155,26 @@ fun QuestionsScreen(
                                     setGroupToDelete(group)
                                 }
                         )
+                    }
+                }
+                item {
+                    Box(
+                        Modifier.fillMaxWidth(),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        IconButton(
+                            onClick = {
+                                val newId = java.util.UUID.randomUUID().toString()
+                                navController.navigate("${MainScreen.CreateInformation.name}/$newId")
+                            }
+                        ) {
+                            Icon(
+                                imageVector = Heroicons.Outline.PlusCircle,
+                                contentDescription = stringResource(R.string.new_questions_group),
+                                tint = Color.LightGray,
+                                modifier = Modifier.size(48.dp)
+                            )
+                        }
                     }
                 }
             }

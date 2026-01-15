@@ -61,7 +61,8 @@ fun Cards(
             .graphicsLayer(
                 scaleX = scale,
                 scaleY = scale
-            ),
+            )
+            .padding(top = 20.dp, bottom = 20.dp),
         elevation = CardDefaults.elevatedCardElevation(defaultElevation = elevation)
     ) {
         Row(

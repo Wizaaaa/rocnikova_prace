@@ -13,8 +13,8 @@ interface QuestionDao {
     @Query("SELECT * FROM questions WHERE groupId = :groupId")
     fun getQuestionsForGroup(groupId: String): Flow<List<QuestionEntity>>
 
-    @Query("SELECT * FROM questions WHERE id = :id")
-    suspend fun getQuestionsForPractice(id: String): List<QuestionEntity>
+    @Query("SELECT * FROM questions WHERE groupId = :groupId")
+    suspend fun getQuestionsForPractice(groupId: String): List<QuestionEntity>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insert(entity: QuestionEntity)

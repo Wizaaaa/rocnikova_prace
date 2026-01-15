@@ -14,6 +14,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
@@ -138,7 +139,14 @@ fun MainScreen(
 
             Scaffold(
                 topBar = {
-                    TopAppBar(navController, createInfoViewModel)
+                    TopAppBar(
+                        title = stringResource(R.string.new_questions_group),
+                        onClick = {
+                            createInfoViewModel.saveInformation {
+                                navController.popBackStack()
+                            }
+                        },
+                    )
                 }
             ) { padding ->
                 CreateInformation(
@@ -158,7 +166,21 @@ fun MainScreen(
                 factory = QuestionGroupViewModelFactory(repository, groupId)
             )
 
-            PracticeScreen(practiceViewModel)
+            Scaffold(
+                topBar = {
+                    TopAppBar(
+                        title = practiceViewModel.groupName,
+                        onClick = {
+                            navController.popBackStack()
+                        }
+                    )
+                }
+            ) { padding ->
+                PracticeScreen(
+                    practiceViewModel,
+                    modifier = Modifier.padding(padding)
+                )
+            }
         }
     }
 }

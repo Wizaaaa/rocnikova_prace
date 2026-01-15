@@ -17,6 +17,7 @@
     <string name="CI_groupName">Enter question group name</string>
     <string name="CI_questionType">Select question type</string>
     <string name="CI_deleteQuestion">Delete question</string>
+    <string name="CI_group_name_cannot_empty">Group name cannot be empty</string>
 
     <!--    Questions Screen-->
     <string name="QS_not_existing_group_questions">No question lists created yet</string>
@@ -35,4 +36,7 @@
     <!--    Errors-->
     <string name="questions_cannot_be_blank">Question is required</string>
     <string name="response_cannot_be_blank">Answer is required</string>
+
+    <!--    Question Card-->
+    <string name="QC_option_required">Option is required</string>
 </resources>

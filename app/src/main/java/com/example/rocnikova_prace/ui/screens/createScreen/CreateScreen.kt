@@ -25,7 +25,9 @@ fun CreateScreen(
 ) {
     Column(
         verticalArrangement = Arrangement.Center,
-        modifier = Modifier.fillMaxSize()
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(20.dp)
     ) {
         Cards(
             text = R.string.CS_new_questions,
@@ -33,22 +35,19 @@ fun CreateScreen(
             onClick = {
                 val newId = java.util.UUID.randomUUID().toString()
                 navController.navigate("${MainScreen.CreateInformation.name}/$newId")
-            },
-            modifier = Modifier.padding(20.dp)
+            }
         )
 
         Cards(
             text = R.string.CS_schools_questions,
             icon = Heroicons.Outline.AcademicCap,
-            onClick = {  },
-            modifier = Modifier.padding(20.dp)
+            onClick = {  }
         )
 
         Cards(
             text = R.string.CS_import_questions,
             icon = Heroicons.Outline.ArrowDownTray,
-            onClick = {  },
-            modifier = Modifier.padding(20.dp)
+            onClick = {  }
         )
     }
 }

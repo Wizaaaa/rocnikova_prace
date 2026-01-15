@@ -54,7 +54,7 @@ fun QuestionCard(
             supportingText = {
                 if (isTextError) {
                     Text(
-                        text = "Vyplňte možnost",
+                        text = stringResource(R.string.QC_option_required),
                         color = MaterialTheme.colorScheme.error
                     )
                 }
