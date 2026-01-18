@@ -11,20 +11,20 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import com.example.rocnikova_prace.ui.screens.practiceScreen.PracticeScreenViewModel
 
 @Composable
 fun QuestionsProgressBar(
-    currentQuestion: Int,
-    maxValue: Int
+    maxValue: Int,
+    viewModel: PracticeScreenViewModel
 ) {
-    val progress = if (maxValue > 0) currentQuestion.toFloat() / maxValue.toFloat() else 0f
-
     val animatedProgress by animateFloatAsState(
-        targetValue = progress,
-        animationSpec = tween(durationMillis = 1000, easing = LinearEasing)
+        targetValue = viewModel.answers.size.toFloat(),
+        animationSpec = tween(durationMillis = 500, easing = LinearEasing)
     )
 
     Canvas(
@@ -33,17 +33,29 @@ fun QuestionsProgressBar(
             .height(12.dp)
             .clip(RoundedCornerShape(50))
     ) {
+        val rectWidth = size.width / maxValue
+
+
         drawRoundRect(
             size = size,
             color = Color.LightGray
         )
 
-        drawRoundRect(
-            size = Size(
-                height = size.height,
-                width = size.width * animatedProgress
-            ),
-            color = Color.Green
-        )
+        viewModel.answers.forEachIndexed { index, answer ->
+            val segmentProgress = (animatedProgress - index).coerceIn(0f, 1f)
+
+            val xOffset = rectWidth * index
+            val color = if (answer) Color.Green else Color.Red
+
+
+            drawRoundRect(
+                size = Size(
+                    height = size.height,
+                    width = (size.width / maxValue) * segmentProgress
+                ),
+                topLeft = Offset(x = xOffset, y = Offset.Zero.y),
+                color = color
+            )
+        }
     }
 }

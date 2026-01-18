@@ -141,11 +141,10 @@ fun MainScreen(
                 topBar = {
                     TopAppBar(
                         title = stringResource(R.string.new_questions_group),
-                        onClick = {
-                            createInfoViewModel.saveInformation {
-                                navController.popBackStack()
-                            }
-                        },
+                        navController = navController,
+                        saveButton = { createInfoViewModel.saveInformation {
+                            navController.popBackStack()
+                        } }
                     )
                 }
             ) { padding ->
@@ -170,9 +169,7 @@ fun MainScreen(
                 topBar = {
                     TopAppBar(
                         title = practiceViewModel.groupName,
-                        onClick = {
-                            navController.popBackStack()
-                        }
+                        navController = navController
                     )
                 }
             ) { padding ->

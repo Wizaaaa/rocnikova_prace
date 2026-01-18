@@ -2,6 +2,7 @@ package com.example.rocnikova_prace.ui.screens.practiceScreen
 
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
@@ -23,6 +24,9 @@ class PracticeScreenViewModel(
         private set
 
     var groupName by mutableStateOf("")
+        private set
+
+    var answers = mutableStateListOf<Boolean>()
         private set
 
     var isRunning = mutableStateOf(false)
@@ -51,6 +55,10 @@ class PracticeScreenViewModel(
         }
     }
 
+    fun addAnswer(answer: Boolean) {
+        answers.add(answer)
+    }
+
     private fun loadData() {
         viewModelScope.launch {
             val group = repository.getGroupById(groupId)
@@ -59,8 +67,6 @@ class PracticeScreenViewModel(
             }
 
             allQuestions = repository.getQuestionsOnce(groupId).shuffled()
-
-            currentQuestionIndex = 0
         }
     }
 }

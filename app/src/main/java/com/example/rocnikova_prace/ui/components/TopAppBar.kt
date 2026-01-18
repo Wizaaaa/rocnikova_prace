@@ -5,7 +5,9 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.navigation.NavController
 import com.woowla.compose.icon.collections.heroicons.Heroicons
 import com.woowla.compose.icon.collections.heroicons.heroicons.Outline
 import com.woowla.compose.icon.collections.heroicons.heroicons.outline.ArrowLeft
@@ -14,18 +16,30 @@ import com.woowla.compose.icon.collections.heroicons.heroicons.outline.ArrowLeft
 @Composable
 fun TopAppBar(
     title: String,
-    onClick: () -> Unit,
+    navController: NavController,
+    saveButton: (() -> Unit)? = null
 ) {
     CenterAlignedTopAppBar(
         title = { Text(title) },
         navigationIcon = {
             IconButton(
-                onClick = { onClick() }
+                onClick = { navController.popBackStack() }
             ) {
                 Icon(
                     imageVector = Heroicons.Outline.ArrowLeft,
                     contentDescription = "Navigate back"
                 )
+            }
+        },
+        actions = {
+            if (saveButton != null) {
+                TextButton(
+                    onClick = { saveButton() }
+                ) {
+                    Text(
+                        text = "Save"
+                    )
+                }
             }
         }
     )
