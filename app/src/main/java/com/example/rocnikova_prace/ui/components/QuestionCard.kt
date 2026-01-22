@@ -28,7 +28,7 @@ fun QuestionCard(
     modifier: Modifier = Modifier
 ) {
     var text by remember(question.id, questionIndex) {
-        mutableStateOf(question.options[questionIndex])
+        mutableStateOf(question.answers[questionIndex])
     }
 
     val isTextError = viewModel.showErrors && text.isBlank()
@@ -44,10 +44,10 @@ fun QuestionCard(
             onValueChange = {
                 text = it
 
-                val newOptions = question.options.toMutableList()
+                val newOptions = question.answers.toMutableList()
                 newOptions[questionIndex] = it
                 viewModel.updateQuestion(
-                    updated = question.copy(options = newOptions),
+                    updated = question.copy(answers = newOptions),
                 )
             },
             isError = isTextError,

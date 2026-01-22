@@ -8,6 +8,8 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.rocnikova_prace.data.local.entities.QuestionEntity
+import com.example.rocnikova_prace.data.local.toQuestionItem
+import com.example.rocnikova_prace.data.model.QuestionItem
 import com.example.rocnikova_prace.data.repository.QuestionRepository
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
@@ -21,6 +23,9 @@ class PracticeScreenViewModel(
         private set
 
     var currentQuestionIndex by mutableIntStateOf(0)
+        private set
+
+    var correctAnswerIndex = mutableStateListOf<Boolean>(false, false, false, false)
         private set
 
     var groupName by mutableStateOf("")
@@ -41,6 +46,10 @@ class PracticeScreenViewModel(
         loadData()
     }
 
+    fun setCorrectAnswerIndex(answer: Boolean, index: Int) {
+        correctAnswerIndex[index] = answer
+    }
+
     fun startTimer() {
         if (isRunning.value) return
 
@@ -53,6 +62,23 @@ class PracticeScreenViewModel(
             }
             isRunning.value = false
         }
+    }
+
+    fun isAnswerValid() {
+        when (val currentQuestion = allQuestions[currentQuestionIndex].toQuestionItem()) {
+            is QuestionItem.MultipleChoice -> {
+                if (currentQuestion.correctIndices == correctAnswerIndex) {
+                    return addAnswer(true)
+                }
+            }
+            is QuestionItem.Open -> {
+
+            }
+            is QuestionItem.FillBlank -> {
+
+            }
+        }
+        return addAnswer(false)
     }
 
     fun addAnswer(answer: Boolean) {

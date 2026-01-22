@@ -126,7 +126,7 @@ class CreateInformationViewModel(
                 is QuestionItem.MultipleChoice -> {
                     val hasCorrectSelection = question.correctIndices.contains(true)
 
-                    val areOptionsFilled = question.options.all { it.isNotBlank() }
+                    val areOptionsFilled = question.answers.all { it.isNotBlank() }
 
                     hasCorrectSelection && areOptionsFilled
                 }

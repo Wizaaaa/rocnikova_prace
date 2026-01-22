@@ -20,7 +20,7 @@ import com.example.rocnikova_prace.ui.screens.createInformation.CreateInformatio
 
 
 @Composable
-fun DrawMultipleChoiceMultiple(
+fun DrawMultipleChoice(
     question: QuestionItem.MultipleChoice,
     viewModel: CreateInformationViewModel
 ) {

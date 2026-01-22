@@ -18,17 +18,9 @@ sealed class QuestionItem {
         }
     }
 
-    fun copyWithGroupId(newGroupId: String): QuestionItem {
-        return when (this) {
-            is MultipleChoice -> this.copy(groupId = newGroupId)
-            is Open -> this.copy(groupId = newGroupId)
-            is FillBlank -> this.copy(groupId = newGroupId)
-        }
-    }
-
     @Serializable
     data class MultipleChoice(
-        val options: List<String>,
+        val answers: List<String>,
         val correctIndices: List<Boolean>,
         override val question: String,
         override val groupId: String,
@@ -64,7 +56,7 @@ sealed class QuestionItem {
             id = id,
             groupId = groupId,
             question = question,
-            options = listOf("", "", "", ""),
+            answers = listOf("", "", "", ""),
             correctIndices = listOf(false, false, false, false)
         )
 

@@ -15,7 +15,6 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -33,7 +32,7 @@ import com.example.rocnikova_prace.data.model.QuestionItem
 import com.example.rocnikova_prace.data.model.QuestionType
 import com.example.rocnikova_prace.ui.components.Cards
 import com.example.rocnikova_prace.ui.components.DrawFillBlank
-import com.example.rocnikova_prace.ui.components.DrawMultipleChoiceMultiple
+import com.example.rocnikova_prace.ui.components.DrawMultipleChoice
 import com.example.rocnikova_prace.ui.components.DrawOpen
 import com.example.rocnikova_prace.ui.components.InformationCard
 import com.example.rocnikova_prace.ui.components.shake
@@ -44,7 +43,6 @@ import com.woowla.compose.icon.collections.heroicons.heroicons.outline.ChevronUp
 import com.woowla.compose.icon.collections.heroicons.heroicons.outline.FolderPlus
 import com.woowla.compose.icon.collections.heroicons.heroicons.outline.XMark
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CreateInformation(
     viewModel: CreateInformationViewModel,
@@ -160,7 +158,7 @@ fun CreateInformation(
 
                             when (questionItem) {
                                 is QuestionItem.MultipleChoice -> {
-                                    DrawMultipleChoiceMultiple(
+                                    DrawMultipleChoice(
                                         question = questionItem,
                                         viewModel = viewModel
                                     )

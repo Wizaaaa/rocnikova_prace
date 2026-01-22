@@ -12,6 +12,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.example.rocnikova_prace.data.local.toQuestionItem
+import com.example.rocnikova_prace.data.model.QuestionItem
+import com.example.rocnikova_prace.ui.components.PracticeMultipleChoice
 import com.example.rocnikova_prace.ui.components.QuestionsProgressBar
 import java.util.Locale
 
@@ -26,7 +28,6 @@ fun PracticeScreen(
 
     if (!viewModel.allQuestions.isEmpty()) {
         val currentQuestion = viewModel.allQuestions[viewModel.currentQuestionIndex].toQuestionItem()
-
 
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
@@ -45,24 +46,30 @@ fun PracticeScreen(
 
             QuestionsProgressBar(viewModel.allQuestions.size, viewModel)
 
-            Text(
-                text = currentQuestion.question
-            )
 
-            TextButton(
-                onClick = {
-                    viewModel.addAnswer(true)
+
+            when (currentQuestion) {
+                is QuestionItem.MultipleChoice -> {
+                    PracticeMultipleChoice(
+                        currentQuestion,
+                        viewModel = viewModel
+                    )
                 }
-            ) {
-                Text("true")
+                is QuestionItem.Open -> {
+
+                }
+                is QuestionItem.FillBlank -> {
+
+                }
             }
 
+
             TextButton(
                 onClick = {
-                    viewModel.addAnswer(false)
+                    viewModel.isAnswerValid()
                 }
             ) {
-                Text("false")
+                Text("Další otázka")
             }
         }
     }
