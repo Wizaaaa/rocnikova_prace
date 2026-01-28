@@ -1,6 +1,7 @@
 package com.example.rocnikova_prace.ui.screens.practiceScreen
 
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
@@ -33,7 +34,7 @@ fun PracticeScreen(
             horizontalAlignment = Alignment.CenterHorizontally,
             modifier = modifier
                 .fillMaxSize()
-                .padding(20.dp)
+                .padding(start = 20.dp, end = 20.dp, bottom = 20.dp)
         ) {
             LaunchedEffect(Unit) {
                 viewModel.startTimer()
@@ -45,8 +46,6 @@ fun PracticeScreen(
             )
 
             QuestionsProgressBar(viewModel.allQuestions.size, viewModel)
-
-
 
             when (currentQuestion) {
                 is QuestionItem.MultipleChoice -> {
@@ -63,13 +62,17 @@ fun PracticeScreen(
                 }
             }
 
+            Spacer(Modifier.weight(1f))
 
             TextButton(
                 onClick = {
                     viewModel.isAnswerValid()
                 }
             ) {
-                Text("Další otázka")
+                Text(
+                    "Další otázka",
+                    style = MaterialTheme.typography.bodyLarge
+                )
             }
         }
     }

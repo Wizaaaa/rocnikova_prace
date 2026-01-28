@@ -4,11 +4,11 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Checkbox
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -24,24 +24,29 @@ fun PracticeMultipleChoice(
     question: QuestionItem.MultipleChoice,
     viewModel: PracticeScreenViewModel
 ) {
-    Text(
-        text = question.question
-    )
+    val shuffledQuestions = question.answers.shuffled()
 
     Column(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(bottom = 10.dp),
-        verticalArrangement = Arrangement.spacedBy(10.dp)
+            .padding(bottom = 10.dp, top = 30.dp),
+        verticalArrangement = Arrangement.spacedBy(10.dp),
+        horizontalAlignment = Alignment.CenterHorizontally
     ) {
+        Text(
+            text = question.question,
+            style = MaterialTheme.typography.titleLarge
+        )
+
+
         AnswerCard(
-            question = question,
+            questions = shuffledQuestions,
             viewModel = viewModel,
             index = 0..1
         )
 
         AnswerCard(
-            question = question,
+            questions = shuffledQuestions,
             viewModel = viewModel,
             index = 2..3
         )
@@ -51,7 +56,7 @@ fun PracticeMultipleChoice(
 
 @Composable
 private fun AnswerCard(
-    question: QuestionItem.MultipleChoice,
+    questions: List<String>,
     index: IntRange,
     viewModel: PracticeScreenViewModel,
 ) {
@@ -69,14 +74,14 @@ private fun AnswerCard(
                     .weight(1f)
                     .clip(RoundedCornerShape(15.dp))
                     .background(Color.LightGray)
+                    .padding(5.dp)
             ) {
-                Spacer(Modifier.weight(1f))
-
                 Text(
-                    text = question.answers[i]
+                    text = questions[i],
+                    modifier = Modifier
+                        .weight(1f)
+                        .padding(start = 12.dp, top = 8.dp, bottom = 8.dp, end = 4.dp)
                 )
-
-                Spacer(Modifier.weight(1f))
 
                 Checkbox(
                     checked = isChecked,
