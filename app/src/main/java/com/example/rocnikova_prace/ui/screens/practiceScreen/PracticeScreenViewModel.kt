@@ -28,6 +28,9 @@ class PracticeScreenViewModel(
     var correctAnswerIndex = mutableStateListOf<Boolean>(false, false, false, false)
         private set
 
+    var practiceEnd = mutableStateOf(false)
+        private set
+
     var groupName by mutableStateOf("")
         private set
 
@@ -68,7 +71,9 @@ class PracticeScreenViewModel(
         when (val currentQuestion = allQuestions[currentQuestionIndex].toQuestionItem()) {
             is QuestionItem.MultipleChoice -> {
                 if (currentQuestion.correctIndices == correctAnswerIndex) {
-                    return addAnswer(true)
+                    submitAnswer(true)
+                } else {
+                    submitAnswer(false)
                 }
             }
             is QuestionItem.Open -> {
@@ -78,7 +83,6 @@ class PracticeScreenViewModel(
 
             }
         }
-        return addAnswer(false)
     }
 
     fun addAnswer(answer: Boolean) {
@@ -93,6 +97,23 @@ class PracticeScreenViewModel(
             }
 
             allQuestions = repository.getQuestionsOnce(groupId).shuffled()
+        }
+    }
+
+    private fun submitAnswer(answer: Boolean) {
+        addAnswer(answer)
+        increaseCurrentQuestionIndex()
+
+        for (i in 0..3) {
+            setCorrectAnswerIndex(false, i)
+        }
+    }
+
+    private fun increaseCurrentQuestionIndex() {
+        if (currentQuestionIndex + 1 != allQuestions.size) {
+            currentQuestionIndex++
+        } else {
+            practiceEnd.value = true
         }
     }
 }

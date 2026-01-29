@@ -1,5 +1,6 @@
 package com.example.rocnikova_prace.ui.screens.practiceScreen
 
+import android.util.Log
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -29,6 +30,7 @@ fun PracticeScreen(
 
     if (!viewModel.allQuestions.isEmpty()) {
         val currentQuestion = viewModel.allQuestions[viewModel.currentQuestionIndex].toQuestionItem()
+        Log.d("Index", viewModel.currentQuestionIndex.toString())
 
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,

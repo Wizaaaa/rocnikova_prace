@@ -49,6 +49,7 @@ import com.woowla.compose.icon.collections.heroicons.Heroicons
 import com.woowla.compose.icon.collections.heroicons.heroicons.Outline
 import com.woowla.compose.icon.collections.heroicons.heroicons.outline.Plus
 import com.woowla.compose.icon.collections.heroicons.heroicons.outline.PlusCircle
+import com.woowla.compose.icon.collections.heroicons.heroicons.outline.ShieldExclamation
 import com.woowla.compose.icon.collections.heroicons.heroicons.outline.XMark
 
 @Composable
@@ -180,6 +181,10 @@ fun QuestionsScreen(
             }
             if (groupToDelete != null) {
                 DeleteDialog(
+                    imageVector = Heroicons.Outline.ShieldExclamation,
+                    text = stringResource(R.string.DD_text),
+                    dismissText = stringResource(R.string.DD_cancel),
+                    confirmText = stringResource(R.string.DD_delete),
                     onDismissRequest = {
                         setGroupToDelete(null)
                     },

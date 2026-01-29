@@ -8,31 +8,31 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.example.rocnikova_prace.R
-import com.woowla.compose.icon.collections.heroicons.Heroicons
-import com.woowla.compose.icon.collections.heroicons.heroicons.Outline
-import com.woowla.compose.icon.collections.heroicons.heroicons.outline.ShieldExclamation
 
 @Composable
 fun DeleteDialog(
+    imageVector: ImageVector,
+    text: String,
+    dismissText: String,
+    confirmText: String,
     onDismissRequest: () -> Unit,
     onConfirmation: () -> Unit
 ) {
     AlertDialog(
         icon = {
             Icon(
-                imageVector = Heroicons.Outline.ShieldExclamation,
+                imageVector = imageVector,
                 contentDescription = null,
                 modifier = Modifier.size(48.dp)
             )
         },
         text = {
             Text(
-                text = stringResource(R.string.DD_text),
+                text = text,
                 style = MaterialTheme.typography.titleMedium,
                 textAlign = TextAlign.Center
             )
@@ -44,14 +44,14 @@ fun DeleteDialog(
             TextButton(
                 onClick = { onConfirmation() },
             ) {
-                Text(stringResource(R.string.DD_delete))
+                Text(confirmText)
             }
         },
         dismissButton = {
             TextButton(
                 onClick = { onDismissRequest() },
             ) {
-                Text(stringResource(R.string.DD_cancel))
+                Text(dismissText)
             }
         }
     )
@@ -60,5 +60,5 @@ fun DeleteDialog(
 @Preview
 @Composable
 fun PreviewDeleteDialog() {
-    DeleteDialog({}, {})
+//    DeleteDialog({}, {}, )
 }
