@@ -1,6 +1,5 @@
 package com.example.rocnikova_prace.ui.screens.practiceScreen
 
-import android.util.Log
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -13,15 +12,21 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
 import com.example.rocnikova_prace.data.local.toQuestionItem
 import com.example.rocnikova_prace.data.model.QuestionItem
+import com.example.rocnikova_prace.ui.components.DeleteDialog
 import com.example.rocnikova_prace.ui.components.PracticeMultipleChoice
 import com.example.rocnikova_prace.ui.components.QuestionsProgressBar
+import com.woowla.compose.icon.collections.heroicons.Heroicons
+import com.woowla.compose.icon.collections.heroicons.heroicons.Outline
+import com.woowla.compose.icon.collections.heroicons.heroicons.outline.InformationCircle
 import java.util.Locale
 
 @Composable
 fun PracticeScreen(
     viewModel: PracticeScreenViewModel,
+    navController: NavController,
     modifier: Modifier = Modifier
 ) {
     val minutes = viewModel.timeLeft / 60
@@ -30,7 +35,6 @@ fun PracticeScreen(
 
     if (!viewModel.allQuestions.isEmpty()) {
         val currentQuestion = viewModel.allQuestions[viewModel.currentQuestionIndex].toQuestionItem()
-        Log.d("Index", viewModel.currentQuestionIndex.toString())
 
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
@@ -76,6 +80,22 @@ fun PracticeScreen(
                     style = MaterialTheme.typography.bodyLarge
                 )
             }
+        }
+        if (viewModel.practiceEnd.value) {
+            DeleteDialog(
+                imageVector = Heroicons.Outline.InformationCircle,
+                text = "Dokončil jste procvičování otázek",
+                dismissText = "Na seznam otázek",
+                confirmText = "Znovu procvičovat",
+                onDismissRequest = {
+                    viewModel.setPracticeEnd(false)
+                    navController.popBackStack()
+                },
+                onConfirmation = {
+                    viewModel.setPracticeEnd(false)
+                    viewModel.resetPracticeScreen()
+                }
+            )
         }
     }
 }

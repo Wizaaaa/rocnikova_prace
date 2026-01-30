@@ -175,6 +175,7 @@ fun MainScreen(
             ) { padding ->
                 PracticeScreen(
                     practiceViewModel,
+                    navController = navController,
                     modifier = Modifier.padding(padding)
                 )
             }

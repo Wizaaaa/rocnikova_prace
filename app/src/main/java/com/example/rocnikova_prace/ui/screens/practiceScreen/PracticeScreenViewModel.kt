@@ -89,6 +89,16 @@ class PracticeScreenViewModel(
         answers.add(answer)
     }
 
+    fun setPracticeEnd(state: Boolean) {
+        practiceEnd.value = state
+    }
+
+    fun resetPracticeScreen() {
+        currentQuestionIndex = 0
+        answers.clear()
+        practiceEnd.value = false
+    }
+
     private fun loadData() {
         viewModelScope.launch {
             val group = repository.getGroupById(groupId)

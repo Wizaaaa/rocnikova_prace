@@ -11,6 +11,7 @@ import androidx.compose.material3.Checkbox
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -24,7 +25,11 @@ fun PracticeMultipleChoice(
     question: QuestionItem.MultipleChoice,
     viewModel: PracticeScreenViewModel
 ) {
-    val shuffledQuestions = question.answers.shuffled()
+    val shuffledQuestions = remember(question) {
+        question.answers.mapIndexed { index, string ->
+            index to string
+        }.shuffled()
+    }
 
     Column(
         modifier = Modifier
@@ -37,7 +42,6 @@ fun PracticeMultipleChoice(
             text = question.question,
             style = MaterialTheme.typography.titleLarge
         )
-
 
         AnswerCard(
             questions = shuffledQuestions,
@@ -56,7 +60,7 @@ fun PracticeMultipleChoice(
 
 @Composable
 private fun AnswerCard(
-    questions: List<String>,
+    questions: List<Pair<Int, String>>,
     index: IntRange,
     viewModel: PracticeScreenViewModel,
 ) {
@@ -65,7 +69,9 @@ private fun AnswerCard(
         horizontalArrangement = Arrangement.spacedBy(10.dp)
     ) {
         for (i in index) {
-            val isChecked = viewModel.correctAnswerIndex[i]
+            val (originalIndex, text) = questions[i]
+
+            val isChecked = viewModel.correctAnswerIndex[originalIndex]
 
             Row(
                 verticalAlignment = Alignment.CenterVertically,
@@ -77,7 +83,7 @@ private fun AnswerCard(
                     .padding(5.dp)
             ) {
                 Text(
-                    text = questions[i],
+                    text = text,
                     modifier = Modifier
                         .weight(1f)
                         .padding(start = 12.dp, top = 8.dp, bottom = 8.dp, end = 4.dp)
@@ -85,7 +91,7 @@ private fun AnswerCard(
 
                 Checkbox(
                     checked = isChecked,
-                    onCheckedChange = { viewModel.setCorrectAnswerIndex(!isChecked, i) }
+                    onCheckedChange = { viewModel.setCorrectAnswerIndex(!isChecked, originalIndex) }
                 )
             }
         }
