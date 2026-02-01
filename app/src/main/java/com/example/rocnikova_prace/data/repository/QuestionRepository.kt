@@ -2,8 +2,10 @@ package com.example.rocnikova_prace.data.repository
 
 import com.example.rocnikova_prace.data.local.dao.GroupDao
 import com.example.rocnikova_prace.data.local.dao.QuestionDao
+import com.example.rocnikova_prace.data.local.dao.ResultDao
 import com.example.rocnikova_prace.data.local.entities.GroupEntity
 import com.example.rocnikova_prace.data.local.entities.QuestionEntity
+import com.example.rocnikova_prace.data.local.entities.ResultEntity
 import com.example.rocnikova_prace.data.local.toEntity
 import com.example.rocnikova_prace.data.local.toQuestionItem
 import com.example.rocnikova_prace.data.model.QuestionItem
@@ -12,7 +14,8 @@ import kotlinx.coroutines.flow.map
 
 class QuestionRepository(
     private val questionDao: QuestionDao,
-    private val groupDao: GroupDao
+    private val groupDao: GroupDao,
+    private val resultDao: ResultDao
 ) {
     fun getAllGroups(): Flow<List<GroupEntity>> {
         return groupDao.getAllGroups()
@@ -36,6 +39,8 @@ class QuestionRepository(
         }
     }
 
+
+
     suspend fun saveGroup(group: GroupEntity) {
         groupDao.insertGroup(group)
     }
@@ -46,5 +51,22 @@ class QuestionRepository(
 
     suspend fun deleteQuestion(item: QuestionItem) {
         questionDao.delete(item.toEntity())
+    }
+
+
+    suspend fun saveTestResult(groupId: String, percentage: Float) {
+        val resultEntity = ResultEntity(
+            groupId = groupId,
+            percentage = percentage
+        )
+        resultDao.insert(resultEntity)
+    }
+
+    fun getTestResultsStream(groupId: String): Flow<List<ResultEntity>> {
+        return resultDao.getAllForGroup(groupId)
+    }
+
+    suspend fun clearHistoryForGroup(groupId: String) {
+        resultDao.deleteAllForGroup(groupId)
     }
 }

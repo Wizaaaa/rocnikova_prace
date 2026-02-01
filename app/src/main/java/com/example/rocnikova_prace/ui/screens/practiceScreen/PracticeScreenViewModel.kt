@@ -90,6 +90,7 @@ class PracticeScreenViewModel(
     }
 
     fun setPracticeEnd(state: Boolean) {
+        saveResult()
         practiceEnd.value = state
     }
 
@@ -124,6 +125,21 @@ class PracticeScreenViewModel(
             currentQuestionIndex++
         } else {
             practiceEnd.value = true
+        }
+    }
+
+    private fun saveResult() {
+        val correctCount = answers.count { it }
+        val totalCount = answers.size
+
+        val percentage = if (totalCount > 0) {
+            (correctCount.toFloat() / totalCount.toFloat()) * 100f
+        } else {
+            0f
+        }
+
+        viewModelScope.launch {
+            repository.saveTestResult(groupId, percentage)
         }
     }
 }

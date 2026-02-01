@@ -14,7 +14,8 @@
 
             repository = QuestionRepository(
                 questionDao = database.questionDao(),
-                groupDao = database.groupDao()
+                groupDao = database.groupDao(),
+                resultDao = database.resultDao()
             )
         }
     }

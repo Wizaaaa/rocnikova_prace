@@ -40,7 +40,7 @@ fun DrawMultipleChoice(
                 updated = question.copy(question = questionText),
             )
         },
-        label = stringResource(R.string.enter_response),
+        label = stringResource(R.string.enter_question),
         isError = isQuestionError,
         supportingText = {
             if (isQuestionError) {

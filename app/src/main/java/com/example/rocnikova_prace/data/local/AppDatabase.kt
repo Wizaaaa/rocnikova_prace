@@ -6,17 +6,20 @@ import androidx.room.Room
 import androidx.room.RoomDatabase
 import com.example.rocnikova_prace.data.local.dao.GroupDao
 import com.example.rocnikova_prace.data.local.dao.QuestionDao
+import com.example.rocnikova_prace.data.local.dao.ResultDao
 import com.example.rocnikova_prace.data.local.entities.GroupEntity
 import com.example.rocnikova_prace.data.local.entities.QuestionEntity
+import com.example.rocnikova_prace.data.local.entities.ResultEntity
 
 @Database(
-    entities = [QuestionEntity::class, GroupEntity::class],
-    version = 2,
+    entities = [QuestionEntity::class, GroupEntity::class, ResultEntity::class],
+    version = 3,
     exportSchema = false
 )
 abstract class AppDatabase : RoomDatabase() {
     abstract fun questionDao(): QuestionDao
     abstract fun groupDao(): GroupDao
+    abstract fun resultDao(): ResultDao
 
     companion object {
         @Volatile
