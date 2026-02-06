@@ -113,33 +113,37 @@ fun Graph(
     ) {
         if (data.isEmpty()) return@Canvas
 
-        drawRect(
-            color = Color.Green.copy(alpha = 0.1f)
-        )
-
         val width = size.width
         val height = size.height
-
         val maxDataVal = 100f
 
         val spacing = width / (data.size - 1).coerceAtLeast(1)
 
+        val verticalPadding = 10.dp.toPx()
+        val graphHeight = height - (2 * verticalPadding)
+
         val path = Path().apply {
-            val firstY = height - (data[0] / maxDataVal * height)
+            val firstY =  (height - verticalPadding) - (data[0] / maxDataVal * height)
             moveTo(0f, firstY)
 
             for (i in 1 .. data.lastIndex) {
                 val x = spacing * i
-                val y = height - (data[i] / maxDataVal * height)
+                val y = (height + verticalPadding) - (data[i] / maxDataVal * height)
                 lineTo(x, y)
             }
         }
 
-        drawLine(
-            color = Color.LightGray,
-            start = Offset(0f, height - (50f / maxDataVal * height)),
-            end = Offset(width, height - (50f / maxDataVal * height))
-        )
+        for (i in 0..4) {
+            val percentage = 25f * i
+            val y = (height - verticalPadding) - (percentage / maxDataVal * graphHeight)
+
+            drawLine(
+                color = Color.LightGray,
+                start = Offset(0f, y),
+                end = Offset(width, y),
+                strokeWidth = 1.dp.toPx()
+            )
+        }
 
         drawPath(
             path = path,

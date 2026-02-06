@@ -6,13 +6,11 @@ import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import com.example.rocnikova_prace.data.local.entities.GroupEntity
 import com.example.rocnikova_prace.data.model.QuestionItem
 import com.example.rocnikova_prace.data.model.QuestionType
 import com.example.rocnikova_prace.data.repository.QuestionRepository
-import com.example.rocnikova_prace.ui.screens.practiceScreen.PracticeScreenViewModel
 import kotlinx.coroutines.launch
 
 class CreateInformationViewModel(
@@ -139,24 +137,6 @@ class CreateInformationViewModel(
             }
 
             isQuestionTextValid && isAnswerValid
-        }
-    }
-}
-
-class QuestionGroupViewModelFactory(
-    private val repository: QuestionRepository,
-    private val groupId: String
-) : ViewModelProvider.Factory {
-    @Suppress("UNCHECKED_CAST")
-    override fun <T : ViewModel> create(modelClass: Class<T>): T {
-        return when {
-            modelClass.isAssignableFrom(CreateInformationViewModel::class.java) -> {
-                CreateInformationViewModel(repository, groupId) as T
-            }
-            modelClass.isAssignableFrom(PracticeScreenViewModel::class.java) -> {
-                PracticeScreenViewModel(repository, groupId) as T
-            }
-            else -> throw IllegalArgumentException("Unknown ViewModel class: ${modelClass.name}")
         }
     }
 }

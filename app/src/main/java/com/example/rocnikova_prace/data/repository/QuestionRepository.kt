@@ -8,6 +8,7 @@ import com.example.rocnikova_prace.data.local.entities.QuestionEntity
 import com.example.rocnikova_prace.data.local.entities.ResultEntity
 import com.example.rocnikova_prace.data.local.toEntity
 import com.example.rocnikova_prace.data.local.toQuestionItem
+import com.example.rocnikova_prace.data.model.GroupSummary
 import com.example.rocnikova_prace.data.model.QuestionItem
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
@@ -66,7 +67,22 @@ class QuestionRepository(
         return resultDao.getAllForGroup(groupId)
     }
 
-    suspend fun clearHistoryForGroup(groupId: String) {
-        resultDao.deleteAllForGroup(groupId)
+    fun getGroupsOverviewStream(): Flow<List<GroupSummary>> {
+        return resultDao.getAllResults().map { allResults ->
+            val groupedMap = allResults.groupBy { it.groupId }
+
+            groupedMap.map { (groupId, resultsOfGroup) ->
+                val average = resultsOfGroup.map { it.percentage }.average()
+
+                val groupName = getGroupById(groupId)!!.name
+
+                GroupSummary(
+                    groupId = groupId,
+                    groupName = groupName,
+                    averageScore = average.toFloat(),
+                    totalAttempts = resultsOfGroup.size
+                )
+            }
+        }
     }
 }

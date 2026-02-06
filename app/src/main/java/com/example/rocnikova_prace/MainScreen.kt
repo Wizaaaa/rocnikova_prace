@@ -22,17 +22,18 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
+import com.example.rocnikova_prace.ui.GroupIdAndRepositoryFactory
+import com.example.rocnikova_prace.ui.QuestionRepositoryFactory
 import com.example.rocnikova_prace.ui.components.NavBar
 import com.example.rocnikova_prace.ui.components.TopAppBar
-import com.example.rocnikova_prace.ui.screens.ProfileScreen
+import com.example.rocnikova_prace.ui.screens.profileScreen.ProfileScreen
 import com.example.rocnikova_prace.ui.screens.createInformation.CreateInformation
 import com.example.rocnikova_prace.ui.screens.createInformation.CreateInformationViewModel
-import com.example.rocnikova_prace.ui.screens.createInformation.QuestionGroupViewModelFactory
 import com.example.rocnikova_prace.ui.screens.createScreen.CreateScreen
 import com.example.rocnikova_prace.ui.screens.practiceScreen.PracticeScreen
 import com.example.rocnikova_prace.ui.screens.practiceScreen.PracticeScreenViewModel
+import com.example.rocnikova_prace.ui.screens.profileScreen.ProfileScreenViewModel
 import com.example.rocnikova_prace.ui.screens.questionsScreen.GroupsViewModel
-import com.example.rocnikova_prace.ui.screens.questionsScreen.GroupsViewModelFactory
 import com.example.rocnikova_prace.ui.screens.questionsScreen.QuestionsScreen
 import kotlinx.coroutines.launch
 
@@ -99,7 +100,7 @@ fun MainScreen(
                     when (pagerScreens[pageIndex]) {
                         MainScreen.Questions -> {
                             val questionsViewModel: GroupsViewModel = viewModel(
-                                factory = GroupsViewModelFactory(repository)
+                                factory = QuestionRepositoryFactory(repository)
                             )
                             QuestionsScreen(
                                 viewModel = questionsViewModel,
@@ -113,7 +114,14 @@ fun MainScreen(
                             CreateScreen(navController = navController)
                         }
                         MainScreen.Profile -> {
-                            ProfileScreen()
+                            val profileScreenViewModel: ProfileScreenViewModel = viewModel(
+                                factory = QuestionRepositoryFactory(repository)
+                            )
+
+                            ProfileScreen(
+                                profileScreenViewModel = profileScreenViewModel,
+                                navController = navController
+                            )
                         }
                         else -> {  }
                     }
@@ -134,7 +142,7 @@ fun MainScreen(
                 ?: return@composable
 
             val createInfoViewModel: CreateInformationViewModel = viewModel(
-                factory = QuestionGroupViewModelFactory(repository, groupId)
+                factory = GroupIdAndRepositoryFactory(repository, groupId)
             )
 
             Scaffold(
@@ -162,7 +170,7 @@ fun MainScreen(
                 ?: return@composable
 
             val practiceViewModel: PracticeScreenViewModel = viewModel(
-                factory = QuestionGroupViewModelFactory(repository, groupId)
+                factory = GroupIdAndRepositoryFactory(repository, groupId)
             )
 
             Scaffold(

@@ -1,7 +1,6 @@
 package com.example.rocnikova_prace.ui.screens.questionsScreen
 
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import com.example.rocnikova_prace.data.local.entities.GroupEntity
 import com.example.rocnikova_prace.data.model.GroupsUiState
@@ -29,17 +28,5 @@ class GroupsViewModel(
         viewModelScope.launch {
             repository.deleteGroup(group)
         }
-    }
-}
-
-class GroupsViewModelFactory(
-    private val repository: QuestionRepository
-) : ViewModelProvider.Factory {
-    override fun <T : ViewModel> create(modelClass: Class<T>): T {
-        if (modelClass.isAssignableFrom(GroupsViewModel::class.java)) {
-            @Suppress("UNCHECKED_CAST")
-            return GroupsViewModel(repository) as T
-        }
-        throw IllegalArgumentException("Unknown ViewModel class")
     }
 }
