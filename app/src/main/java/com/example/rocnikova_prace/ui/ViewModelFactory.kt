@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import com.example.rocnikova_prace.data.repository.QuestionRepository
 import com.example.rocnikova_prace.ui.screens.createInformation.CreateInformationViewModel
+import com.example.rocnikova_prace.ui.screens.graphScreen.GraphScreenViewModel
 import com.example.rocnikova_prace.ui.screens.practiceScreen.PracticeScreenViewModel
 import com.example.rocnikova_prace.ui.screens.profileScreen.ProfileScreenViewModel
 import com.example.rocnikova_prace.ui.screens.questionsScreen.GroupsViewModel
@@ -21,6 +22,9 @@ class GroupIdAndRepositoryFactory(
             modelClass.isAssignableFrom(PracticeScreenViewModel::class.java) -> {
                 PracticeScreenViewModel(repository, groupId) as T
             }
+            modelClass.isAssignableFrom(GraphScreenViewModel::class.java) -> {
+                GraphScreenViewModel(repository, groupId) as T
+            }
             else -> throw IllegalArgumentException("Unknown ViewModel class: ${modelClass.name}")
         }
     }
@@ -29,15 +33,16 @@ class GroupIdAndRepositoryFactory(
 class QuestionRepositoryFactory(
     private val repository: QuestionRepository
 ) : ViewModelProvider.Factory {
+    @Suppress("UNCHECKED_CAST")
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
-        if (modelClass.isAssignableFrom(GroupsViewModel::class.java)) {
-            @Suppress("UNCHECKED_CAST")
-            return GroupsViewModel(repository) as T
+        return when {
+            modelClass.isAssignableFrom(GroupsViewModel::class.java) -> {
+                GroupsViewModel(repository) as T
+            }
+            modelClass.isAssignableFrom(ProfileScreenViewModel::class.java) -> {
+                ProfileScreenViewModel(repository) as T
+            }
+            else -> throw IllegalArgumentException("Unknown ViewModel class")
         }
-        if (modelClass.isAssignableFrom((ProfileScreenViewModel::class.java))) {
-            @Suppress("UNCHECKED_CAST")
-            return ProfileScreenViewModel(repository) as T
-        }
-        throw IllegalArgumentException("Unknown ViewModel class")
     }
 }

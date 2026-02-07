@@ -30,6 +30,8 @@ import com.example.rocnikova_prace.ui.screens.profileScreen.ProfileScreen
 import com.example.rocnikova_prace.ui.screens.createInformation.CreateInformation
 import com.example.rocnikova_prace.ui.screens.createInformation.CreateInformationViewModel
 import com.example.rocnikova_prace.ui.screens.createScreen.CreateScreen
+import com.example.rocnikova_prace.ui.screens.graphScreen.GraphScreen
+import com.example.rocnikova_prace.ui.screens.graphScreen.GraphScreenViewModel
 import com.example.rocnikova_prace.ui.screens.practiceScreen.PracticeScreen
 import com.example.rocnikova_prace.ui.screens.practiceScreen.PracticeScreenViewModel
 import com.example.rocnikova_prace.ui.screens.profileScreen.ProfileScreenViewModel
@@ -42,7 +44,8 @@ enum class MainScreen {
     Questions,
     Profile,
     CreateInformation,
-    PracticeScreen
+    PracticeScreen,
+    GraphScreen
 }
 
 val pagerScreens = listOf(
@@ -184,6 +187,31 @@ fun MainScreen(
                 PracticeScreen(
                     practiceViewModel,
                     navController = navController,
+                    modifier = Modifier.padding(padding)
+                )
+            }
+        }
+
+        composable(
+            route = "${MainScreen.GraphScreen.name}/{groupId}"
+        ) { backStackEntry ->
+            val groupId = backStackEntry.arguments?.getString("groupId")
+                ?: return@composable
+
+            val graphScreenViewModel: GraphScreenViewModel = viewModel(
+                factory = GroupIdAndRepositoryFactory(repository, groupId)
+            )
+
+            Scaffold(
+                topBar = {
+                    TopAppBar(
+                        title = graphScreenViewModel.groupName,
+                        navController = navController
+                    )
+                }
+            ) { padding ->
+                GraphScreen(
+                    viewModel = graphScreenViewModel,
                     modifier = Modifier.padding(padding)
                 )
             }

@@ -27,6 +27,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import com.example.rocnikova_prace.MainScreen
 import com.woowla.compose.icon.collections.heroicons.Heroicons
 import com.woowla.compose.icon.collections.heroicons.heroicons.Outline
 import com.woowla.compose.icon.collections.heroicons.heroicons.outline.ArrowRight
@@ -52,7 +53,7 @@ fun ProfileScreen(
             val score = data.averageScore
 
             ElevatedCard(
-                onClick = {  },
+                onClick = { navController.navigate("${MainScreen.GraphScreen.name}/${data.groupId}") },
                 elevation = CardDefaults.elevatedCardElevation(defaultElevation = 4.dp),
                 colors = CardDefaults.elevatedCardColors(containerColor = MaterialTheme.colorScheme.surface),
                 modifier = Modifier
