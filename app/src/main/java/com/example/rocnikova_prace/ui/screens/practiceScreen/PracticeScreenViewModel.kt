@@ -25,7 +25,7 @@ class PracticeScreenViewModel(
     var currentQuestionIndex by mutableIntStateOf(0)
         private set
 
-    var correctAnswerIndex = mutableStateListOf<Boolean>(false, false, false, false)
+    var correctAnswerIndex = mutableStateListOf(false, false, false, false)
         private set
 
     var practiceEnd = mutableStateOf(false)
