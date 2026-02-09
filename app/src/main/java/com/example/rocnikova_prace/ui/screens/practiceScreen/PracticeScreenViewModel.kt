@@ -34,6 +34,9 @@ class PracticeScreenViewModel(
     var groupName by mutableStateOf("")
         private set
 
+    var questionAnswer by mutableStateOf("")
+        private set
+
     var answers = mutableStateListOf<Boolean>()
         private set
 
@@ -72,21 +75,35 @@ class PracticeScreenViewModel(
             is QuestionItem.MultipleChoice -> {
                 if (currentQuestion.correctIndices == correctAnswerIndex) {
                     submitAnswer(true)
+                    resetCorrectAnswerIndex()
+                } else {
+                    submitAnswer(false)
+                    resetCorrectAnswerIndex()
+                }
+            }
+            is QuestionItem.Open -> {
+                if (currentQuestion.answer == questionAnswer) {
+                    submitAnswer(true)
                 } else {
                     submitAnswer(false)
                 }
             }
-            is QuestionItem.Open -> {
-
-            }
             is QuestionItem.FillBlank -> {
-
+                if (currentQuestion.answer == questionAnswer) {
+                    submitAnswer(true)
+                } else {
+                    submitAnswer(false)
+                }
             }
         }
     }
 
     fun addAnswer(answer: Boolean) {
         answers.add(answer)
+    }
+
+    fun updateQuestionAnswer(answer: String) {
+        questionAnswer = answer
     }
 
     fun setPracticeEnd(state: Boolean) {
@@ -114,7 +131,10 @@ class PracticeScreenViewModel(
     private fun submitAnswer(answer: Boolean) {
         addAnswer(answer)
         increaseCurrentQuestionIndex()
+        questionAnswer = ""
+    }
 
+    private fun resetCorrectAnswerIndex() {
         for (i in 0..3) {
             setCorrectAnswerIndex(false, i)
         }

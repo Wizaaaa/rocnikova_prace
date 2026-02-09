@@ -16,7 +16,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import com.example.rocnikova_prace.R
 import com.example.rocnikova_prace.data.model.QuestionItem
 import com.example.rocnikova_prace.ui.screens.practiceScreen.PracticeScreenViewModel
 
@@ -55,6 +57,60 @@ fun PracticeMultipleChoice(
             index = 2..3
         )
 
+    }
+}
+
+@Composable
+fun PracticeOpen(
+    question: QuestionItem.Open,
+    viewModel: PracticeScreenViewModel
+) {
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(bottom = 10.dp, top = 30.dp),
+        verticalArrangement = Arrangement.spacedBy(10.dp),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Text(
+            text = question.question,
+            style = MaterialTheme.typography.titleLarge
+        )
+
+        InformationCard(
+            value = viewModel.questionAnswer,
+            onValueChange = { newText ->
+                viewModel.updateQuestionAnswer(newText)
+            },
+            label = stringResource(R.string.enter_response)
+        )
+    }
+}
+
+@Composable
+fun PracticeFillBlank(
+    question: QuestionItem.FillBlank,
+    viewModel: PracticeScreenViewModel
+) {
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(bottom = 10.dp, top = 30.dp),
+        verticalArrangement = Arrangement.spacedBy(10.dp),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Text(
+            text = question.question,
+            style = MaterialTheme.typography.titleLarge
+        )
+
+        InformationCard(
+            value = viewModel.questionAnswer,
+            onValueChange = { newText ->
+                viewModel.updateQuestionAnswer(newText)
+            },
+            label = stringResource(R.string.enter_response)
+        )
     }
 }
 

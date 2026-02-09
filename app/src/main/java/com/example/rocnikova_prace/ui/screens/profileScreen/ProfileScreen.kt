@@ -24,10 +24,12 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.rocnikova_prace.MainScreen
+import com.example.rocnikova_prace.R
 import com.woowla.compose.icon.collections.heroicons.Heroicons
 import com.woowla.compose.icon.collections.heroicons.heroicons.Outline
 import com.woowla.compose.icon.collections.heroicons.heroicons.outline.ArrowRight
@@ -91,15 +93,9 @@ fun ProfileScreen(
                             fontWeight = FontWeight.Bold
                         )
 
-                        val attempt = if (data.totalAttempts == 0 || data.totalAttempts >= 5) {
-                            "pokusů"
-                        } else if (data.totalAttempts == 1) {
-                            "pokus"
-                        } else {
-                            "pokusy"
-                        }
+
                         Text(
-                            text = "${data.totalAttempts} $attempt",
+                            text = pluralStringResource(R.plurals.attempts_count, data.totalAttempts, data.totalAttempts),
                             style = MaterialTheme.typography.bodyMedium,
                             color = Color.Gray
                         )

@@ -18,7 +18,7 @@ import androidx.room.PrimaryKey
     indices = [Index("groupId")]
 )
 data class ResultEntity(
-    @PrimaryKey(autoGenerate = true) val id: Long = 0,
+    @PrimaryKey val id: String,
     val groupId: String,
     val percentage: Float
 )

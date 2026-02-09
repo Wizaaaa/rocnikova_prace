@@ -11,12 +11,16 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import com.example.rocnikova_prace.R
 import com.example.rocnikova_prace.data.local.toQuestionItem
 import com.example.rocnikova_prace.data.model.QuestionItem
 import com.example.rocnikova_prace.ui.components.DeleteDialog
+import com.example.rocnikova_prace.ui.components.PracticeFillBlank
 import com.example.rocnikova_prace.ui.components.PracticeMultipleChoice
+import com.example.rocnikova_prace.ui.components.PracticeOpen
 import com.example.rocnikova_prace.ui.components.QuestionsProgressBar
 import com.woowla.compose.icon.collections.heroicons.Heroicons
 import com.woowla.compose.icon.collections.heroicons.heroicons.Outline
@@ -61,10 +65,16 @@ fun PracticeScreen(
                     )
                 }
                 is QuestionItem.Open -> {
-
+                    PracticeOpen(
+                        currentQuestion,
+                        viewModel = viewModel
+                    )
                 }
                 is QuestionItem.FillBlank -> {
-
+                    PracticeFillBlank(
+                        currentQuestion,
+                        viewModel = viewModel
+                    )
                 }
             }
 
@@ -76,7 +86,7 @@ fun PracticeScreen(
                 }
             ) {
                 Text(
-                    "Další otázka",
+                    stringResource(R.string.PC_next_question),
                     style = MaterialTheme.typography.bodyLarge
                 )
             }
@@ -84,9 +94,9 @@ fun PracticeScreen(
         if (viewModel.practiceEnd.value) {
             DeleteDialog(
                 imageVector = Heroicons.Outline.InformationCircle,
-                text = "Dokončil jste procvičování otázek",
-                dismissText = "Na seznam otázek",
-                confirmText = "Znovu procvičovat",
+                text = stringResource(R.string.PC_finished_practice),
+                dismissText = stringResource(R.string.PC_to_question_list),
+                confirmText = stringResource(R.string.PC_start_practice),
                 onDismissRequest = {
                     viewModel.setPracticeEnd(false)
                     navController.popBackStack()
@@ -94,7 +104,8 @@ fun PracticeScreen(
                 onConfirmation = {
                     viewModel.setPracticeEnd(false)
                     viewModel.resetPracticeScreen()
-                }
+                },
+                centerButtons = true
             )
         }
     }

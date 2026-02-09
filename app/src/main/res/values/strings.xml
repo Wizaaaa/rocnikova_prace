@@ -39,4 +39,15 @@
 
     <!--    Question Card-->
     <string name="QC_option_required">Option is required</string>
+
+    <!--    Practice Screen-->
+    <string name="PC_next_question">Next question</string>
+    <string name="PC_finished_practice">Practice complete</string>
+    <string name="PC_to_question_list">Back to list</string>
+    <string name="PC_start_practice">Practice again</string>
+
+    <plurals name="attempts_count">
+        <item quantity="one">%d attempt</item>
+        <item quantity="other">%d attempts</item>
+    </plurals>
 </resources>
