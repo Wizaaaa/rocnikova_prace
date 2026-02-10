@@ -5,6 +5,7 @@ import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
+import androidx.room.Transaction
 import com.example.rocnikova_prace.data.local.entities.QuestionEntity
 import kotlinx.coroutines.flow.Flow
 
@@ -21,4 +22,16 @@ interface QuestionDao {
 
     @Delete
     suspend fun delete(entity: QuestionEntity)
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertAll(questions: List<QuestionEntity>)
+
+    @Query("DELETE FROM questions WHERE groupId = :groupId")
+    suspend fun deleteByGroupId(groupId: String)
+
+    @Transaction
+    suspend fun refreshQuestions(groupId: String, questions: List<QuestionEntity>) {
+        deleteByGroupId(groupId)
+        insertAll(questions)
+    }
 }
