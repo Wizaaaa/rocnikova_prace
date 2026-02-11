@@ -48,11 +48,45 @@ class QuestionRepository(
     }
 
     suspend fun getGroupById(id: String): GroupEntity? {
-        return groupDao.getGroupById(id)
+        return try {
+            val remoteDto = supabase.from("question_groups")
+                .select {
+                    filter {
+                        eq("id", id)
+                    }
+                }
+                .decodeSingle<GroupDto>()
+
+            val entity = remoteDto.toEntity()
+
+            groupDao.insertGroup(entity)
+
+            entity
+        } catch (e: Exception) {
+            e.printStackTrace()
+            throw e
+        }
     }
 
-    suspend fun getQuestionsOnce(id: String): List<QuestionEntity> {
-        return questionDao.getQuestionsForPractice(id)
+    suspend fun getQuestionsOnce(groupId: String): List<QuestionEntity> {
+        return try {
+            val remoteDto = supabase.from("questions")
+                .select {
+                    filter {
+                        eq("group_id", groupId)
+                    }
+                }
+                .decodeList<QuestionDto>()
+
+            val remoteEntities = remoteDto.map { it.toEntity() }
+
+            questionDao.refreshQuestions(groupId, remoteEntities)
+
+            remoteEntities
+        } catch (e: Exception) {
+            e.printStackTrace()
+            throw e
+        }
     }
 
     suspend fun deleteGroup(group: GroupEntity) {
