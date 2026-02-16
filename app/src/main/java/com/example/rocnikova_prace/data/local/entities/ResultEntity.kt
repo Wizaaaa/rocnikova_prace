@@ -20,5 +20,6 @@ import androidx.room.PrimaryKey
 data class ResultEntity(
     @PrimaryKey val id: String,
     val groupId: String,
+    val userId: String,
     val percentage: Float
 )

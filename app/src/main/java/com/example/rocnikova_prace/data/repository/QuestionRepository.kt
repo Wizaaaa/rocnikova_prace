@@ -15,11 +15,12 @@ import com.example.rocnikova_prace.data.model.QuestionItem
 import com.example.rocnikova_prace.data.remote.SupabaseClient
 import com.example.rocnikova_prace.data.remote.dto.GroupDto
 import com.example.rocnikova_prace.data.remote.dto.QuestionDto
+import com.example.rocnikova_prace.data.remote.dto.ResultDto
+import io.github.jan.supabase.auth.auth
 import io.github.jan.supabase.postgrest.from
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flow
-import kotlinx.coroutines.flow.map
 
 class QuestionRepository(
     private val questionDao: QuestionDao,
@@ -64,7 +65,7 @@ class QuestionRepository(
             entity
         } catch (e: Exception) {
             e.printStackTrace()
-            throw e
+            return groupDao.getGroupById(id)
         }
     }
 
@@ -85,19 +86,42 @@ class QuestionRepository(
             remoteEntities
         } catch (e: Exception) {
             e.printStackTrace()
-            throw e
+            return questionDao.getQuestionsForPractice(groupId)
         }
     }
 
     suspend fun deleteGroup(group: GroupEntity) {
         try {
             supabase.from("question_groups").delete {
-                filter { eq("group_id", group.id) }
+                filter { eq("id", group.id) }
             }
             groupDao.deleteGroup(group)
         } catch (e: Exception) {
             e.printStackTrace()
             throw e
+        }
+    }
+    fun getTestResultsStream(groupId: String): Flow<List<ResultEntity>> = flow {
+        val localData = resultDao.getAllForGroup(groupId).first()
+        emit(localData)
+
+        try {
+            val remoteDto = supabase.from("result")
+                .select {
+                    filter {
+                        eq("group_id", groupId)
+                    }
+                }
+                .decodeList<ResultDto>()
+
+            val remoteEntities = remoteDto.map { it.toEntity() }
+
+            resultDao.refreshResult(groupId, remoteEntities)
+
+            val updatedData = resultDao.getAllForGroup(groupId).first()
+            emit(updatedData)
+        } catch (e: Exception) {
+            e.printStackTrace()
         }
     }
 
@@ -168,10 +192,13 @@ class QuestionRepository(
 
     suspend fun saveTestResult(groupId: String, percentage: Float) {
         val newId = java.util.UUID.randomUUID().toString()
+        val currentUserId = supabase.auth.currentUserOrNull()?.id
+            ?: throw Exception("Uživatel není přihlášen!")
 
         val resultEntity = ResultEntity(
             id = newId,
             groupId = groupId,
+            userId = currentUserId,
             percentage = percentage
         )
 
@@ -181,30 +208,53 @@ class QuestionRepository(
             resultDao.insert(resultEntity)
         } catch (e: Exception) {
             e.printStackTrace()
-            throw e
+            resultDao.insert(resultEntity)
         }
     }
 
-    fun getTestResultsStream(groupId: String): Flow<List<ResultEntity>> {
-        return resultDao.getAllForGroup(groupId)
-    }
 
-    fun getGroupsOverviewStream(): Flow<List<GroupSummary>> {
-        return resultDao.getAllResults().map { allResults ->
-            val groupedMap = allResults.groupBy { it.groupId }
+    fun getGroupsOverviewStream(): Flow<List<GroupSummary>> = flow {
+        val localResults = resultDao.getAllResults().first()
+        val localGroups = groupDao.getAllGroups().first()
 
-            groupedMap.mapNotNull { (groupId, resultsOfGroup) ->
-                val average = resultsOfGroup.map { it.percentage }.average()
+        emit(calculateSummaries(localResults, localGroups))
 
-                val groupName = groupDao.getGroupById(groupId)?.name ?: "Neznámá skupina"
+        try {
+            val remoteResultDto = supabase.from("result")
+                .select()
+                .decodeList<ResultDto>()
 
-                GroupSummary(
-                    groupId = groupId,
-                    groupName = groupName,
-                    averageScore = average.toFloat(),
-                    totalAttempts = resultsOfGroup.size
-                )
-            }
+            val remoteResultEntities = remoteResultDto.map { it.toEntity() }
+            resultDao.insertAll(remoteResultEntities)
+
+            val updatedResults = resultDao.getAllResults().first()
+            val updatedGroups = groupDao.getAllGroups().first()
+
+            emit(calculateSummaries(updatedResults, updatedGroups))
+        } catch (e: Exception) {
+            e.printStackTrace()
         }
+    }
+}
+
+private fun calculateSummaries(
+    results: List<ResultEntity>,
+    groups: List<GroupEntity>
+): List<GroupSummary> {
+    val groupMap = groups.associateBy { it.id }
+
+    val groupedMap = results.groupBy { it.groupId }
+
+    return groupedMap.mapNotNull { (groupId, resultsOfGroup) ->
+        val average = resultsOfGroup.map { it.percentage }.average()
+
+        val groupName = groupMap[groupId]?.name ?: "Neznámá skupina"
+
+        GroupSummary(
+            groupId = groupId,
+            groupName = groupName,
+            averageScore = average.toFloat(),
+            totalAttempts = resultsOfGroup.size
+        )
     }
 }

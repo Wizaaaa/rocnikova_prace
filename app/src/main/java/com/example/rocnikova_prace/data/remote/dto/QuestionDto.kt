@@ -10,6 +10,9 @@ data class QuestionDto(
     @SerialName("group_id")
     val groupId: String,
 
+    @SerialName("user_id")
+    val userId: String,
+
     val type: String,
     val data: String
 )

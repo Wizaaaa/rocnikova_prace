@@ -22,6 +22,7 @@ androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = 
 androidx-navigation-compose = { module = "androidx.navigation:navigation-compose", version.ref = "navigationCompose" }
 androidx-room-runtime = { module = "androidx.room:room-runtime", version.ref = "roomRuntime" }
 bom = { module = "io.github.jan-tennert.supabase:bom", version.ref = "bom" }
+auth-kt = { module = "io.github.jan-tennert.supabase:auth-kt" }
 heroicons = { module = "com.woowla.compose.icon.collections:heroicons", version.ref = "heroicons" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }
 androidx-junit = { group = "androidx.test.ext", name = "junit", version.ref = "junitVersion" }

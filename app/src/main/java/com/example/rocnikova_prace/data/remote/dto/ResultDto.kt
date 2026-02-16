@@ -10,5 +10,8 @@ data class ResultDto(
     @SerialName("group_id")
     val groupId: String,
 
+    @SerialName("user_id")
+    val userId: String,
+
     val percentage: Float
 )

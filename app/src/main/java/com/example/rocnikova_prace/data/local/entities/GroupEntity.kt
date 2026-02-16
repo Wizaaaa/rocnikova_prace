@@ -7,6 +7,7 @@ import java.util.UUID
 @Entity(tableName = "question_groups")
 data class GroupEntity (
     @PrimaryKey val id: String = UUID.randomUUID().toString(),
+    val userId: String,
     val name: String,
     val description: String? = null,
     val createdAt: Long = System.currentTimeMillis()

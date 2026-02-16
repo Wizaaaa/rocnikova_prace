@@ -20,6 +20,7 @@ import androidx.room.PrimaryKey
 data class QuestionEntity(
     @PrimaryKey val id: String,
     val groupId: String,
+    val userId: String,
     val type: String,
     val data: String
 )

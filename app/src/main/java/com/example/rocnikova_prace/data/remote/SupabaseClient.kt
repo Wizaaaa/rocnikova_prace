@@ -1,5 +1,6 @@
 package com.example.rocnikova_prace.data.remote
 
+import io.github.jan.supabase.auth.Auth
 import io.github.jan.supabase.createSupabaseClient
 import io.github.jan.supabase.postgrest.Postgrest
 import io.github.jan.supabase.serializer.KotlinXSerializer
@@ -12,5 +13,6 @@ object SupabaseClient {
         install(Postgrest) {
             serializer = KotlinXSerializer()
         }
+        install(Auth)
     }
 }
