@@ -26,6 +26,7 @@ fun QuestionItem.toEntity(): QuestionEntity {
     return QuestionEntity(
         id = id,
         groupId = groupId,
+        userId = userId,
         type = type,
         data = jsonData
     )

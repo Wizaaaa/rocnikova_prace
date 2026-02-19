@@ -22,10 +22,14 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
+import com.example.rocnikova_prace.ui.AuthViewModelFactory
 import com.example.rocnikova_prace.ui.GroupIdAndRepositoryFactory
+import com.example.rocnikova_prace.ui.GroupIdRepositoryAuthFactory
 import com.example.rocnikova_prace.ui.QuestionRepositoryFactory
 import com.example.rocnikova_prace.ui.components.NavBar
 import com.example.rocnikova_prace.ui.components.TopAppBar
+import com.example.rocnikova_prace.ui.screens.authScreen.AuthScreen
+import com.example.rocnikova_prace.ui.screens.authScreen.AuthViewModel
 import com.example.rocnikova_prace.ui.screens.profileScreen.ProfileScreen
 import com.example.rocnikova_prace.ui.screens.createInformation.CreateInformation
 import com.example.rocnikova_prace.ui.screens.createInformation.CreateInformationViewModel
@@ -40,6 +44,7 @@ import com.example.rocnikova_prace.ui.screens.questionsScreen.QuestionsScreen
 import kotlinx.coroutines.launch
 
 enum class MainScreen {
+    AuthScreen,
     Create,
     Questions,
     Profile,
@@ -61,15 +66,27 @@ fun MainScreen(
     val context = LocalContext.current
     val app = context.applicationContext as App
     val repository = app.repository
+    val authRepository = app.authRepository
 
     NavHost(
         navController = navController,
-        startDestination = "home_wrapper",
+        startDestination = MainScreen.AuthScreen.name,
         enterTransition = { slideInHorizontally(tween(300)) { it } + fadeIn() },
         exitTransition = { slideOutHorizontally(tween(300)) { -it } + fadeOut() },
         popEnterTransition = { slideInHorizontally(tween(300)) { -it } + fadeIn() },
         popExitTransition = { slideOutHorizontally(tween(300)) { it } + fadeOut() }
     ) {
+        composable(
+            route = MainScreen.AuthScreen.name
+        ) {
+            val authViewModel: AuthViewModel = viewModel(
+                factory = AuthViewModelFactory(authRepository)
+            )
+
+            AuthScreen(viewModel = authViewModel, navController = navController)
+        }
+
+
         composable("home_wrapper") {
             val pagerState = rememberPagerState(initialPage = 1, pageCount = { pagerScreens.size })
             val scope = rememberCoroutineScope()
@@ -145,7 +162,7 @@ fun MainScreen(
                 ?: return@composable
 
             val createInfoViewModel: CreateInformationViewModel = viewModel(
-                factory = GroupIdAndRepositoryFactory(repository, groupId)
+                factory = GroupIdRepositoryAuthFactory(repository, authRepository, groupId)
             )
 
             Scaffold(

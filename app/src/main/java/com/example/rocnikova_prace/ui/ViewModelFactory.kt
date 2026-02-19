@@ -4,7 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import com.example.rocnikova_prace.data.repository.AuthRepository
 import com.example.rocnikova_prace.data.repository.QuestionRepository
-import com.example.rocnikova_prace.ui.auth.AuthViewModel
+import com.example.rocnikova_prace.ui.screens.authScreen.AuthViewModel
 import com.example.rocnikova_prace.ui.screens.createInformation.CreateInformationViewModel
 import com.example.rocnikova_prace.ui.screens.graphScreen.GraphScreenViewModel
 import com.example.rocnikova_prace.ui.screens.practiceScreen.PracticeScreenViewModel
@@ -13,19 +13,32 @@ import com.example.rocnikova_prace.ui.screens.questionsScreen.GroupsViewModel
 
 class GroupIdAndRepositoryFactory(
     private val repository: QuestionRepository,
-    private val groupId: String
+    private val groupId: String,
 ) : ViewModelProvider.Factory {
     @Suppress("UNCHECKED_CAST")
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
         return when {
-            modelClass.isAssignableFrom(CreateInformationViewModel::class.java) -> {
-                CreateInformationViewModel(repository, groupId) as T
-            }
             modelClass.isAssignableFrom(PracticeScreenViewModel::class.java) -> {
                 PracticeScreenViewModel(repository, groupId) as T
             }
             modelClass.isAssignableFrom(GraphScreenViewModel::class.java) -> {
                 GraphScreenViewModel(repository, groupId) as T
+            }
+            else -> throw IllegalArgumentException("Unknown ViewModel class: ${modelClass.name}")
+        }
+    }
+}
+
+class GroupIdRepositoryAuthFactory(
+    private val repository: QuestionRepository,
+    private val authRepository: AuthRepository,
+    private val groupId: String,
+) : ViewModelProvider.Factory {
+    @Suppress("UNCHECKED_CAST")
+    override fun <T : ViewModel> create(modelClass: Class<T>): T {
+        return when {
+            modelClass.isAssignableFrom(CreateInformationViewModel::class.java) -> {
+                CreateInformationViewModel(repository, authRepository, groupId) as T
             }
             else -> throw IllegalArgumentException("Unknown ViewModel class: ${modelClass.name}")
         }

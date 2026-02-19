@@ -9,6 +9,7 @@ sealed class QuestionItem {
     abstract val isExpanded: Boolean
     abstract val groupId: String
     abstract val question: String
+    abstract val userId: String
 
     fun changeExpanded(expanded: Boolean): QuestionItem {
         return when (this) {
@@ -24,6 +25,7 @@ sealed class QuestionItem {
         val correctIndices: List<Boolean>,
         override val question: String,
         override val groupId: String,
+        override val userId: String,
         override var isExpanded: Boolean = false,
         override val id: String = UUID.randomUUID().toString()
     ) : QuestionItem()
@@ -33,6 +35,7 @@ sealed class QuestionItem {
         val answer: String,
         override val question: String,
         override val groupId: String,
+        override val userId: String,
         override var isExpanded: Boolean = false,
         override val id: String = UUID.randomUUID().toString()
     ) : QuestionItem()
@@ -42,6 +45,7 @@ sealed class QuestionItem {
         val answer: String,
         override val question: String,
         override val groupId: String,
+        override val userId: String,
         override var isExpanded: Boolean = false,
         override val id: String = UUID.randomUUID().toString()
     ) : QuestionItem()
@@ -51,10 +55,12 @@ sealed class QuestionItem {
         fun emptyMultipleChoice(
             groupId: String,
             id: String = UUID.randomUUID().toString(),
+            userId: String,
             question: String = ""
         ) = MultipleChoice(
             id = id,
             groupId = groupId,
+            userId = userId,
             question = question,
             answers = listOf("", "", "", ""),
             correctIndices = listOf(false, false, false, false)
@@ -63,10 +69,12 @@ sealed class QuestionItem {
         fun emptyOpen(
             groupId: String,
             id: String = UUID.randomUUID().toString(),
+            userId: String,
             question: String = ""
         ) = Open(
             id = id,
             groupId = groupId,
+            userId = userId,
             question = question,
             answer = ""
         )
@@ -74,10 +82,12 @@ sealed class QuestionItem {
         fun emptyFillBlank(
             groupId: String,
             id: String = UUID.randomUUID().toString(),
+            userId: String,
             question: String = ""
         ) = FillBlank(
             id = id,
             groupId = groupId,
+            userId = userId,
             question = question,
             answer = ""
         )

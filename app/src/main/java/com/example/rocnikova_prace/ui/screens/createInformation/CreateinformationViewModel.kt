@@ -10,11 +10,13 @@ import androidx.lifecycle.viewModelScope
 import com.example.rocnikova_prace.data.local.entities.GroupEntity
 import com.example.rocnikova_prace.data.model.QuestionItem
 import com.example.rocnikova_prace.data.model.QuestionType
+import com.example.rocnikova_prace.data.repository.AuthRepository
 import com.example.rocnikova_prace.data.repository.QuestionRepository
 import kotlinx.coroutines.launch
 
 class CreateInformationViewModel(
     private val repository: QuestionRepository,
+    private val authRepository: AuthRepository,
     val groupId: String
 ): ViewModel() {
     var isLoading by mutableStateOf(true)
@@ -58,9 +60,10 @@ class CreateInformationViewModel(
 
     // --- WORK WITH QUESTIONS ---
     fun addQuestion() {
+        val currentUserId = authRepository.getCurrentUserId() ?: return
         showErrors = false
 
-        val newQuestion = QuestionItem.emptyMultipleChoice(groupId = groupId)
+        val newQuestion = QuestionItem.emptyMultipleChoice(groupId = groupId, userId = currentUserId)
         questions.add(newQuestion)
     }
 
@@ -73,15 +76,16 @@ class CreateInformationViewModel(
     }
 
     fun changeQuestionType(id: String, type: QuestionType) {
+        val currentUserId = authRepository.getCurrentUserId() ?: return
         val index = questions.indexOfFirst { it.id == id }
         if (index == -1) return
 
         val oldQuestion = questions[index]
 
         val newQuestion = when (type) {
-            QuestionType.MultipleChoice -> QuestionItem.emptyMultipleChoice(groupId = groupId, id = id, question = oldQuestion.question)
-            QuestionType.Open -> QuestionItem.emptyOpen(groupId = groupId, id = id, question = oldQuestion.question)
-            QuestionType.FillBlank -> QuestionItem.emptyFillBlank(groupId = groupId, id = id, question = oldQuestion.question)
+            QuestionType.MultipleChoice -> QuestionItem.emptyMultipleChoice(groupId = groupId, id = id, question = oldQuestion.question, userId = currentUserId)
+            QuestionType.Open -> QuestionItem.emptyOpen(groupId = groupId, id = id, question = oldQuestion.question, userId = currentUserId)
+            QuestionType.FillBlank -> QuestionItem.emptyFillBlank(groupId = groupId, id = id, question = oldQuestion.question, userId = currentUserId)
         }
 
         questions[index] = newQuestion
@@ -101,8 +105,10 @@ class CreateInformationViewModel(
             return
         }
 
+        val currentUserId = authRepository.getCurrentUserId() ?: return
+
         viewModelScope.launch {
-            repository.saveGroup(GroupEntity(id = groupId, name = groupName))
+            repository.saveGroup(GroupEntity(id = groupId, name = groupName, userId = currentUserId))
 
             questionsToDelete.forEach { repository.deleteQuestion(it) }
             questionsToDelete.clear()
