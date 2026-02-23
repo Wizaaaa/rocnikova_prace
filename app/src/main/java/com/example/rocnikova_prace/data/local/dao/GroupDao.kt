@@ -12,11 +12,11 @@ import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface GroupDao {
-    @Query("SELECT * FROM question_groups ORDER BY createdAt DESC")
-    fun getAllGroups(): Flow<List<GroupEntity>>
+    @Query("SELECT * FROM question_groups WHERE userId = :userId ORDER BY createdAt DESC")
+    fun getAllGroups(userId: String): Flow<List<GroupEntity>>
 
-    @Query("SELECT * FROM question_groups WHERE id = :id")
-    suspend fun getGroupById(id: String): GroupEntity?
+    @Query("SELECT * FROM question_groups WHERE id = :id AND userId = :userId")
+    suspend fun getGroupById(id: String, userId: String): GroupEntity?
 
     @Upsert
     suspend fun insertGroup(group: GroupEntity)
@@ -24,15 +24,15 @@ interface GroupDao {
     @Delete
     suspend fun deleteGroup(group: GroupEntity)
 
-    @Query("DELETE FROM question_groups")
-    suspend fun deleteAll()
+    @Query("DELETE FROM question_groups WHERE userId = :userId")
+    suspend fun deleteAll(userId: String)
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertAll(groups: List<GroupEntity>)
 
     @Transaction
-    suspend fun refreshGroups(groups: List<GroupEntity>) {
-        deleteAll()
+    suspend fun refreshGroups(userId: String, groups: List<GroupEntity>) {
+        deleteAll(userId)
         insertAll(groups)
     }
 }

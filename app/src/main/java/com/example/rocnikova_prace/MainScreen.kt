@@ -22,6 +22,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
+import com.example.rocnikova_prace.data.remote.SupabaseClient
 import com.example.rocnikova_prace.ui.AuthViewModelFactory
 import com.example.rocnikova_prace.ui.GroupIdAndRepositoryFactory
 import com.example.rocnikova_prace.ui.GroupIdRepositoryAuthFactory
@@ -41,6 +42,7 @@ import com.example.rocnikova_prace.ui.screens.practiceScreen.PracticeScreenViewM
 import com.example.rocnikova_prace.ui.screens.profileScreen.ProfileScreenViewModel
 import com.example.rocnikova_prace.ui.screens.questionsScreen.GroupsViewModel
 import com.example.rocnikova_prace.ui.screens.questionsScreen.QuestionsScreen
+import io.github.jan.supabase.auth.auth
 import kotlinx.coroutines.launch
 
 enum class MainScreen {
@@ -61,16 +63,24 @@ val pagerScreens = listOf(
 
 @Composable
 fun MainScreen(
-    navController: NavHostController = rememberNavController()
+    navController: NavHostController = rememberNavController(),
+    supabase: io.github.jan.supabase.SupabaseClient = SupabaseClient.client
 ) {
     val context = LocalContext.current
     val app = context.applicationContext as App
     val repository = app.repository
     val authRepository = app.authRepository
 
+    val currentUser = supabase.auth.currentUserOrNull()
+    val startDestination = if (currentUser != null) {
+        "home_wrapper"
+    } else {
+        MainScreen.AuthScreen.name
+    }
+
     NavHost(
         navController = navController,
-        startDestination = MainScreen.AuthScreen.name,
+        startDestination = startDestination,
         enterTransition = { slideInHorizontally(tween(300)) { it } + fadeIn() },
         exitTransition = { slideOutHorizontally(tween(300)) { -it } + fadeOut() },
         popEnterTransition = { slideInHorizontally(tween(300)) { -it } + fadeIn() },

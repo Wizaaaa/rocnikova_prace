@@ -14,18 +14,18 @@ interface ResultDao {
     @Insert
     suspend fun insertAll(result: List<ResultEntity>)
 
-    @Query("SELECT * FROM result")
-    fun getAllResults(): Flow<List<ResultEntity>> // no suspend - flow
+    @Query("SELECT * FROM result WHERE userId = :userId")
+    fun getAllResults(userId: String): Flow<List<ResultEntity>> // no suspend - flow
 
-    @Query("SELECT * FROM result WHERE groupId = :groupId")
-    fun getAllForGroup(groupId: String): Flow<List<ResultEntity>>
+    @Query("SELECT * FROM result WHERE groupId = :groupId AND userId = :userId")
+    fun getAllForGroup(groupId: String, userId: String): Flow<List<ResultEntity>>
 
-    @Query("DELETE FROM result WHERE groupId = :groupId")
-    suspend fun deleteAllForGroup(groupId: String)
+    @Query("DELETE FROM result WHERE groupId = :groupId AND userId = :userId")
+    suspend fun deleteAllForGroup(groupId: String, userId: String)
 
     @Transaction
-    suspend fun refreshResult(groupId: String, result: List<ResultEntity>) {
-        deleteAllForGroup(groupId)
+    suspend fun refreshResult(groupId: String, userId: String, result: List<ResultEntity>) {
+        deleteAllForGroup(groupId, userId)
         insertAll(result)
     }
 }

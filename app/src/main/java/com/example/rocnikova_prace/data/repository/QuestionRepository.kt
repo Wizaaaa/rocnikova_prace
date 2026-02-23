@@ -29,19 +29,24 @@ class QuestionRepository(
     private val supabase: io.github.jan.supabase.SupabaseClient = SupabaseClient.client
 ) {
     fun getAllGroups(): Flow<List<GroupEntity>> = flow {
-        val localData = groupDao.getAllGroups().first()
+        val currentUserId = supabase.auth.currentUserOrNull()?.id ?: return@flow
+        val localData = groupDao.getAllGroups(currentUserId).first()
         emit(localData)
 
         try {
             val remoteDto = supabase.from("question_groups")
-                .select()
+                .select{
+                    filter {
+                        eq("user_id", currentUserId)
+                    }
+                }
                 .decodeList<GroupDto>()
 
             val remoteEntities = remoteDto.map { it.toEntity() }
 
-            groupDao.refreshGroups(remoteEntities)
+            groupDao.refreshGroups(currentUserId, remoteEntities)
 
-            val updatedData = groupDao.getAllGroups().first()
+            val updatedData = groupDao.getAllGroups(currentUserId).first()
             emit(updatedData)
         } catch (e: Exception) {
             e.printStackTrace()
@@ -49,11 +54,13 @@ class QuestionRepository(
     }
 
     suspend fun getGroupById(id: String): GroupEntity? {
+        val currentUserId = supabase.auth.currentUserOrNull()?.id ?: return null
         return try {
             val remoteDto = supabase.from("question_groups")
                 .select {
                     filter {
                         eq("id", id)
+                        eq("user_id", currentUserId)
                     }
                 }
                 .decodeSingle<GroupDto>()
@@ -65,28 +72,30 @@ class QuestionRepository(
             entity
         } catch (e: Exception) {
             e.printStackTrace()
-            return groupDao.getGroupById(id)
+            groupDao.getGroupById(id, currentUserId)
         }
     }
 
     suspend fun getQuestionsOnce(groupId: String): List<QuestionEntity> {
+        val currentUserId = supabase.auth.currentUserOrNull()?.id ?: return emptyList()
         return try {
             val remoteDto = supabase.from("questions")
                 .select {
                     filter {
                         eq("group_id", groupId)
+                        eq("user_id", currentUserId)
                     }
                 }
                 .decodeList<QuestionDto>()
 
             val remoteEntities = remoteDto.map { it.toEntity() }
 
-            questionDao.refreshQuestions(groupId, remoteEntities)
+            questionDao.refreshQuestions(groupId, currentUserId, remoteEntities)
 
             remoteEntities
         } catch (e: Exception) {
             e.printStackTrace()
-            return questionDao.getQuestionsForPractice(groupId)
+            questionDao.getQuestionsForPractice(groupId, currentUserId)
         }
     }
 
@@ -102,7 +111,8 @@ class QuestionRepository(
         }
     }
     fun getTestResultsStream(groupId: String): Flow<List<ResultEntity>> = flow {
-        val localData = resultDao.getAllForGroup(groupId).first()
+        val currentUserId = supabase.auth.currentUserOrNull()?.id ?: return@flow
+        val localData = resultDao.getAllForGroup(groupId, currentUserId).first()
         emit(localData)
 
         try {
@@ -110,15 +120,16 @@ class QuestionRepository(
                 .select {
                     filter {
                         eq("group_id", groupId)
+                        eq("user_id", currentUserId)
                     }
                 }
                 .decodeList<ResultDto>()
 
             val remoteEntities = remoteDto.map { it.toEntity() }
 
-            resultDao.refreshResult(groupId, remoteEntities)
+            resultDao.refreshResult(groupId, currentUserId, remoteEntities)
 
-            val updatedData = resultDao.getAllForGroup(groupId).first()
+            val updatedData = resultDao.getAllForGroup(groupId, currentUserId).first()
             emit(updatedData)
         } catch (e: Exception) {
             e.printStackTrace()
@@ -126,7 +137,8 @@ class QuestionRepository(
     }
 
     fun getQuestionsForGroup(groupId: String): Flow<List<QuestionItem>> = flow {
-        val localData = questionDao.getQuestionsForGroup(groupId).first()
+        val currentUserId = supabase.auth.currentUserOrNull()?.id ?: return@flow
+        val localData = questionDao.getQuestionsForGroup(groupId, currentUserId).first()
         emit(localData.map { it.toQuestionItem() })
 
         try {
@@ -134,15 +146,16 @@ class QuestionRepository(
                 .select {
                     filter {
                         eq("group_id", groupId)
+                        eq("user_id", currentUserId)
                     }
                 }
                 .decodeList<QuestionDto>()
 
             val remoteEntities = remoteDto.map { it.toEntity() }
 
-            questionDao.refreshQuestions(groupId, remoteEntities)
+            questionDao.refreshQuestions(groupId, currentUserId, remoteEntities)
 
-            val updatedData = questionDao.getQuestionsForGroup(groupId).first()
+            val updatedData = questionDao.getQuestionsForGroup(groupId, currentUserId).first()
             emit(updatedData.map { it.toQuestionItem() })
         } catch (e: Exception) {
             e.printStackTrace()
@@ -214,21 +227,26 @@ class QuestionRepository(
 
 
     fun getGroupsOverviewStream(): Flow<List<GroupSummary>> = flow {
-        val localResults = resultDao.getAllResults().first()
-        val localGroups = groupDao.getAllGroups().first()
+        val currentUserId = supabase.auth.currentUserOrNull()?.id ?: return@flow
+        val localResults = resultDao.getAllResults(currentUserId).first()
+        val localGroups = groupDao.getAllGroups(currentUserId).first()
 
         emit(calculateSummaries(localResults, localGroups))
 
         try {
             val remoteResultDto = supabase.from("result")
-                .select()
+                .select{
+                    filter {
+                        eq("user_id", currentUserId)
+                    }
+                }
                 .decodeList<ResultDto>()
 
             val remoteResultEntities = remoteResultDto.map { it.toEntity() }
             resultDao.insertAll(remoteResultEntities)
 
-            val updatedResults = resultDao.getAllResults().first()
-            val updatedGroups = groupDao.getAllGroups().first()
+            val updatedResults = resultDao.getAllResults(currentUserId).first()
+            val updatedGroups = groupDao.getAllGroups(currentUserId).first()
 
             emit(calculateSummaries(updatedResults, updatedGroups))
         } catch (e: Exception) {

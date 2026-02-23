@@ -13,6 +13,8 @@ object SupabaseClient {
         install(Postgrest) {
             serializer = KotlinXSerializer()
         }
-        install(Auth)
+        install(Auth) {
+
+        }
     }
 }

@@ -1,19 +1,19 @@
 package com.example.rocnikova_prace.ui.screens.authScreen
 
 import android.widget.Toast
-import androidx.compose.foundation.layout.Column
-import androidx.compose.material3.Button
-import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.NavController
 import com.example.rocnikova_prace.MainScreen
-import com.example.rocnikova_prace.ui.components.InformationCard
+
+enum class LoginOrRegister{
+    LOGIN,
+    REGISTER
+}
+
 
 @Composable
 fun AuthScreen(
@@ -40,39 +40,19 @@ fun AuthScreen(
         }
     }
 
-    Column() {
-        InformationCard(
-            value = viewModel.email,
-            onValueChange = {
-                viewModel.updateEmail(it)
-            },
-            label = "Zadejte email"
+    if (viewModel.isRegistered) {
+        AuthComponent(
+            viewModel = viewModel,
+            type = LoginOrRegister.LOGIN,
+            authState = authState,
+            onClick = { viewModel.signIn(viewModel.email, viewModel.password) }
         )
-
-        InformationCard(
-            value = viewModel.password,
-            onValueChange = {
-                viewModel.updatePassword(it)
-            },
-            label = "Zadejte heslo"
+    } else {
+        AuthComponent(
+            viewModel = viewModel,
+            type = LoginOrRegister.REGISTER,
+            authState = authState,
+            onClick = { viewModel.signUp(viewModel.email, viewModel.password) }
         )
-
-        Button(
-            onClick = {
-                viewModel.signIn(email = viewModel.email, password = viewModel.password)
-            },
-            enabled = authState !is AuthState.Loading
-        ) {
-            if (authState is AuthState.Loading) {
-                CircularProgressIndicator(color = Color.White)
-            } else {
-                Text("Přihlásit se")
-            }
-        }
-
-        if (authState is AuthState.Error) {
-            val errorMsg = (authState as AuthState.Error).message
-            Text(text = errorMsg, color = Color.Red)
-        }
     }
 }

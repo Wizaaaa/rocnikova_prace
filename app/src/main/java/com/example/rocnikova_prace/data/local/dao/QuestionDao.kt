@@ -11,11 +11,11 @@ import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface QuestionDao {
-    @Query("SELECT * FROM questions WHERE groupId = :groupId")
-    fun getQuestionsForGroup(groupId: String): Flow<List<QuestionEntity>>
+    @Query("SELECT * FROM questions WHERE groupId = :groupId AND userId = :userId")
+    fun getQuestionsForGroup(groupId: String, userId: String): Flow<List<QuestionEntity>>
 
-    @Query("SELECT * FROM questions WHERE groupId = :groupId")
-    suspend fun getQuestionsForPractice(groupId: String): List<QuestionEntity>
+    @Query("SELECT * FROM questions WHERE groupId = :groupId AND userId = :userId")
+    suspend fun getQuestionsForPractice(groupId: String, userId: String): List<QuestionEntity>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insert(entity: QuestionEntity)
@@ -26,12 +26,12 @@ interface QuestionDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertAll(questions: List<QuestionEntity>)
 
-    @Query("DELETE FROM questions WHERE groupId = :groupId")
-    suspend fun deleteByGroupId(groupId: String)
+    @Query("DELETE FROM questions WHERE groupId = :groupId AND userId = :userId")
+    suspend fun deleteByGroupId(groupId: String, userId: String)
 
     @Transaction
-    suspend fun refreshQuestions(groupId: String, questions: List<QuestionEntity>) {
-        deleteByGroupId(groupId)
+    suspend fun refreshQuestions(groupId: String, userId: String, questions: List<QuestionEntity>) {
+        deleteByGroupId(groupId, userId)
         insertAll(questions)
     }
 }

@@ -30,6 +30,12 @@ class AuthViewModel(
     var password by mutableStateOf("")
         private set
 
+    var confirmPassword by mutableStateOf("")
+        private set
+
+    var isRegistered by mutableStateOf(true)
+        private set
+
     fun signIn(email: String, password: String) {
         viewModelScope.launch {
             _authState.value = AuthState.Loading
@@ -46,17 +52,21 @@ class AuthViewModel(
     }
 
     fun signUp(email: String, password: String) {
-        viewModelScope.launch {
-            _authState.value = AuthState.Loading
+        if (password == confirmPassword) {
+            viewModelScope.launch {
+                _authState.value = AuthState.Loading
 
-            try {
-                authRepository.signUp(email, password)
+                try {
+                    authRepository.signUp(email, password)
 
-                _authState.value = AuthState.Success
-            } catch (e: Exception) {
-                e.printStackTrace()
-                _authState.value = AuthState.Error(e.message ?: "Nastala neznámá chyba")
+                    _authState.value = AuthState.Success
+                } catch (e: Exception) {
+                    e.printStackTrace()
+                    _authState.value = AuthState.Error(e.message ?: "Nastala neznámá chyba")
+                }
             }
+        } else {
+            _authState.value = AuthState.Error("Hesla se neshodují!")
         }
     }
 
@@ -70,5 +80,14 @@ class AuthViewModel(
 
     fun updatePassword(value: String) {
         password = value
+    }
+
+    fun updateConfirmPassword(value: String) {
+        confirmPassword = value
+    }
+
+    fun setupRegister(value: Boolean) {
+        password = ""
+        isRegistered = value
     }
 }
