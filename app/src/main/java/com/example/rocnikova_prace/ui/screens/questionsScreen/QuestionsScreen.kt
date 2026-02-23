@@ -101,7 +101,11 @@ fun QuestionsScreen(
         }
 
         else -> {
-            LazyColumn(modifier = Modifier.safeDrawingPadding()) {
+            LazyColumn(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .safeDrawingPadding()
+            ) {
                 items(
                     items = uiState.groups,
                     key = { group -> group.id }
