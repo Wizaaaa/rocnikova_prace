@@ -8,6 +8,9 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.NavController
 import com.example.rocnikova_prace.MainScreen
+import io.github.jan.supabase.compose.auth.composable.NativeSignInResult
+import io.github.jan.supabase.compose.auth.composable.rememberSignInWithGoogle
+import io.github.jan.supabase.compose.auth.composeAuth
 
 enum class LoginOrRegister{
     LOGIN,
@@ -18,7 +21,8 @@ enum class LoginOrRegister{
 @Composable
 fun AuthScreen(
     viewModel: AuthViewModel,
-    navController: NavController
+    navController: NavController,
+    supabase: io.github.jan.supabase.SupabaseClient
 ) {
     val authState by  viewModel.authState.collectAsState()
 
@@ -39,6 +43,26 @@ fun AuthScreen(
             else -> {  }
         }
     }
+
+    val googleSignIn = supabase.composeAuth.rememberSignInWithGoogle(
+        onResult = { result ->
+            when (result) {
+                is NativeSignInResult.Success -> {
+                    navController.navigate("home_wrapper") {
+                        popUpTo("auth_screen") { inclusive = true }
+                    }
+                }
+                is NativeSignInResult.Error -> {
+                    Toast.makeText(context, "Chyba: ${result.message}", Toast.LENGTH_LONG).show()
+                }
+                is NativeSignInResult.ClosedByUser -> {
+                }
+                is NativeSignInResult.NetworkError -> {
+                    Toast.makeText(context, "Chyba sítě", Toast.LENGTH_SHORT).show()
+                }
+            }
+        }
+    )
 
     if (viewModel.isRegistered) {
         AuthComponent(

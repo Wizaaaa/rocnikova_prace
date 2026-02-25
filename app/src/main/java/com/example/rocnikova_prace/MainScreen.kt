@@ -73,7 +73,9 @@ fun MainScreen(
 
     val currentUser = supabase.auth.currentUserOrNull()
     val startDestination = if (currentUser != null) {
-        "home_wrapper"
+//        "home_wrapper"
+        MainScreen.AuthScreen.name
+
     } else {
         MainScreen.AuthScreen.name
     }
@@ -93,7 +95,7 @@ fun MainScreen(
                 factory = AuthViewModelFactory(authRepository)
             )
 
-            AuthScreen(viewModel = authViewModel, navController = navController)
+            AuthScreen(viewModel = authViewModel, navController = navController, supabase = supabase)
         }
 
 

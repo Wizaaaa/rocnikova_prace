@@ -1,6 +1,8 @@
 package com.example.rocnikova_prace.data.remote
 
 import io.github.jan.supabase.auth.Auth
+import io.github.jan.supabase.compose.auth.ComposeAuth
+import io.github.jan.supabase.compose.auth.googleNativeLogin
 import io.github.jan.supabase.createSupabaseClient
 import io.github.jan.supabase.postgrest.Postgrest
 import io.github.jan.supabase.serializer.KotlinXSerializer
@@ -15,6 +17,9 @@ object SupabaseClient {
         }
         install(Auth) {
 
+        }
+        install(ComposeAuth) {
+            googleNativeLogin(serverClientId = "356671901841-efc7p71p2oarcfa9vduol0m1j1sda4vu.apps.googleusercontent.com")
         }
     }
 }
