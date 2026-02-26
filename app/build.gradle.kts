@@ -8,9 +8,8 @@ plugins {
 
 android {
     namespace = "com.example.rocnikova_prace"
-    compileSdk {
-        version = release(36)
-    }
+
+    compileSdk = 36
 
     defaultConfig {
         applicationId = "com.example.rocnikova_prace"

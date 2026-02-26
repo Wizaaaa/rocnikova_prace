@@ -27,29 +27,14 @@ class AuthViewModel(
     var email by mutableStateOf("")
         private set
 
+    var otp by mutableStateOf("")
+        private set
+
     var password by mutableStateOf("")
         private set
 
     var confirmPassword by mutableStateOf("")
         private set
-
-    var isRegistered by mutableStateOf(true)
-        private set
-
-    fun signIn(email: String, password: String) {
-        viewModelScope.launch {
-            _authState.value = AuthState.Loading
-
-            try {
-                authRepository.signIn(email, password)
-
-                _authState.value = AuthState.Success
-            } catch (e: Exception) {
-                e.printStackTrace()
-                _authState.value = AuthState.Error(e.message ?: "Nastala neznámá chyba")
-            }
-        }
-    }
 
     fun signUp(email: String, password: String) {
         if (password == confirmPassword) {
@@ -86,8 +71,7 @@ class AuthViewModel(
         confirmPassword = value
     }
 
-    fun setupRegister(value: Boolean) {
-        password = ""
-        isRegistered = value
+    fun updateOtp(value: String) {
+        otp = value
     }
 }
