@@ -31,7 +31,6 @@ import com.example.rocnikova_prace.ui.components.NavBar
 import com.example.rocnikova_prace.ui.components.TopAppBar
 import com.example.rocnikova_prace.ui.screens.authScreen.AuthScreen
 import com.example.rocnikova_prace.ui.screens.authScreen.AuthViewModel
-import com.example.rocnikova_prace.ui.screens.profileScreen.ProfileScreen
 import com.example.rocnikova_prace.ui.screens.createInformation.CreateInformation
 import com.example.rocnikova_prace.ui.screens.createInformation.CreateInformationViewModel
 import com.example.rocnikova_prace.ui.screens.createScreen.CreateScreen
@@ -39,6 +38,7 @@ import com.example.rocnikova_prace.ui.screens.graphScreen.GraphScreen
 import com.example.rocnikova_prace.ui.screens.graphScreen.GraphScreenViewModel
 import com.example.rocnikova_prace.ui.screens.practiceScreen.PracticeScreen
 import com.example.rocnikova_prace.ui.screens.practiceScreen.PracticeScreenViewModel
+import com.example.rocnikova_prace.ui.screens.profileScreen.ProfileScreen
 import com.example.rocnikova_prace.ui.screens.profileScreen.ProfileScreenViewModel
 import com.example.rocnikova_prace.ui.screens.questionsScreen.GroupsViewModel
 import com.example.rocnikova_prace.ui.screens.questionsScreen.QuestionsScreen
@@ -73,9 +73,7 @@ fun MainScreen(
 
     val currentUser = supabase.auth.currentUserOrNull()
     val startDestination = if (currentUser != null) {
-//        "home_wrapper"
-        MainScreen.AuthScreen.name
-
+        "home_wrapper"
     } else {
         MainScreen.AuthScreen.name
     }
