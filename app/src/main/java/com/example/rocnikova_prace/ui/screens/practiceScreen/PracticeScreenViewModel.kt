@@ -46,6 +46,9 @@ class PracticeScreenViewModel(
     var timeLeft by mutableIntStateOf(900)
         private set
 
+    var answerError by mutableStateOf("")
+        private set
+
     private var timerJob: Job? = null
 
     init {
@@ -82,17 +85,29 @@ class PracticeScreenViewModel(
                 }
             }
             is QuestionItem.Open -> {
-                if (currentQuestion.answer == questionAnswer) {
+                val enteredAnswer = currentQuestion.answer.lowercase().replace(" ", "")
+                val correctAnswer = questionAnswer.lowercase().replace(" ", "")
+
+                if (enteredAnswer == correctAnswer) {
                     submitAnswer(true)
+                } else if (answerError == "") {
+                    addAnswer(false)
+                    answerError = "Správná odpověd je: ${currentQuestion.answer}"
                 } else {
-                    submitAnswer(false)
+                    submitOpenAnswer()
                 }
             }
             is QuestionItem.FillBlank -> {
-                if (currentQuestion.answer == questionAnswer) {
+                val enteredAnswer = currentQuestion.answer.lowercase().replace(" ", "")
+                val correctAnswer = questionAnswer.lowercase().replace(" ", "")
+
+                if (enteredAnswer == correctAnswer) {
                     submitAnswer(true)
+                } else if (answerError == "") {
+                    addAnswer(false)
+                    answerError = "Správná odpověd je: ${currentQuestion.answer}"
                 } else {
-                    submitAnswer(false)
+                    submitOpenAnswer()
                 }
             }
         }
@@ -132,6 +147,12 @@ class PracticeScreenViewModel(
         addAnswer(answer)
         increaseCurrentQuestionIndex()
         questionAnswer = ""
+    }
+
+    private fun submitOpenAnswer() {
+        increaseCurrentQuestionIndex()
+        questionAnswer = ""
+        answerError = ""
     }
 
     private fun resetCorrectAnswerIndex() {

@@ -27,6 +27,9 @@ class AuthViewModel(
     var email by mutableStateOf("")
         private set
 
+    var name by mutableStateOf("")
+        private set
+
     var otp by mutableStateOf("")
         private set
 
@@ -36,18 +39,23 @@ class AuthViewModel(
     var confirmPassword by mutableStateOf("")
         private set
 
-    fun signUp(email: String, password: String) {
+    fun signUp() {
         if (password == confirmPassword) {
             viewModelScope.launch {
                 _authState.value = AuthState.Loading
 
                 try {
-                    authRepository.signUp(email, password)
+                    val isAvailable = authRepository.isNameAvailable(name)
 
+                    if (!isAvailable) {
+                        _authState.value = AuthState.Error("Tato přezdívka je již zabraná. Zkuste prosím jinou.")
+                        return@launch
+                    }
+
+                    authRepository.signUp(email, password, name)
                     _authState.value = AuthState.Success
                 } catch (e: Exception) {
                     e.printStackTrace()
-                    _authState.value = AuthState.Error(e.message ?: "Nastala neznámá chyba")
                 }
             }
         } else {
@@ -61,6 +69,10 @@ class AuthViewModel(
 
     fun updateEmail(value: String) {
         email = value
+    }
+
+    fun updateName(value: String) {
+        name = value
     }
 
     fun updatePassword(value: String) {

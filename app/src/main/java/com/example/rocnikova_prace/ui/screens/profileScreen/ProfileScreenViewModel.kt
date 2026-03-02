@@ -15,5 +15,4 @@ class ProfileScreenViewModel(
             started = SharingStarted.WhileSubscribed(5000),
             initialValue = emptyList()
         )
-
 }

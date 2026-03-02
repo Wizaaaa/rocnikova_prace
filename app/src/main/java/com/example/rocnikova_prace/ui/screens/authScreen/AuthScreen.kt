@@ -42,7 +42,8 @@ import kotlinx.coroutines.launch
 enum class AuthStep {
     ENTER_EMAIL,
     ENTER_OTP,
-    REGISTER_NEW_USER
+    REGISTER_NEW_USER,
+    REGISTER_NAME
 }
 
 
@@ -218,15 +219,37 @@ fun AuthScreen(
             AuthStep.REGISTER_NEW_USER -> {
                 Text("Vypadá to, že tu jste noví! Vytvořte si účet.")
 
-                AuthComponent(
+                AuthRegister(
                     viewModel = viewModel,
                     authState = authState,
-                    onClick = { viewModel.signUp(viewModel.email, viewModel.password) }
+                    onClick = {
+                        if (viewModel.password == viewModel.confirmPassword) {
+                            if (viewModel.password.length >= 6) {
+                                currentStep = AuthStep.REGISTER_NAME
+                            } else {
+                                Toast.makeText(context, "Heslo musí mít alespoň 6 znaků.", Toast.LENGTH_SHORT).show()
+                            }
+                        } else {
+                            Toast.makeText(context, "Hesla se neshodují!", Toast.LENGTH_SHORT).show()
+                        }
+                    }
                 )
 
                 Spacer(modifier = Modifier.height(16.dp))
                 TextButton(onClick = { currentStep = AuthStep.ENTER_EMAIL }) {
                     Text("Zpět na e-mail")
+                }
+            }
+
+            AuthStep.REGISTER_NAME -> {
+                AuthName(
+                    viewModel = viewModel,
+                    authState = authState,
+                    onClick = { viewModel.signUp() }
+                )
+
+                TextButton(onClick = { currentStep = AuthStep.REGISTER_NEW_USER }) {
+                    Text("Zpět na zadání hesla")
                 }
             }
         }

@@ -1,6 +1,7 @@
 package com.example.rocnikova_prace.ui.components
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -121,8 +122,8 @@ private fun AnswerCard(
     viewModel: PracticeScreenViewModel,
 ) {
     Row(
-        Modifier.fillMaxWidth(),
-        horizontalArrangement = Arrangement.spacedBy(10.dp)
+        horizontalArrangement = Arrangement.spacedBy(10.dp),
+        modifier = Modifier.fillMaxWidth()
     ) {
         for (i in index) {
             val (originalIndex, text) = questions[i]
@@ -135,6 +136,7 @@ private fun AnswerCard(
                 modifier = Modifier
                     .weight(1f)
                     .clip(RoundedCornerShape(15.dp))
+                    .clickable{ viewModel.setCorrectAnswerIndex(!isChecked, originalIndex) }
                     .background(Color.LightGray)
                     .padding(5.dp)
             ) {

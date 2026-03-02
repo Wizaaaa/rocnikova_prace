@@ -2,6 +2,8 @@ package com.example.rocnikova_prace.ui.screens.authScreen
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawingPadding
 import androidx.compose.foundation.text.KeyboardOptions
@@ -17,7 +19,7 @@ import com.example.rocnikova_prace.ui.components.AuthButton
 import com.example.rocnikova_prace.ui.components.InformationCard
 
 @Composable
-fun AuthComponent(
+fun AuthRegister(
     viewModel: AuthViewModel,
     authState: AuthState,
     onClick: () -> Unit,
@@ -49,6 +51,7 @@ fun AuthComponent(
             label = "Zopakujte heslo"
         )
 
+        Spacer(modifier = Modifier.height(16.dp))
 
         AuthButton(
             onClick = { onClick() },

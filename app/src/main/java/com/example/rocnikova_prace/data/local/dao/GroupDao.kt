@@ -21,6 +21,9 @@ interface GroupDao {
     @Upsert
     suspend fun insertGroup(group: GroupEntity)
 
+    @Upsert
+    suspend fun upsertGroups(groups: List<GroupEntity>)
+
     @Delete
     suspend fun deleteGroup(group: GroupEntity)
 
@@ -32,7 +35,7 @@ interface GroupDao {
 
     @Transaction
     suspend fun refreshGroups(userId: String, groups: List<GroupEntity>) {
-        deleteAll(userId)
+        deleteAll(userId    )
         insertAll(groups)
     }
 }

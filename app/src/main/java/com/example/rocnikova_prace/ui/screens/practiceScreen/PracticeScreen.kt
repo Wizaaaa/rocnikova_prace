@@ -80,6 +80,10 @@ fun PracticeScreen(
 
             Spacer(Modifier.weight(1f))
 
+            Text(viewModel.answerError)
+
+            Spacer(Modifier.weight(1f))
+
             TextButton(
                 onClick = {
                     viewModel.isAnswerValid()

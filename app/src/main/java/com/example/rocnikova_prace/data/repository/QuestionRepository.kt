@@ -19,8 +19,11 @@ import com.example.rocnikova_prace.data.remote.dto.ResultDto
 import io.github.jan.supabase.auth.auth
 import io.github.jan.supabase.postgrest.from
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.emptyFlow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.onStart
 
 class QuestionRepository(
     private val questionDao: QuestionDao,
@@ -44,7 +47,7 @@ class QuestionRepository(
 
             val remoteEntities = remoteDto.map { it.toEntity() }
 
-            groupDao.refreshGroups(currentUserId, remoteEntities)
+            groupDao.upsertGroups(remoteEntities)
 
             val updatedData = groupDao.getAllGroups(currentUserId).first()
             emit(updatedData)
@@ -226,53 +229,35 @@ class QuestionRepository(
     }
 
 
-    fun getGroupsOverviewStream(): Flow<List<GroupSummary>> = flow {
-        val currentUserId = supabase.auth.currentUserOrNull()?.id ?: return@flow
-        val localResults = resultDao.getAllResults(currentUserId).first()
-        val localGroups = groupDao.getAllGroups(currentUserId).first()
+    fun getGroupsOverviewStream(): Flow<List<GroupSummary>> {
+        val currentUserId = supabase.auth.currentUserOrNull()?.id ?: return emptyFlow()
 
-        emit(calculateSummaries(localResults, localGroups))
-
-        try {
-            val remoteResultDto = supabase.from("result")
-                .select{
-                    filter {
-                        eq("user_id", currentUserId)
-                    }
+        return resultDao.getAllResults(currentUserId)
+            .map { dtoList ->
+                dtoList.map { dto ->
+                    GroupSummary(
+                        groupId = dto.groupId,
+                        groupName = dto.groupName,
+                        totalAttempts = dto.totalAttempts,
+                        averageScore = dto.averageScore
+                    )
                 }
-                .decodeList<ResultDto>()
+            }
+            .onStart {
+                try {
+                    val remoteResultDto = supabase.from("result")
+                        .select {
+                            filter { eq("user_id", currentUserId) }
+                        }
+                        .decodeList<ResultDto>()
 
-            val remoteResultEntities = remoteResultDto.map { it.toEntity() }
-            resultDao.insertAll(remoteResultEntities)
+                    val remoteResultEntities = remoteResultDto.map { it.toEntity() }
 
-            val updatedResults = resultDao.getAllResults(currentUserId).first()
-            val updatedGroups = groupDao.getAllGroups(currentUserId).first()
+                    resultDao.insertAll(remoteResultEntities)
 
-            emit(calculateSummaries(updatedResults, updatedGroups))
-        } catch (e: Exception) {
-            e.printStackTrace()
-        }
-    }
-}
-
-private fun calculateSummaries(
-    results: List<ResultEntity>,
-    groups: List<GroupEntity>
-): List<GroupSummary> {
-    val groupMap = groups.associateBy { it.id }
-
-    val groupedMap = results.groupBy { it.groupId }
-
-    return groupedMap.mapNotNull { (groupId, resultsOfGroup) ->
-        val average = resultsOfGroup.map { it.percentage }.average()
-
-        val groupName = groupMap[groupId]?.name ?: "Neznámá skupina"
-
-        GroupSummary(
-            groupId = groupId,
-            groupName = groupName,
-            averageScore = average.toFloat(),
-            totalAttempts = resultsOfGroup.size
-        )
+                } catch (e: Exception) {
+                    e.printStackTrace()
+                }
+            }
     }
 }
