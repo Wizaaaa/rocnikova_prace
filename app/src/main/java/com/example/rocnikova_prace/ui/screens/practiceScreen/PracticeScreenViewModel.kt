@@ -14,6 +14,8 @@ import com.example.rocnikova_prace.data.repository.QuestionRepository
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import java.util.Collections.emptyList
+import kotlin.collections.forEachIndexed
 
 class PracticeScreenViewModel(
     private val repository: QuestionRepository,
@@ -26,6 +28,15 @@ class PracticeScreenViewModel(
         private set
 
     var correctAnswerIndex = mutableStateListOf(false, false, false, false)
+        private set
+
+    var greenAnswer = mutableStateListOf(false, false, false, false)
+        private set
+
+    var redAnswer = mutableStateListOf(false, false, false, false)
+        private set
+
+    var showError by mutableStateOf(false)
         private set
 
     var practiceEnd = mutableStateOf(false)
@@ -59,6 +70,14 @@ class PracticeScreenViewModel(
         correctAnswerIndex[index] = answer
     }
 
+    fun setGreenAnswer(answer: Boolean, index: Int) {
+        greenAnswer[index] = answer
+    }
+
+    fun setRedAnswer(answer: Boolean, index: Int) {
+        redAnswer[index] = answer
+    }
+
     fun startTimer() {
         if (isRunning.value) return
 
@@ -76,36 +95,67 @@ class PracticeScreenViewModel(
     fun isAnswerValid() {
         when (val currentQuestion = allQuestions[currentQuestionIndex].toQuestionItem()) {
             is QuestionItem.MultipleChoice -> {
-                if (currentQuestion.correctIndices == correctAnswerIndex) {
-                    submitAnswer(true)
-                    resetCorrectAnswerIndex()
+                if (answerError == "") {
+                    val isPerfectMatch = currentQuestion.correctIndices == correctAnswerIndex.toList()
+
+                    if (isPerfectMatch) {
+                        correctAnswerIndex.forEachIndexed { index, isCheckedByUser ->
+                            if (isCheckedByUser) {
+                                setGreenAnswer(true, index)
+                            }
+                        }
+                        addAnswer(true)
+                    } else {
+                        correctAnswerIndex.forEachIndexed { index, isCheckedByUser ->
+                            val isCorrectInDb = currentQuestion.correctIndices[index]
+
+                            if (isCheckedByUser && !isCorrectInDb) {
+                                setRedAnswer(true, index)
+                            } else if (isCorrectInDb) {
+                                setGreenAnswer(true, index)
+                                setCorrectAnswerIndex(true, index)
+                            }
+                        }
+                        addAnswer(false)
+                    }
+
+                    answerError = " "
                 } else {
-                    submitAnswer(false)
+                    submitOpenAnswer()
                     resetCorrectAnswerIndex()
+                    resetColors()
                 }
             }
             is QuestionItem.Open -> {
-                val enteredAnswer = currentQuestion.answer.lowercase().replace(" ", "")
-                val correctAnswer = questionAnswer.lowercase().replace(" ", "")
+                if (answerError == "") {
+                    val enteredAnswer = currentQuestion.answer.lowercase().replace(" ", "")
+                    val correctAnswer = questionAnswer.lowercase().replace(" ", "")
 
-                if (enteredAnswer == correctAnswer) {
-                    submitAnswer(true)
-                } else if (answerError == "") {
-                    addAnswer(false)
-                    answerError = "Správná odpověd je: ${currentQuestion.answer}"
+                    if (enteredAnswer == correctAnswer) {
+                        addAnswer(true)
+                        answerError = "Správně"
+                    } else {
+                        addAnswer(false)
+                        showError = true
+                        answerError = "Správná odpověd je: ${currentQuestion.answer}"
+                    }
                 } else {
                     submitOpenAnswer()
                 }
             }
             is QuestionItem.FillBlank -> {
-                val enteredAnswer = currentQuestion.answer.lowercase().replace(" ", "")
-                val correctAnswer = questionAnswer.lowercase().replace(" ", "")
+                if (answerError == "") {
+                    val enteredAnswer = currentQuestion.answer.lowercase().replace(" ", "")
+                    val correctAnswer = questionAnswer.lowercase().replace(" ", "")
 
-                if (enteredAnswer == correctAnswer) {
-                    submitAnswer(true)
-                } else if (answerError == "") {
-                    addAnswer(false)
-                    answerError = "Správná odpověd je: ${currentQuestion.answer}"
+                    if (enteredAnswer == correctAnswer) {
+                        addAnswer(true)
+                        answerError = "Správně"
+                    } else {
+                        addAnswer(false)
+                        showError = true
+                        answerError = "Správná odpověd je: ${currentQuestion.answer}"
+                    }
                 } else {
                     submitOpenAnswer()
                 }
@@ -132,6 +182,13 @@ class PracticeScreenViewModel(
         practiceEnd.value = false
     }
 
+    fun resetColors() {
+        for (i in 0..3) {
+            setRedAnswer(false, i)
+            setGreenAnswer(false, i)
+        }
+    }
+
     private fun loadData() {
         viewModelScope.launch {
             val group = repository.getGroupById(groupId)
@@ -143,16 +200,11 @@ class PracticeScreenViewModel(
         }
     }
 
-    private fun submitAnswer(answer: Boolean) {
-        addAnswer(answer)
-        increaseCurrentQuestionIndex()
-        questionAnswer = ""
-    }
-
     private fun submitOpenAnswer() {
         increaseCurrentQuestionIndex()
         questionAnswer = ""
         answerError = ""
+        showError = false
     }
 
     private fun resetCorrectAnswerIndex() {

@@ -81,8 +81,11 @@ fun PracticeOpen(
         InformationCard(
             value = viewModel.questionAnswer,
             onValueChange = { newText ->
-                viewModel.updateQuestionAnswer(newText)
+                if (viewModel.answerError == "") {
+                    viewModel.updateQuestionAnswer(newText)
+                }
             },
+            isError = viewModel.showError,
             label = stringResource(R.string.enter_response)
         )
     }
@@ -108,8 +111,11 @@ fun PracticeFillBlank(
         InformationCard(
             value = viewModel.questionAnswer,
             onValueChange = { newText ->
-                viewModel.updateQuestionAnswer(newText)
+                if (viewModel.answerError != "") {
+                    viewModel.updateQuestionAnswer(newText)
+                }
             },
+            isError = viewModel.showError,
             label = stringResource(R.string.enter_response)
         )
     }
@@ -129,6 +135,16 @@ private fun AnswerCard(
             val (originalIndex, text) = questions[i]
 
             val isChecked = viewModel.correctAnswerIndex[originalIndex]
+            val isGreen = viewModel.greenAnswer[originalIndex]
+            val isRed = viewModel.redAnswer[originalIndex]
+
+            val isReviewing = viewModel.answerError.isNotEmpty()
+
+            val backgroundColor = when {
+                isRed -> Color(0xFFFFCDD2)
+                isGreen -> Color(0xFFC8E6C9)
+                else -> Color.LightGray
+            }
 
             Row(
                 verticalAlignment = Alignment.CenterVertically,
@@ -136,8 +152,10 @@ private fun AnswerCard(
                 modifier = Modifier
                     .weight(1f)
                     .clip(RoundedCornerShape(15.dp))
-                    .clickable{ viewModel.setCorrectAnswerIndex(!isChecked, originalIndex) }
-                    .background(Color.LightGray)
+                    .background(backgroundColor)
+                    .clickable(enabled = !isReviewing ){
+                        viewModel.setCorrectAnswerIndex(!isChecked, originalIndex)
+                    }
                     .padding(5.dp)
             ) {
                 Text(
@@ -149,6 +167,7 @@ private fun AnswerCard(
 
                 Checkbox(
                     checked = isChecked,
+                    enabled = !isReviewing,
                     onCheckedChange = { viewModel.setCorrectAnswerIndex(!isChecked, originalIndex) }
                 )
             }

@@ -13,7 +13,7 @@ import com.example.rocnikova_prace.data.local.entities.ResultEntity
 
 @Database(
     entities = [QuestionEntity::class, GroupEntity::class, ResultEntity::class],
-    version = 4,
+    version = 5,
     exportSchema = false
 )
 abstract class AppDatabase : RoomDatabase() {
