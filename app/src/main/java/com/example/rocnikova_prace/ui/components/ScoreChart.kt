@@ -81,9 +81,17 @@ fun ScoreChart(data: List<Float>) {
                 .padding(start = 45.dp, top = 8.dp),
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
+            val maxLabels = 10
+
+            val step = maxOf(1, data.size / maxLabels)
+
             data.indices.forEach { index ->
+                val isLabelVisible = (index % step == 0) || (index == data.lastIndex)
+
+                val finalVisibility = isLabelVisible && !(index == data.lastIndex - 1 && step > 1)
+
                 Text(
-                    text = "${index + 1}",
+                    text = if (finalVisibility) "${index + 1}" else "",
                     style = MaterialTheme.typography.labelSmall,
                     color = Color.Gray
                 )
@@ -159,27 +167,31 @@ fun Graph(
             path = strokePath,
             color = lineColor,
             style = Stroke(
-                width = 3.dp.toPx(),
+                width = if (data.size > 30) 2.dp.toPx() else 3.dp.toPx(),
                 cap = StrokeCap.Round,
                 join = StrokeJoin.Round
             )
         )
 
+        val shouldDrawAllPoints = data.size <= 30
+
         for (i in data.indices) {
             val x = spacing * i
             val y = (height - verticalPadding) - (data[i] / maxDataVal * graphHeight)
 
-            drawCircle(
-                color = lineColor,
-                radius = 5.dp.toPx(),
-                center = Offset(x, y)
-            )
+            if (shouldDrawAllPoints || i == data.lastIndex) {
+                drawCircle(
+                    color = lineColor,
+                    radius = 5.dp.toPx(),
+                    center = Offset(x, y)
+                )
 
-            drawCircle(
-                color = pointColor,
-                radius = 3.dp.toPx(),
-                center = Offset(x, y)
-            )
+                drawCircle(
+                    color = pointColor,
+                    radius = 3.dp.toPx(),
+                    center = Offset(x, y)
+                )
+            }
         }
     }
 }

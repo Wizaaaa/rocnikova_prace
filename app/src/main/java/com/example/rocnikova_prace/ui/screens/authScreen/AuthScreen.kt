@@ -9,8 +9,8 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
@@ -25,13 +25,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.rocnikova_prace.MainScreen
 import com.example.rocnikova_prace.ui.components.AuthButton
 import com.example.rocnikova_prace.ui.components.InformationCard
-import io.github.jan.supabase.auth.OtpType
 import io.github.jan.supabase.auth.auth
 import io.github.jan.supabase.auth.providers.builtin.OTP
 import io.github.jan.supabase.compose.auth.composable.NativeSignInResult
@@ -43,9 +42,8 @@ import kotlinx.coroutines.launch
 
 enum class AuthStep {
     ENTER_EMAIL,
-    ENTER_OTP,
-    REGISTER_NEW_USER,
-    REGISTER_NAME
+    REGISTER_NAME,
+    CHECK_EMAIL
 }
 
 
@@ -57,7 +55,6 @@ fun AuthScreen(
 ) {
     val authState by viewModel.authState.collectAsState()
     val context = LocalContext.current
-
     val scope = rememberCoroutineScope()
 
     var currentStep by remember { mutableStateOf(AuthStep.ENTER_EMAIL) }
@@ -125,39 +122,31 @@ fun AuthScreen(
                                 ).decodeAs<Boolean>()
 
                                 if (exists) {
-                                    currentStep = AuthStep.ENTER_OTP
-
                                     supabase.auth.signInWith(OTP) {
                                         email = viewModel.email
                                     }
+                                    currentStep = AuthStep.CHECK_EMAIL
                                 } else {
-                                    currentStep = AuthStep.REGISTER_NEW_USER
+                                    currentStep = AuthStep.REGISTER_NAME
                                 }
-
-                            } catch (e: Exception) {
-                                println("Chyba při ověřování: ${e.message}")
+                            } catch (_: Exception) {
+                                Toast.makeText(context, "Chyba připojení", Toast.LENGTH_SHORT).show()
                             }
                         }
                     },
                     enable = authState !is AuthState.Loading && viewModel.email.isNotBlank(),
-                    text = "Pokracovat",
+                    text = "Pokračovat",
                     filled = true
                 )
 
                 // Divider
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(top = 18.dp, bottom = 18.dp)
+                    modifier = Modifier.fillMaxWidth().padding(top = 18.dp, bottom = 18.dp)
                 ) {
                     HorizontalDivider(Modifier.weight(1f))
 
-                    Text(
-                        text = "nebo",
-                        modifier = Modifier.padding(horizontal = 16.dp),
-                        color = Color.Gray
-                    )
+                    Text(text = "nebo", modifier = Modifier.padding(horizontal = 16.dp), color = Color.Gray)
 
                     HorizontalDivider(Modifier.weight(1f))
                 }
@@ -171,70 +160,18 @@ fun AuthScreen(
             }
 
             // -----------------------------------------
-            // KROK 2A: PŘIHLÁŠENÍ EXISTUJÍCÍHO UŽIVATELE
+            // KROK 2: REGISTRACE JMÉNA (Pro nové uživatele)
             // -----------------------------------------
-            AuthStep.ENTER_OTP -> {
-                Text("8místný kód jsme poslali na ${viewModel.email}")
+            AuthStep.REGISTER_NAME -> {
+                Text("Vypadá to, že tu jste noví! Jak vám máme říkat?")
                 Spacer(modifier = Modifier.height(16.dp))
 
-                InformationCard(
-                    value = viewModel.otp,
-                    onValueChange = { viewModel.updateOtp(it) },
-                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-                    label = "Zadejte kod"
-                )
-
-                Spacer(modifier = Modifier.height(16.dp))
-
-                AuthButton(
-                    onClick = {
-                        scope.launch {
-                            try {
-                                supabase.auth.verifyEmailOtp(
-                                    type = OtpType.Email.EMAIL,
-                                    email = viewModel.email,
-                                    token = viewModel.otp
-                                )
-
-                                navController.navigate("home_wrapper") {
-                                    popUpTo("auth_screen") { inclusive = true }
-                                }
-                            } catch (_: Exception) {
-                                Toast.makeText(context, "Špatný kód, zkuste to znovu.", Toast.LENGTH_SHORT).show()
-                            }
-                        }
-                    },
-                    enable = authState !is AuthState.Loading && viewModel.otp.isNotBlank(),
-                    text = "Ověřit a přihlásit se",
-                    filled = true
-                )
-
-                Spacer(modifier = Modifier.height(16.dp))
-
-                TextButton(onClick = { currentStep = AuthStep.ENTER_EMAIL }) {
-                    Text("Zpět na zadání e-mailu")
-                }
-            }
-
-            // -----------------------------------------
-            // KROK 2B: REGISTRACE NOVÉHO UŽIVATELE
-            // -----------------------------------------
-            AuthStep.REGISTER_NEW_USER -> {
-                Text("Vypadá to, že tu jste noví! Vytvořte si účet.")
-
-                AuthRegister(
+                AuthName(
                     viewModel = viewModel,
                     authState = authState,
                     onClick = {
-                        if (viewModel.password == viewModel.confirmPassword) {
-                            if (viewModel.password.length >= 6) {
-                                currentStep = AuthStep.REGISTER_NAME
-                            } else {
-                                Toast.makeText(context, "Heslo musí mít alespoň 6 znaků.", Toast.LENGTH_SHORT).show()
-                            }
-                        } else {
-                            Toast.makeText(context, "Hesla se neshodují!", Toast.LENGTH_SHORT).show()
-                        }
+                        viewModel.sendMagicLink()
+                        currentStep = AuthStep.CHECK_EMAIL
                     }
                 )
 
@@ -244,15 +181,25 @@ fun AuthScreen(
                 }
             }
 
-            AuthStep.REGISTER_NAME -> {
-                AuthName(
-                    viewModel = viewModel,
-                    authState = authState,
-                    onClick = { viewModel.signUp() }
+            // -----------------------------------------
+            // KROK 3: ČEKÁNÍ NA KLIKNUTÍ V E-MAILU
+            // -----------------------------------------
+            AuthStep.CHECK_EMAIL -> {
+                Text(
+                    text = "Zkontrolujte si e-mail!",
+                    style = MaterialTheme.typography.titleLarge
+                )
+                Spacer(modifier = Modifier.height(8.dp))
+                Text(
+                    text = "Poslali jsme vám přihlašovací odkaz na adresu\n${viewModel.email}\n\nStačí na něj kliknout a aplikace se sama přihlásí.",
+                    textAlign = TextAlign.Center,
+                    color = Color.Gray
                 )
 
-                TextButton(onClick = { currentStep = AuthStep.REGISTER_NEW_USER }) {
-                    Text("Zpět na zadání hesla")
+                Spacer(modifier = Modifier.height(24.dp))
+
+                TextButton(onClick = { currentStep = AuthStep.ENTER_EMAIL }) {
+                    Text("Zadal jsem špatný e-mail")
                 }
             }
         }

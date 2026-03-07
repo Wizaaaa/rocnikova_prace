@@ -1,5 +1,6 @@
 package com.example.rocnikova_prace.ui.screens.practiceScreen
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -9,6 +10,10 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -24,6 +29,7 @@ import com.example.rocnikova_prace.ui.components.PracticeOpen
 import com.example.rocnikova_prace.ui.components.QuestionsProgressBar
 import com.woowla.compose.icon.collections.heroicons.Heroicons
 import com.woowla.compose.icon.collections.heroicons.heroicons.Outline
+import com.woowla.compose.icon.collections.heroicons.heroicons.outline.FaceFrown
 import com.woowla.compose.icon.collections.heroicons.heroicons.outline.InformationCircle
 import java.util.Locale
 
@@ -35,6 +41,19 @@ fun PracticeScreen(
 ) {
     val minutes = viewModel.timeLeft / 60
     val seconds = viewModel.timeLeft % 60
+
+    var showExitDialog by remember { mutableStateOf(false) }
+
+    LaunchedEffect(viewModel.practiceEnd.value) {
+        if (viewModel.practiceEnd.value) {
+            viewModel.pauseTimer()
+        }
+    }
+
+    BackHandler(enabled = !viewModel.practiceEnd.value) {
+        viewModel.pauseTimer()
+        showExitDialog = true
+    }
 
 
     if (!viewModel.allQuestions.isEmpty()) {
@@ -110,6 +129,42 @@ fun PracticeScreen(
                     viewModel.resetPracticeScreen()
                 },
                 centerButtons = true
+            )
+        }
+        if (viewModel.timeLeft <= 0 && !viewModel.practiceEnd.value) {
+            DeleteDialog(
+                imageVector = Heroicons.Outline.FaceFrown,
+                text = "Bohužel vám vypšel čas na procvičování",
+                dismissText = stringResource(R.string.PC_to_question_list),
+                confirmText = stringResource(R.string.PC_start_practice),
+                onDismissRequest = {
+                    viewModel.setPracticeEnd(false)
+                    navController.popBackStack()
+                },
+                onConfirmation = {
+                    viewModel.setPracticeEnd(false)
+                    viewModel.resetPracticeScreen()
+                },
+                centerButtons = true
+            )
+        }
+        if (showExitDialog) {
+            DeleteDialog(
+                imageVector = Heroicons.Outline.InformationCircle,
+                text = "Opravdu si přejete odejít?",
+                dismissText = "Ne",
+                confirmText = "Ano",
+                onDismissRequest = {
+                    showExitDialog = false
+                    viewModel.startTimer()
+                },
+                onConfirmation = {
+                    if (viewModel.answers.isNotEmpty()) {
+                        viewModel.setPracticeEnd(false)
+                    }
+
+                    navController.popBackStack()
+                }
             )
         }
     }

@@ -24,13 +24,6 @@ class AuthRepository(
         }
     }
 
-    suspend fun signIn(userEmail: String, userPassword: String) {
-        supabase.auth.signInWith(Email) {
-            email = userEmail
-            password = userPassword
-        }
-    }
-
     suspend fun signOut() {
         supabase.auth.signOut()
         database.clearAllTables()
@@ -48,9 +41,5 @@ class AuthRepository(
         ).decodeAs<Boolean>()
 
         return !nameExists
-    }
-
-    suspend fun resetUserPassword(userEmail: String) {
-        supabase.auth.resetPasswordForEmail(email = userEmail)
     }
 }

@@ -14,7 +14,6 @@ import com.example.rocnikova_prace.data.repository.QuestionRepository
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import java.util.Collections.emptyList
 import kotlin.collections.forEachIndexed
 
 class PracticeScreenViewModel(
@@ -54,7 +53,9 @@ class PracticeScreenViewModel(
     var isRunning = mutableStateOf(false)
         private set
 
-    var timeLeft by mutableIntStateOf(900)
+    val secondsForQuestion = 30
+
+    var timeLeft by mutableIntStateOf(secondsForQuestion)
         private set
 
     var answerError by mutableStateOf("")
@@ -90,6 +91,13 @@ class PracticeScreenViewModel(
             }
             isRunning.value = false
         }
+    }
+
+    fun pauseTimer() {
+        isRunning.value = false
+
+        timerJob?.cancel()
+        timerJob = null
     }
 
     fun isAnswerValid() {
@@ -165,6 +173,7 @@ class PracticeScreenViewModel(
 
     fun addAnswer(answer: Boolean) {
         answers.add(answer)
+        saveResult()
     }
 
     fun updateQuestionAnswer(answer: String) {
@@ -180,6 +189,10 @@ class PracticeScreenViewModel(
         currentQuestionIndex = 0
         answers.clear()
         practiceEnd.value = false
+        timeLeft = allQuestions.size * secondsForQuestion
+        resetColors()
+        resetCorrectAnswerIndex()
+        startTimer()
     }
 
     fun resetColors() {
@@ -197,6 +210,8 @@ class PracticeScreenViewModel(
             }
 
             allQuestions = repository.getQuestionsOnce(groupId).shuffled()
+
+            timeLeft = allQuestions.size * secondsForQuestion
         }
     }
 
@@ -223,7 +238,7 @@ class PracticeScreenViewModel(
 
     private fun saveResult() {
         val correctCount = answers.count { it }
-        val totalCount = answers.size
+        val totalCount = allQuestions.size
 
         val percentage = if (totalCount > 0) {
             (correctCount.toFloat() / totalCount.toFloat()) * 100f

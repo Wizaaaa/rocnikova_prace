@@ -6,10 +6,15 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.rocnikova_prace.data.repository.AuthRepository
+import io.github.jan.supabase.auth.auth
+import io.github.jan.supabase.auth.providers.builtin.OTP
+import io.github.jan.supabase.auth.status.SessionStatus
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import kotlinx.serialization.json.buildJsonObject
+import kotlinx.serialization.json.put
 
 sealed class AuthState {
     object Idle: AuthState()
@@ -18,9 +23,7 @@ sealed class AuthState {
     data class Error(val message: String): AuthState()
 }
 
-class AuthViewModel(
-    private val authRepository: AuthRepository
-) : ViewModel() {
+class AuthViewModel: ViewModel() {
     private val _authState = MutableStateFlow<AuthState>(AuthState.Idle)
     val authState: StateFlow<AuthState> = _authState.asStateFlow()
 
@@ -39,27 +42,40 @@ class AuthViewModel(
     var confirmPassword by mutableStateOf("")
         private set
 
-    fun signUp() {
-        if (password == confirmPassword) {
-            viewModelScope.launch {
-                _authState.value = AuthState.Loading
-
-                try {
-                    val isAvailable = authRepository.isNameAvailable(name)
-
-                    if (!isAvailable) {
-                        _authState.value = AuthState.Error("Tato přezdívka je již zabraná. Zkuste prosím jinou.")
-                        return@launch
+    init {
+        viewModelScope.launch {
+            com.example.rocnikova_prace.data.remote.SupabaseClient.client.auth.sessionStatus.collect { status ->
+                when (status) {
+                    is SessionStatus.Authenticated -> {
+                        _authState.value = AuthState.Success
                     }
-
-                    authRepository.signUp(email, password, name)
-                    _authState.value = AuthState.Success
-                } catch (e: Exception) {
-                    e.printStackTrace()
+                    is SessionStatus.RefreshFailure -> {
+                        if (_authState.value is AuthState.Loading) {
+                            _authState.value = AuthState.Error("Odkaz vypršel nebo je neplatný.")
+                        }
+                    }
+                    else -> { }
                 }
             }
-        } else {
-            _authState.value = AuthState.Error("Hesla se neshodují!")
+        }
+    }
+
+    fun sendMagicLink() {
+        viewModelScope.launch {
+            _authState.value = AuthState.Loading
+            try {
+                com.example.rocnikova_prace.data.remote.SupabaseClient.client.auth.signInWith(OTP) {
+                    email = this@AuthViewModel.email
+                    if (name.isNotBlank()) {
+                        data = buildJsonObject {
+                            put("name", name)
+                        }
+                    }
+                }
+                _authState.value = AuthState.Idle
+            } catch (e: Exception) {
+                _authState.value = AuthState.Error("Chyba při odesílání: ${e.message}")
+            }
         }
     }
 
@@ -81,9 +97,5 @@ class AuthViewModel(
 
     fun updateConfirmPassword(value: String) {
         confirmPassword = value
-    }
-
-    fun updateOtp(value: String) {
-        otp = value
     }
 }
