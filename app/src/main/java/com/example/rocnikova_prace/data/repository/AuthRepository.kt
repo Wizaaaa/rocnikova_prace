@@ -6,6 +6,8 @@ import io.github.jan.supabase.auth.auth
 import io.github.jan.supabase.auth.providers.builtin.Email
 import io.github.jan.supabase.postgrest.postgrest
 import io.github.jan.supabase.postgrest.rpc
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import kotlinx.serialization.json.buildJsonObject
 import kotlinx.serialization.json.put
 
@@ -26,9 +28,10 @@ class AuthRepository(
 
     suspend fun signOut() {
         supabase.auth.signOut()
-        database.clearAllTables()
+        withContext(Dispatchers.IO) {
+            database.clearAllTables()
+        }
     }
-
 
     fun getCurrentUserId(): String? {
         return supabase.auth.currentUserOrNull()?.id
