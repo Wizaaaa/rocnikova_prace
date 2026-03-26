@@ -11,7 +11,7 @@ import com.example.rocnikova_prace.ui.screens.profileScreen.ProfileScreenViewMod
 import com.example.rocnikova_prace.ui.screens.questionsScreen.GroupsViewModel
 
 class ViewModelFactory(
-    private val repository: QuestionRepository,
+    private val questionRepository: QuestionRepository,
     private val authRepository: AuthRepository? = null,
     private val groupId: String? = null
 ) : ViewModelProvider.Factory {
@@ -19,19 +19,19 @@ class ViewModelFactory(
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
         return when {
             modelClass.isAssignableFrom(PracticeScreenViewModel::class.java) -> {
-                PracticeScreenViewModel(repository, groupId!!) as T
+                PracticeScreenViewModel(questionRepository, groupId!!) as T
             }
             modelClass.isAssignableFrom(GraphScreenViewModel::class.java) -> {
-                GraphScreenViewModel(repository, groupId!!) as T
+                GraphScreenViewModel(questionRepository, groupId!!) as T
             }
             modelClass.isAssignableFrom(CreateInformationViewModel::class.java) -> {
-                CreateInformationViewModel(repository, authRepository!!, groupId!!) as T
+                CreateInformationViewModel(questionRepository, authRepository!!, groupId!!) as T
             }
             modelClass.isAssignableFrom(GroupsViewModel::class.java) -> {
-                GroupsViewModel(repository) as T
+                GroupsViewModel(questionRepository) as T
             }
             modelClass.isAssignableFrom(ProfileScreenViewModel::class.java) -> {
-                ProfileScreenViewModel(repository, authRepository!!) as T
+                ProfileScreenViewModel(questionRepository, authRepository!!) as T
             }
             else -> throw IllegalArgumentException("Unknown ViewModel class: ${modelClass.name}")
         }

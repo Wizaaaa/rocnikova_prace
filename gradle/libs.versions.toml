@@ -3,7 +3,7 @@ agp = "9.0.0"
 bom = "3.3.0"
 coilCompose = "2.7.0"
 heroicons = "2.2.0"
-kotlin = "2.3.10"
+kotlin = "2.3.20"
 coreKtx = "1.17.0"
 junit = "4.13.2"
 junitVersion = "1.3.0"
@@ -45,6 +45,7 @@ kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serializa
 androidx-room-compiler = { module = "androidx.room:room-compiler", version.ref = "roomRuntime" }
 ktor-client-android = { module = "io.ktor:ktor-client-android", version.ref = "ktorClientAndroid" }
 postgrest-kt = { module = "io.github.jan-tennert.supabase:postgrest-kt" }
+storage-kt = { module = "io.github.jan-tennert.supabase:storage-kt"}
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

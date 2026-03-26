@@ -31,6 +31,8 @@ import com.example.rocnikova_prace.ui.screens.createInformation.CreateInformatio
 import com.example.rocnikova_prace.ui.screens.createInformation.CreateInformationViewModel
 import com.example.rocnikova_prace.ui.screens.createScreen.CreateScreen
 import com.example.rocnikova_prace.ui.screens.datailProfile.DetailProfile
+import com.example.rocnikova_prace.ui.screens.datailProfile.DetailProfileViewModel
+import com.example.rocnikova_prace.ui.screens.datailProfile.DetailProfileViewModelFactory
 import com.example.rocnikova_prace.ui.screens.graphScreen.GraphScreen
 import com.example.rocnikova_prace.ui.screens.graphScreen.GraphScreenViewModel
 import com.example.rocnikova_prace.ui.screens.practiceScreen.PracticeScreen
@@ -235,10 +237,18 @@ fun MainScreen(
                 )
             }
         }
+
         composable(
-            route = MainScreen.DetailProfile.name
+            route = "${MainScreen.DetailProfile.name}/{userId}"
         ) { backStackEntry ->
-            DetailProfile()
+            val factory = DetailProfileViewModelFactory(
+                repository = authRepository,
+                owner = backStackEntry,
+                defaultArgs = backStackEntry.arguments
+            )
+            val viewModel: DetailProfileViewModel = viewModel(factory = factory)
+
+            DetailProfile(viewModel)
         }
     }
 }

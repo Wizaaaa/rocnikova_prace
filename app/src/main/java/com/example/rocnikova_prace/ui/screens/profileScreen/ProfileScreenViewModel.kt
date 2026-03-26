@@ -1,34 +1,62 @@
 package com.example.rocnikova_prace.ui.screens.profileScreen
 
 import android.util.Log
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.rocnikova_prace.data.model.GroupSummary
 import com.example.rocnikova_prace.data.repository.AuthRepository
 import com.example.rocnikova_prace.data.repository.QuestionRepository
-import io.github.jan.supabase.auth.auth
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.SharingStarted
-import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 class ProfileScreenViewModel(
-    repository: QuestionRepository,
+    private val repository: QuestionRepository,
     private val authRepository: AuthRepository
 ): ViewModel() {
-    val overviewData = repository.getGroupsOverviewStream()
-        .stateIn(
-            scope = viewModelScope,
-            started = SharingStarted.WhileSubscribed(5000),
-            initialValue = emptyList()
-        )
+    var isLoading by mutableStateOf(true)
+        private set
 
-    val userId: String? = authRepository.getCurrentUserId()
+    private val _overviewData = MutableStateFlow<List<GroupSummary>>(emptyList())
+    val overviewData = _overviewData.asStateFlow()
 
-    private val supabase = com.example.rocnikova_prace.data.remote.SupabaseClient.client
+    val userId = authRepository.getCurrentUserId()
 
-    val userEmail: String
-        get() = supabase.auth.currentUserOrNull()?.email ?: "Neznámý e-mail"
+    var userName by mutableStateOf("")
+        private set
+
+    var userAvatar: String? by mutableStateOf(null)
+        private set
+
+    var isRefreshing by mutableStateOf(false)
+        private set
+
+    init {
+        loadData()
+    }
+
+    private fun loadData() {
+        viewModelScope.launch {
+            isLoading = true
+            try {
+                loadUser()
+
+                repository.getGroupsOverviewStream()
+                    .collect { data ->
+                        _overviewData.value = data
+                        isLoading = false
+                    }
+            } catch (e: Exception) {
+                e.printStackTrace()
+                isLoading = false
+            }
+        }
+    }
 
     fun signOut(onSuccess: () -> Unit) {
         viewModelScope.launch {
@@ -48,14 +76,24 @@ class ProfileScreenViewModel(
         }
     }
 
-    fun getUserName(): String {
-        val user = supabase.auth.currentUserOrNull()
-        val name = user?.userMetadata?.get("name")?.toString() ?: "Uživatel"
-        return name.replace("\"", "")
+    fun uploadNewAvatar(imageBytes: ByteArray) {
+        viewModelScope.launch {
+            try {
+                authRepository.uploadAvatar(imageBytes)
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+        }
     }
 
-    fun getUserAvatarUrl(): String? {
-        val user = supabase.auth.currentUserOrNull()
-        return user?.userMetadata?.get("avatar_url")?.toString()?.replace("\"", "")
+    suspend fun loadUser() {
+        val id = authRepository.getCurrentUserId()
+        val profile = authRepository.getRemoteProfile(id!!)
+        userName = profile.userName
+        userAvatar = profile.avatarUrl
+    }
+
+    fun refreshData() {
+        loadData()
     }
 }

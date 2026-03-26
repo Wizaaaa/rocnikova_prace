@@ -6,6 +6,7 @@ import io.github.jan.supabase.compose.auth.googleNativeLogin
 import io.github.jan.supabase.createSupabaseClient
 import io.github.jan.supabase.postgrest.Postgrest
 import io.github.jan.supabase.serializer.KotlinXSerializer
+import io.github.jan.supabase.storage.Storage
 
 object SupabaseClient {
     val client = createSupabaseClient(
@@ -22,5 +23,6 @@ object SupabaseClient {
         install(ComposeAuth) {
             googleNativeLogin(serverClientId = "356671901841-1cb1pta371p8ng8iae4uujg8eduu2pmd.apps.googleusercontent.com")
         }
+        install(Storage)
     }
 }
