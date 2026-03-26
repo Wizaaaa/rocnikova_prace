@@ -5,7 +5,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.rocnikova_prace.data.repository.AuthRepository
 import io.github.jan.supabase.auth.auth
 import io.github.jan.supabase.auth.providers.builtin.OTP
 import io.github.jan.supabase.auth.status.SessionStatus
@@ -31,9 +30,6 @@ class AuthViewModel: ViewModel() {
         private set
 
     var name by mutableStateOf("")
-        private set
-
-    var otp by mutableStateOf("")
         private set
 
     var password by mutableStateOf("")
@@ -66,9 +62,12 @@ class AuthViewModel: ViewModel() {
             try {
                 com.example.rocnikova_prace.data.remote.SupabaseClient.client.auth.signInWith(OTP) {
                     email = this@AuthViewModel.email
+
                     if (name.isNotBlank()) {
                         data = buildJsonObject {
                             put("name", name)
+                            put("full_name", name)
+                            put("avatar_url", "")
                         }
                     }
                 }

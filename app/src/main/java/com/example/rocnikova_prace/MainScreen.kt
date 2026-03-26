@@ -23,17 +23,16 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.example.rocnikova_prace.data.remote.SupabaseClient
-import com.example.rocnikova_prace.ui.AuthViewModelFactory
-import com.example.rocnikova_prace.ui.GroupIdAndRepositoryFactory
-import com.example.rocnikova_prace.ui.GroupIdRepositoryAuthFactory
-import com.example.rocnikova_prace.ui.QuestionRepositoryFactory
+import com.example.rocnikova_prace.ui.ViewModelFactory
 import com.example.rocnikova_prace.ui.components.NavBar
 import com.example.rocnikova_prace.ui.components.TopAppBar
 import com.example.rocnikova_prace.ui.screens.authScreen.AuthScreen
-import com.example.rocnikova_prace.ui.screens.authScreen.AuthViewModel
 import com.example.rocnikova_prace.ui.screens.createInformation.CreateInformation
 import com.example.rocnikova_prace.ui.screens.createInformation.CreateInformationViewModel
 import com.example.rocnikova_prace.ui.screens.createScreen.CreateScreen
+import com.example.rocnikova_prace.ui.screens.datailProfile.DetailProfile
+import com.example.rocnikova_prace.ui.screens.datailProfile.DetailProfileViewModel
+import com.example.rocnikova_prace.ui.screens.datailProfile.DetailProfileViewModelFactory
 import com.example.rocnikova_prace.ui.screens.graphScreen.GraphScreen
 import com.example.rocnikova_prace.ui.screens.graphScreen.GraphScreenViewModel
 import com.example.rocnikova_prace.ui.screens.practiceScreen.PracticeScreen
@@ -52,7 +51,8 @@ enum class MainScreen {
     Profile,
     CreateInformation,
     PracticeScreen,
-    GraphScreen
+    GraphScreen,
+    DetailProfile
 }
 
 val pagerScreens = listOf(
@@ -89,11 +89,8 @@ fun MainScreen(
         composable(
             route = MainScreen.AuthScreen.name
         ) {
-            val authViewModel: AuthViewModel = viewModel(
-                factory = AuthViewModelFactory(authRepository)
-            )
 
-            AuthScreen(viewModel = authViewModel, navController = navController, supabase = supabase)
+            AuthScreen(viewModel = viewModel(), navController = navController, supabase = supabase)
         }
 
 
@@ -130,7 +127,7 @@ fun MainScreen(
                     when (pagerScreens[pageIndex]) {
                         MainScreen.Questions -> {
                             val questionsViewModel: GroupsViewModel = viewModel(
-                                factory = QuestionRepositoryFactory(repository)
+                                factory = ViewModelFactory(repository)
                             )
                             QuestionsScreen(
                                 viewModel = questionsViewModel,
@@ -145,7 +142,7 @@ fun MainScreen(
                         }
                         MainScreen.Profile -> {
                             val profileScreenViewModel: ProfileScreenViewModel = viewModel(
-                                factory = QuestionRepositoryFactory(repository)
+                                factory = ViewModelFactory(repository, authRepository)
                             )
 
                             ProfileScreen(
@@ -172,7 +169,7 @@ fun MainScreen(
                 ?: return@composable
 
             val createInfoViewModel: CreateInformationViewModel = viewModel(
-                factory = GroupIdRepositoryAuthFactory(repository, authRepository, groupId)
+                factory = ViewModelFactory(repository, authRepository, groupId)
             )
 
             Scaffold(
@@ -199,7 +196,7 @@ fun MainScreen(
                 ?: return@composable
 
             val practiceViewModel: PracticeScreenViewModel = viewModel(
-                factory = GroupIdAndRepositoryFactory(repository, groupId)
+                factory = ViewModelFactory(repository, groupId = groupId)
             )
 
             Scaffold(
@@ -224,7 +221,7 @@ fun MainScreen(
                 ?: return@composable
 
             val graphScreenViewModel: GraphScreenViewModel = viewModel(
-                factory = GroupIdAndRepositoryFactory(repository, groupId)
+                factory = ViewModelFactory(repository, groupId = groupId)
             )
 
             Scaffold(
@@ -239,6 +236,19 @@ fun MainScreen(
                     modifier = Modifier.padding(padding)
                 )
             }
+        }
+
+        composable(
+            route = "${MainScreen.DetailProfile.name}/{userId}"
+        ) { backStackEntry ->
+            val factory = DetailProfileViewModelFactory(
+                repository = authRepository,
+                owner = backStackEntry,
+                defaultArgs = backStackEntry.arguments
+            )
+            val viewModel: DetailProfileViewModel = viewModel(factory = factory)
+
+            DetailProfile(viewModel)
         }
     }
 }

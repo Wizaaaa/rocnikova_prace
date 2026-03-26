@@ -69,6 +69,9 @@ dependencies {
     implementation(libs.ktor.client.android)
     implementation(libs.auth.kt)
     implementation(libs.compose.auth)
+    implementation(libs.storage.kt)
+
+    implementation(libs.coil.compose)
 
     debugImplementation(libs.androidx.compose.ui.tooling)
     debugImplementation(libs.androidx.compose.ui.test.manifest)
