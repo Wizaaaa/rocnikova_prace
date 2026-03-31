@@ -1,6 +1,10 @@
 package com.example.rocnikova_prace
 
+import android.os.Build
+import android.util.Log
 import androidx.activity.compose.BackHandler
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
@@ -9,12 +13,15 @@ import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
@@ -27,6 +34,7 @@ import com.example.rocnikova_prace.ui.ViewModelFactory
 import com.example.rocnikova_prace.ui.components.NavBar
 import com.example.rocnikova_prace.ui.components.TopAppBar
 import com.example.rocnikova_prace.ui.screens.authScreen.AuthScreen
+import com.example.rocnikova_prace.ui.screens.authScreen.AuthViewModel
 import com.example.rocnikova_prace.ui.screens.createInformation.CreateInformation
 import com.example.rocnikova_prace.ui.screens.createInformation.CreateInformationViewModel
 import com.example.rocnikova_prace.ui.screens.createScreen.CreateScreen
@@ -71,6 +79,22 @@ fun MainScreen(
     val repository = app.repository
     val authRepository = app.authRepository
 
+    val launcher = rememberLauncherForActivityResult(
+        ActivityResultContracts.RequestPermission()
+    ) { isGranted ->
+        if (isGranted) {
+            Log.d("Notification", "Uživatel povolil notifikace")
+        } else {
+            Log.d("Notification", "Uživatel zamítl notifikace")
+        }
+    }
+
+    LaunchedEffect(Unit) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            launcher.launch(android.Manifest.permission.POST_NOTIFICATIONS)
+        }
+    }
+
     val currentUser = supabase.auth.currentUserOrNull()
     val startDestination = if (currentUser != null) {
         "home_wrapper"
@@ -89,8 +113,15 @@ fun MainScreen(
         composable(
             route = MainScreen.AuthScreen.name
         ) {
+            val authViewModel: AuthViewModel = viewModel(
+                factory = ViewModelFactory(repository, authRepository)
+            )
 
-            AuthScreen(viewModel = viewModel(), navController = navController, supabase = supabase)
+            AuthScreen(
+                viewModel = authViewModel,
+                navController = navController,
+                supabase = supabase
+            )
         }
 
 
@@ -138,7 +169,14 @@ fun MainScreen(
                             )
                         }
                         MainScreen.Create -> {
-                            CreateScreen(navController = navController)
+                            val authViewModel: AuthViewModel = viewModel(
+                                factory = ViewModelFactory(repository, authRepository)
+                            )
+
+                            CreateScreen(
+                                navController = navController,
+                                authViewModel = authViewModel
+                            )
                         }
                         MainScreen.Profile -> {
                             val profileScreenViewModel: ProfileScreenViewModel = viewModel(
@@ -242,13 +280,27 @@ fun MainScreen(
             route = "${MainScreen.DetailProfile.name}/{userId}"
         ) { backStackEntry ->
             val factory = DetailProfileViewModelFactory(
-                repository = authRepository,
+                authRepository = authRepository,
                 owner = backStackEntry,
-                defaultArgs = backStackEntry.arguments
+                defaultArgs = backStackEntry.arguments,
+                questionRepository = repository
             )
             val viewModel: DetailProfileViewModel = viewModel(factory = factory)
 
-            DetailProfile(viewModel)
+            Scaffold(
+                topBar = {
+                    TopAppBar(
+                        title = viewModel.userName,
+                        style = MaterialTheme.typography.headlineMedium,
+                        fontWeight = FontWeight.Bold
+                    )
+                }
+            ) { padding ->
+                DetailProfile(
+                    viewModel = viewModel,
+                    modifier = Modifier.padding(padding)
+                )
+            }
         }
     }
 }

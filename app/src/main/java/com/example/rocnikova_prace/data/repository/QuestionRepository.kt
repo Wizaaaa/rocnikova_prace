@@ -229,10 +229,10 @@ class QuestionRepository(
     }
 
 
-    fun getGroupsOverviewStream(): Flow<List<GroupSummary>> {
-        val currentUserId = supabase.auth.currentUserOrNull()?.id ?: return emptyFlow()
+    fun getGroupsOverviewStream(userId: String? = supabase.auth.currentUserOrNull()?.id): Flow<List<GroupSummary>> {
+        val resolvedUserId = userId ?: return emptyFlow()
 
-        return resultDao.getAllResults(currentUserId)
+        return resultDao.getAllResults(resolvedUserId)
             .map { dtoList ->
                 dtoList.map { dto ->
                     GroupSummary(
@@ -247,17 +247,16 @@ class QuestionRepository(
                 try {
                     val remoteResultDto = supabase.from("result")
                         .select {
-                            filter { eq("user_id", currentUserId) }
+                            filter { eq("user_id", resolvedUserId) }
                         }
                         .decodeList<ResultDto>()
 
                     val remoteResultEntities = remoteResultDto.map { it.toEntity() }
-
                     resultDao.insertAll(remoteResultEntities)
-
                 } catch (e: Exception) {
                     e.printStackTrace()
                 }
             }
     }
+
 }

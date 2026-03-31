@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "953826581802",
+    "project_id": "rocnikova-prace",
+    "storage_bucket": "rocnikova-prace.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:953826581802:android:7c04cc1913d14c2d9c5253",
+        "android_client_info": {
+          "package_name": "com.example.rocnikova_prace"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD5VBXEDg2_6oqYxpHf3Bpl_ipboHlYeP0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

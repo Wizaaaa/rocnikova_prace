@@ -33,6 +33,9 @@ class ProfileScreenViewModel(
     var userAvatar: String? by mutableStateOf(null)
         private set
 
+    var mail by mutableStateOf("")
+        private set
+
     var isRefreshing by mutableStateOf(false)
         private set
 
@@ -91,6 +94,7 @@ class ProfileScreenViewModel(
         val profile = authRepository.getRemoteProfile(id!!)
         userName = profile.userName
         userAvatar = profile.avatarUrl
+        mail = profile.email
     }
 
     fun refreshData() {
