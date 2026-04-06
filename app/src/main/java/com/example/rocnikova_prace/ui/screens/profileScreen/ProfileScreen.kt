@@ -76,7 +76,7 @@ fun ProfileScreen(
 
     PullToRefreshBox(
         isRefreshing = profileScreenViewModel.isRefreshing,
-        onRefresh = { profileScreenViewModel.refreshData() }
+        onRefresh = { profileScreenViewModel.forceRefresh() }
     ) {
         if (profileScreenViewModel.isLoading) {
             Box(
@@ -97,9 +97,11 @@ fun ProfileScreen(
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(horizontal = 16.dp, vertical = 24.dp)
-                            .clickable(onClick = {
-                                navController.navigate("${MainScreen.DetailProfile.name}/${profileScreenViewModel.userId}")
-                            }),
+                            .clickable {
+                                profileScreenViewModel.currentUserId?.let { uid ->
+                                    navController.navigate("${MainScreen.DetailProfile.name}/$uid")
+                                }
+                            },
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         Surface(

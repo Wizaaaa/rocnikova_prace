@@ -181,7 +181,6 @@ class PracticeScreenViewModel(
     }
 
     fun setPracticeEnd(state: Boolean) {
-        saveResult()
         practiceEnd.value = state
     }
 

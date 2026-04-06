@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import com.example.rocnikova_prace.data.repository.AuthRepository
 import com.example.rocnikova_prace.data.repository.QuestionRepository
+import com.example.rocnikova_prace.ui.screens.authScreen.AuthViewModel
 import com.example.rocnikova_prace.ui.screens.createInformation.CreateInformationViewModel
 import com.example.rocnikova_prace.ui.screens.graphScreen.GraphScreenViewModel
 import com.example.rocnikova_prace.ui.screens.practiceScreen.PracticeScreenViewModel
@@ -32,6 +33,9 @@ class ViewModelFactory(
             }
             modelClass.isAssignableFrom(ProfileScreenViewModel::class.java) -> {
                 ProfileScreenViewModel(questionRepository, authRepository!!) as T
+            }
+            modelClass.isAssignableFrom(AuthViewModel::class.java) -> {
+                AuthViewModel(authRepository!!) as T
             }
             else -> throw IllegalArgumentException("Unknown ViewModel class: ${modelClass.name}")
         }

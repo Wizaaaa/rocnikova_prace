@@ -6,17 +6,12 @@ import com.example.rocnikova_prace.data.model.Profile
 import com.example.rocnikova_prace.data.remote.dto.ProfileDto
 import io.github.jan.supabase.SupabaseClient
 import io.github.jan.supabase.auth.auth
-import io.github.jan.supabase.auth.providers.builtin.Email
-import io.github.jan.supabase.auth.user.UserInfo
 import io.github.jan.supabase.postgrest.from
-import io.github.jan.supabase.postgrest.postgrest
-import io.github.jan.supabase.postgrest.rpc
 import io.github.jan.supabase.storage.storage
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import kotlinx.serialization.json.buildJsonObject
 import kotlinx.serialization.json.put
-
 
 class AuthRepository(
     private val supabase: SupabaseClient,
@@ -31,52 +26,102 @@ class AuthRepository(
                     }
                     .decodeSingle<ProfileDto>()
 
-                Profile(response.name, response.email ?: "", response.avatarUrl)
+                Profile(
+                    id = response.userId,
+                    userName = response.name,
+                    email = response.email,
+                    avatarUrl = response.avatarUrl,
+                    notificationsEnabled = response.notificationsEnabled
+                )
             } catch (e: Exception) {
                 Log.e("AuthRepo", "Chyba načítání profilu: ${e.message}")
-                e.printStackTrace()
-
-                Profile("Neznámý uživatel", "", null)
-            }
-        }
-    }
-
-    suspend fun signUp(userEmail: String, userPassword: String, name: String) {
-        supabase.auth.signUpWith(Email) {
-            email = userEmail
-            password = userPassword
-            data = buildJsonObject {
-                put("name", name)
+                Profile("", "Neznámý uživatel", "", null, true)
             }
         }
     }
 
     suspend fun signOut() {
-        supabase.auth.signOut()
         withContext(Dispatchers.IO) {
+            supabase.auth.signOut()
             database.clearAllTables()
         }
     }
 
     suspend fun uploadAvatar(imageBytes: ByteArray): String {
-        val userId = getCurrentUserId() ?: throw Exception("Uživatel není přihlášen")
+        return withContext(Dispatchers.IO) {
+            try {
+                val userId = getCurrentUserId()
+                    ?: throw Exception("Uživatel není přihlášen")
 
-        val filePath = "$userId/avatar.jpg"
-        val bucket = supabase.storage["avatars"]
+                val filePath = "$userId/avatar.jpg"
+                val bucket = supabase.storage["avatars"]
 
-        bucket.upload(filePath, imageBytes) {
-            upsert = true
-        }
+                bucket.upload(filePath, imageBytes) {
+                    upsert = true
+                }
 
-        val publicUrl = bucket.publicUrl(filePath)
+                val publicUrl = bucket.publicUrl(filePath)
 
-        supabase.auth.updateUser {
-            data = buildJsonObject {
-                put("avatar_url", publicUrl)
+                supabase.auth.updateUser {
+                    data = buildJsonObject {
+                        put("avatar_url", publicUrl)
+                    }
+                }
+
+                Log.d("AuthRepo", "Avatar nahrán: $publicUrl")
+                publicUrl
+            } catch (e: Exception) {
+                Log.e("AuthRepo", "Chyba při nahrávání avataru: ${e.message}")
+                throw e
             }
         }
+    }
 
-        return publicUrl
+    suspend fun updateFcmToken(userId: String, token: String) {
+        withContext(Dispatchers.IO) {
+            try {
+                supabase.from("profiles").update(
+                    {
+                        set("fcm_token", token)
+                    }
+                ) {
+                    filter {
+                        eq("user_id", userId)
+                    }
+                }
+                Log.d("AuthRepository", "FCM Token úspěšně aktualizován")
+            } catch (e: Exception) {
+                Log.e("AuthRepository", "Chyba při ukládání FCM tokenu: ${e.message}")
+                throw e
+            }
+        }
+    }
+
+    suspend fun toggleNotifications(userId: String): Boolean {
+        return withContext(Dispatchers.IO) {
+            try {
+                val response = supabase.from("profiles")
+                    .select {
+                        filter { eq("user_id", userId) }
+                    }
+                    .decodeSingle<ProfileDto>()
+
+                val newStatus = !response.notificationsEnabled
+
+                supabase.from("profiles").update(
+                    buildJsonObject {
+                        put("notifications_enabled", newStatus)
+                    }
+                ) {
+                    filter { eq("user_id", userId) }
+                }
+
+                newStatus
+            } catch (e: Exception) {
+                Log.e("AuthRepo", "Chyba toggleNotifications: ${e.message}")
+                false
+            }
+        }
     }
 
     fun getCurrentUserId(): String? {

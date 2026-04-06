@@ -10,6 +10,7 @@ import com.example.rocnikova_prace.data.model.GroupSummary
 import com.example.rocnikova_prace.data.repository.AuthRepository
 import com.example.rocnikova_prace.data.repository.QuestionRepository
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
@@ -25,7 +26,8 @@ class ProfileScreenViewModel(
     private val _overviewData = MutableStateFlow<List<GroupSummary>>(emptyList())
     val overviewData = _overviewData.asStateFlow()
 
-    val userId = authRepository.getCurrentUserId()
+    var currentUserId by mutableStateOf<String?>(null)
+        private set
 
     var userName by mutableStateOf("")
         private set
@@ -33,27 +35,44 @@ class ProfileScreenViewModel(
     var userAvatar: String? by mutableStateOf(null)
         private set
 
+    var mail by mutableStateOf("")
+        private set
+
     var isRefreshing by mutableStateOf(false)
         private set
+
+    private var overviewJob: Job? = null
 
     init {
         loadData()
     }
 
     private fun loadData() {
-        viewModelScope.launch {
+        overviewJob?.cancel()
+        overviewJob = viewModelScope.launch {
             isLoading = true
             try {
-                loadUser()
+                val id = authRepository.getCurrentUserId()
+                currentUserId = id
+                if (id == null) {
+                    _overviewData.value = emptyList()
+                    isLoading = false
+                    isRefreshing = false
+                    return@launch
+                }
 
-                repository.getGroupsOverviewStream()
+                loadUser(id)
+
+                repository.getGroupsOverviewStream(id)
                     .collect { data ->
                         _overviewData.value = data
                         isLoading = false
+                        isRefreshing = false
                     }
             } catch (e: Exception) {
                 e.printStackTrace()
                 isLoading = false
+                isRefreshing = false
             }
         }
     }
@@ -86,14 +105,20 @@ class ProfileScreenViewModel(
         }
     }
 
-    suspend fun loadUser() {
-        val id = authRepository.getCurrentUserId()
-        val profile = authRepository.getRemoteProfile(id!!)
-        userName = profile.userName
-        userAvatar = profile.avatarUrl
+    private suspend fun loadUser(id: String) {
+        val profile = authRepository.getRemoteProfile(id)
+        userName = profile.userName.trim().trim('"')
+        userAvatar = profile.avatarUrl?.takeIf { it.isNotBlank() }
+        mail = profile.email
     }
 
-    fun refreshData() {
+    fun forceRefresh() {
+        _overviewData.value = emptyList()
+        userName = ""
+        userAvatar = null
+        mail = ""
+        isLoading = true
+
         loadData()
     }
 }

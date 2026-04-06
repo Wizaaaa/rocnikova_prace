@@ -5,14 +5,14 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
-import androidx.navigation.compose.rememberNavController
 import com.example.rocnikova_prace.MainScreen
 import com.example.rocnikova_prace.R
 import com.example.rocnikova_prace.ui.components.Cards
+import com.example.rocnikova_prace.ui.screens.authScreen.AuthViewModel
 import com.woowla.compose.icon.collections.heroicons.Heroicons
 import com.woowla.compose.icon.collections.heroicons.heroicons.Outline
 import com.woowla.compose.icon.collections.heroicons.heroicons.outline.AcademicCap
@@ -21,8 +21,13 @@ import com.woowla.compose.icon.collections.heroicons.heroicons.outline.Plus
 
 @Composable
 fun CreateScreen(
-    navController: NavHostController
+    navController: NavHostController,
+    authViewModel: AuthViewModel
 ) {
+    LaunchedEffect(Unit) {
+        authViewModel.saveDeviceToken()
+    }
+
     Column(
         verticalArrangement = Arrangement.Center,
         modifier = Modifier
@@ -50,10 +55,4 @@ fun CreateScreen(
             onClick = {  }
         )
     }
-}
-
-@Preview
-@Composable
-fun CreateScreenPreview() {
-    CreateScreen(rememberNavController())
 }
