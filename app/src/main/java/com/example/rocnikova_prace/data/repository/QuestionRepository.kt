@@ -1,5 +1,6 @@
 package com.example.rocnikova_prace.data.repository
 
+import android.util.Log
 import com.example.rocnikova_prace.data.local.dao.GroupDao
 import com.example.rocnikova_prace.data.local.dao.QuestionDao
 import com.example.rocnikova_prace.data.local.dao.ResultDao
@@ -22,8 +23,6 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.emptyFlow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flow
-import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.onStart
 
 class QuestionRepository(
     private val questionDao: QuestionDao,
@@ -228,35 +227,98 @@ class QuestionRepository(
         }
     }
 
-
     fun getGroupsOverviewStream(userId: String? = supabase.auth.currentUserOrNull()?.id): Flow<List<GroupSummary>> {
         val resolvedUserId = userId ?: return emptyFlow()
 
-        return resultDao.getAllResults(resolvedUserId)
-            .map { dtoList ->
-                dtoList.map { dto ->
-                    GroupSummary(
-                        groupId = dto.groupId,
-                        groupName = dto.groupName,
-                        totalAttempts = dto.totalAttempts,
-                        averageScore = dto.averageScore
-                    )
+        return flow {
+            try {
+                Log.d("ProfileData", "Stahování dat pro userId: $resolvedUserId")
+
+                // 1. Stáhni remote data
+                val remoteGroupsDto = supabase.from("question_groups")
+                    .select {
+                        filter { eq("user_id", resolvedUserId) }
+                    }
+                    .decodeList<GroupDto>()
+
+                val remoteResultDto = supabase.from("result")
+                    .select {
+                        filter { eq("user_id", resolvedUserId) }
+                    }
+                    .decodeList<ResultDto>()
+
+                Log.d("ProfileData", "Remote skupiny: ${remoteGroupsDto.size}, Results: ${remoteResultDto.size}")
+
+                // 2. POUZE pokud máme remote data, aktualizuj DB
+                if (remoteGroupsDto.isNotEmpty() || remoteResultDto.isNotEmpty()) {
+                    if (remoteGroupsDto.isNotEmpty()) {
+                        groupDao.upsertGroups(remoteGroupsDto.map { it.toEntity() })
+                        Log.d("ProfileData", "Upsertnuty skupiny: ${remoteGroupsDto.size}")
+                    }
+
+                    if (remoteResultDto.isNotEmpty()) {
+                        resultDao.insertAll(remoteResultDto.map { it.toEntity() })
+                        Log.d("ProfileData", "Vloženy results: ${remoteResultDto.size}")
+                    }
                 }
-            }
-            .onStart {
-                try {
-                    val remoteResultDto = supabase.from("result")
-                        .select {
-                            filter { eq("user_id", resolvedUserId) }
+
+                // 3. Načti results a spáruj s group names
+                resultDao.getResultsForUser(resolvedUserId)
+                    .collect { resultEntities ->
+                        Log.d("ProfileData", "Lokální results: ${resultEntities.size}")
+
+                        val groupedResults = resultEntities.groupBy { it.groupId }
+                        val allGroups = groupDao.getAllGroups(resolvedUserId).first()
+
+                        Log.d("ProfileData", "Skupiny v DB: ${allGroups.size}")
+
+                        val summary = groupedResults.map { (groupId, results) ->
+                            val groupName = allGroups.find { it.id == groupId }?.name ?: "Unknown"
+                            Log.d("ProfileData", "Paruji: $groupId -> $groupName (${results.size} results)")
+
+                            GroupSummary(
+                                groupId = groupId,
+                                groupName = groupName,
+                                totalAttempts = results.size,
+                                averageScore = results.map { it.percentage }.average().toFloat()
+                            )
                         }
-                        .decodeList<ResultDto>()
 
-                    val remoteResultEntities = remoteResultDto.map { it.toEntity() }
-                    resultDao.insertAll(remoteResultEntities)
-                } catch (e: Exception) {
-                    e.printStackTrace()
+                        Log.d("ProfileData", "Emituji ${summary.size} summary")
+                        emit(summary)
+                    }
+
+            } catch (e: Exception) {
+                Log.e("ProfileData", "Chyba při načítání remote dat: ${e.message}")
+                e.printStackTrace()
+                // Pokud síť selhala, zkus emitovat z lokální DB
+                try {
+                    resultDao.getResultsForUser(resolvedUserId)
+                        .collect { resultEntities ->
+                            Log.d("ProfileData", "Fallback - Lokální results: ${resultEntities.size}")
+
+                            val groupedResults = resultEntities.groupBy { it.groupId }
+                            val allGroups = groupDao.getAllGroups(resolvedUserId).first()
+
+                            val summary = groupedResults.map { (groupId, results) ->
+                                val groupName = allGroups.find { it.id == groupId }?.name ?: "Unknown"
+                                GroupSummary(
+                                    groupId = groupId,
+                                    groupName = groupName,
+                                    totalAttempts = results.size,
+                                    averageScore = results.map { it.percentage }.average().toFloat()
+                                )
+                            }
+
+                            Log.d("ProfileData", "Fallback emituji ${summary.size} summary")
+                            emit(summary)
+                        }
+                } catch (ex: Exception) {
+                    Log.e("ProfileData", "Fallback také selhal: ${ex.message}")
+                    ex.printStackTrace()
+                    emit(emptyList())
                 }
             }
+        }
     }
-
 }

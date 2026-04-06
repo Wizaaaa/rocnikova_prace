@@ -13,5 +13,8 @@ data class ResultDto(
     @SerialName("user_id")
     val userId: String,
 
-    val percentage: Float
+    val percentage: Float,
+
+    @SerialName("created_at")
+    val createdAt: String? = null
 )
