@@ -31,9 +31,11 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
+import com.example.rocnikova_prace.R
 import com.woowla.compose.icon.collections.heroicons.Heroicons
 import com.woowla.compose.icon.collections.heroicons.heroicons.Outline
 import com.woowla.compose.icon.collections.heroicons.heroicons.outline.Bell
@@ -120,9 +122,9 @@ fun DetailProfile(
                     }
                     Spacer(modifier = Modifier.width(24.dp))
                     Column {
-                        Text(text = "Celková úroveň", fontWeight = FontWeight.Bold)
+                        Text(text = stringResource(R.string.DP_total_level), fontWeight = FontWeight.Bold)
                         Text(
-                            text = "Průměrná úspěšnost napříč všemi tématy.",
+                            text = stringResource(R.string.DP_average_success),
                             style = MaterialTheme.typography.bodySmall,
                             color = Color.Gray
                         )
@@ -134,7 +136,7 @@ fun DetailProfile(
         item {
             Spacer(modifier = Modifier.height(32.dp))
             Text(
-                text = "Nastavení aplikace",
+                text = stringResource(R.string.DP_app_settings),
                 modifier = Modifier.fillMaxWidth(),
                 style = MaterialTheme.typography.labelLarge,
                 color = MaterialTheme.colorScheme.primary
@@ -144,18 +146,18 @@ fun DetailProfile(
             Column(
                 modifier = Modifier.clip(RoundedCornerShape(16.dp))
             ) {
-                SettingsItem(icon = Heroicons.Outline.User, title = "Změnit jméno")
+                SettingsItem(icon = Heroicons.Outline.User, title = stringResource(R.string.DP_change_name))
                 SettingsItem(
                     icon = Heroicons.Outline.Bell,
-                    title = "Notifikace",
+                    title = stringResource(R.string.DP_notifications),
                     showSwitch = true,
                     switchState = viewModel.notificationsEnabled,
                     onClick = {
                         viewModel.changeNotificationsSettings()
                     }
                 )
-                SettingsItem(icon = Heroicons.Outline.ShieldCheck, title = "Soukromí")
-                SettingsItem(icon = Heroicons.Outline.Trash, title = "Smazat data", isDanger = true)
+                SettingsItem(icon = Heroicons.Outline.ShieldCheck, title = stringResource(R.string.DP_privacy))
+                SettingsItem(icon = Heroicons.Outline.Trash, title = stringResource(R.string.DP_delete_data), isDanger = true)
             }
         }
     }

@@ -1,7 +1,6 @@
 package com.example.rocnikova_prace
 
 import android.os.Build
-import android.util.Log
 import androidx.activity.compose.BackHandler
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
@@ -81,13 +80,7 @@ fun MainScreen(
 
     val launcher = rememberLauncherForActivityResult(
         ActivityResultContracts.RequestPermission()
-    ) { isGranted ->
-        if (isGranted) {
-            Log.d("Notification", "Uživatel povolil notifikace")
-        } else {
-            Log.d("Notification", "Uživatel zamítl notifikace")
-        }
-    }
+    ) { _ -> }
 
     LaunchedEffect(Unit) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {

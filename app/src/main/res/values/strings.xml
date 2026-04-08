@@ -40,11 +40,44 @@
     <!--    Question Card-->
     <string name="QC_option_required">Option is required</string>
 
+    <!--    Auth Screen-->
+    <string name="AS_what_is_your_name">What should we call you?</string>
+    <string name="AS_enter_username">Enter username</string>
+    <string name="AS_continue">Continue</string>
+    <string name="AS_error">Error: %1$s</string>
+    <string name="AS_network_error">Network error</string>
+    <string name="AS_enter_email">Enter email</string>
+    <string name="AS_connection_error">Connection error</string>
+    <string name="AS_or">or</string>
+    <string name="AS_continue_with_google">Continue with Google</string>
+    <string name="AS_looks_like_new_user">Looks like you are new here! What should we call you?</string>
+    <string name="AS_back_to_email">Back to email</string>
+    <string name="AS_check_email_title">Check your email!</string>
+    <string name="AS_check_email_body">We sent a login link to\n%1$s\n\nJust click it and the app will log in automatically.</string>
+    <string name="AS_wrong_email">I entered the wrong email</string>
+
     <!--    Practice Screen-->
     <string name="PC_next_question">Next question</string>
     <string name="PC_finished_practice">Practice complete</string>
     <string name="PC_to_question_list">Back to list</string>
     <string name="PC_start_practice">Practice again</string>
+    <string name="PC_time_out">Unfortunately, your practice time has run out</string>
+    <string name="PC_exit_practice">Are you sure you want to leave?</string>
+    <string name="PC_no">No</string>
+    <string name="PC_yes">Yes</string>
+
+    <!--    Profile Screen-->
+    <string name="PS_view_profile">View profile</string>
+    <string name="PS_sign_out">Sign out</string>
+
+    <!--    Detail Profile Screen-->
+    <string name="DP_total_level">Overall level</string>
+    <string name="DP_average_success">Average success rate across all topics.</string>
+    <string name="DP_app_settings">App settings</string>
+    <string name="DP_change_name">Change name</string>
+    <string name="DP_notifications">Notifications</string>
+    <string name="DP_privacy">Privacy</string>
+    <string name="DP_delete_data">Delete data</string>
 
     <plurals name="attempts_count">
         <item quantity="one">%d attempt</item>

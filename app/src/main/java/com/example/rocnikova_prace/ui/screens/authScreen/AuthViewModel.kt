@@ -36,12 +36,6 @@ class AuthViewModel(
     var name by mutableStateOf("")
         private set
 
-    var password by mutableStateOf("")
-        private set
-
-    var confirmPassword by mutableStateOf("")
-        private set
-
     init {
         viewModelScope.launch {
             com.example.rocnikova_prace.data.remote.SupabaseClient.client.auth.sessionStatus.collect { status ->
@@ -107,13 +101,5 @@ class AuthViewModel(
 
     fun updateName(value: String) {
         name = value
-    }
-
-    fun updatePassword(value: String) {
-        password = value
-    }
-
-    fun updateConfirmPassword(value: String) {
-        confirmPassword = value
     }
 }

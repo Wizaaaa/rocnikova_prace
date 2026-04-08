@@ -61,7 +61,9 @@ class ProfileScreenViewModel(
                     return@launch
                 }
 
-                loadUser(id)
+                withContext(Dispatchers.IO) {
+                    loadUser(id)
+                }
 
                 repository.getGroupsOverviewStream(id)
                     .collect { data ->
@@ -70,6 +72,7 @@ class ProfileScreenViewModel(
                         isRefreshing = false
                     }
             } catch (e: Exception) {
+                Log.e("ProfileData", "Chyba: ${e.message}")
                 e.printStackTrace()
                 isLoading = false
                 isRefreshing = false
@@ -107,7 +110,7 @@ class ProfileScreenViewModel(
 
     private suspend fun loadUser(id: String) {
         val profile = authRepository.getRemoteProfile(id)
-        userName = profile.userName.trim().trim('"')
+        userName = profile.userName.trim()
         userAvatar = profile.avatarUrl?.takeIf { it.isNotBlank() }
         mail = profile.email
     }

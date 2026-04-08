@@ -15,7 +15,7 @@ fun GroupDto.toEntity(): GroupEntity {
         description = this.description,
         createdAt = try {
             java.time.Instant.parse(this.createdAt).toEpochMilli()
-        } catch (e: Exception) {
+        } catch (_: Exception) {
             System.currentTimeMillis()
         }
     )
@@ -36,7 +36,12 @@ fun ResultDto.toEntity(): ResultEntity {
         id = this.id ?: java.util.UUID.randomUUID().toString(),
         groupId = this.groupId,
         userId = this.userId,
-        percentage = this.percentage
+        percentage = this.percentage,
+        createdAt = try {
+            java.time.Instant.parse(this.createdAt).toEpochMilli()
+        } catch (_: Exception) {
+            System.currentTimeMillis()
+        }
     )
 }
 
@@ -66,6 +71,7 @@ fun ResultEntity.toDto(): ResultDto {
         id = this.id,
         groupId = this.groupId,
         userId = this.userId,
-        percentage = this.percentage
+        percentage = this.percentage,
+        createdAt = java.time.Instant.ofEpochMilli(this.createdAt).toString()
     )
 }

@@ -16,16 +16,7 @@ interface ResultDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertAll(result: List<ResultEntity>)
 
-    @Query("""
-    SELECT 
-        id,
-        groupId,
-        userId,
-        percentage
-    FROM result
-    WHERE userId = :userId
-    ORDER BY id DESC
-""")
+    @Query("SELECT * FROM result WHERE userId = :userId ORDER BY id DESC")
     fun getResultsForUser(userId: String): Flow<List<ResultEntity>>
 
     @Query("SELECT * FROM result WHERE groupId = :groupId AND userId = :userId")

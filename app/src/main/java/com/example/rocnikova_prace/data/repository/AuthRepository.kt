@@ -1,6 +1,5 @@
 package com.example.rocnikova_prace.data.repository
 
-import android.util.Log
 import com.example.rocnikova_prace.data.local.AppDatabase
 import com.example.rocnikova_prace.data.model.Profile
 import com.example.rocnikova_prace.data.remote.dto.ProfileDto
@@ -33,8 +32,7 @@ class AuthRepository(
                     avatarUrl = response.avatarUrl,
                     notificationsEnabled = response.notificationsEnabled
                 )
-            } catch (e: Exception) {
-                Log.e("AuthRepo", "Chyba načítání profilu: ${e.message}")
+            } catch (_: Exception) {
                 Profile("", "Neznámý uživatel", "", null, true)
             }
         }
@@ -68,10 +66,8 @@ class AuthRepository(
                     }
                 }
 
-                Log.d("AuthRepo", "Avatar nahrán: $publicUrl")
                 publicUrl
             } catch (e: Exception) {
-                Log.e("AuthRepo", "Chyba při nahrávání avataru: ${e.message}")
                 throw e
             }
         }
@@ -89,9 +85,7 @@ class AuthRepository(
                         eq("user_id", userId)
                     }
                 }
-                Log.d("AuthRepository", "FCM Token úspěšně aktualizován")
             } catch (e: Exception) {
-                Log.e("AuthRepository", "Chyba při ukládání FCM tokenu: ${e.message}")
                 throw e
             }
         }
@@ -117,8 +111,7 @@ class AuthRepository(
                 }
 
                 newStatus
-            } catch (e: Exception) {
-                Log.e("AuthRepo", "Chyba toggleNotifications: ${e.message}")
+            } catch (_: Exception) {
                 false
             }
         }

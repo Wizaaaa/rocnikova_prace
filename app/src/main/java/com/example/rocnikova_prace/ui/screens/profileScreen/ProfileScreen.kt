@@ -38,6 +38,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.pluralStringResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
@@ -142,7 +143,7 @@ fun ProfileScreen(
                                 fontWeight = FontWeight.Bold
                             )
                             Text(
-                                text = "Zobrazit profil",
+                                text = stringResource(R.string.PS_view_profile),
                                 style = MaterialTheme.typography.bodyMedium,
                                 color = Color.Gray
                             )
@@ -262,7 +263,7 @@ fun ProfileScreen(
                         modifier = Modifier.fillMaxWidth().padding(bottom = 32.dp),
                         colors = ButtonDefaults.textButtonColors(contentColor = MaterialTheme.colorScheme.error)
                     ) {
-                        Text("Odhlásit se")
+                        Text(stringResource(R.string.PS_sign_out))
                     }
                 }
             }

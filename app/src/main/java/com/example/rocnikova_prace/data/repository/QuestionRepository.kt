@@ -234,7 +234,6 @@ class QuestionRepository(
             try {
                 Log.d("ProfileData", "Stahování dat pro userId: $resolvedUserId")
 
-                // 1. Stáhni remote data
                 val remoteGroupsDto = supabase.from("question_groups")
                     .select {
                         filter { eq("user_id", resolvedUserId) }
@@ -249,7 +248,6 @@ class QuestionRepository(
 
                 Log.d("ProfileData", "Remote skupiny: ${remoteGroupsDto.size}, Results: ${remoteResultDto.size}")
 
-                // 2. POUZE pokud máme remote data, aktualizuj DB
                 if (remoteGroupsDto.isNotEmpty() || remoteResultDto.isNotEmpty()) {
                     if (remoteGroupsDto.isNotEmpty()) {
                         groupDao.upsertGroups(remoteGroupsDto.map { it.toEntity() })
@@ -262,7 +260,6 @@ class QuestionRepository(
                     }
                 }
 
-                // 3. Načti results a spáruj s group names
                 resultDao.getResultsForUser(resolvedUserId)
                     .collect { resultEntities ->
                         Log.d("ProfileData", "Lokální results: ${resultEntities.size}")
@@ -291,7 +288,6 @@ class QuestionRepository(
             } catch (e: Exception) {
                 Log.e("ProfileData", "Chyba při načítání remote dat: ${e.message}")
                 e.printStackTrace()
-                // Pokud síť selhala, zkus emitovat z lokální DB
                 try {
                     resultDao.getResultsForUser(resolvedUserId)
                         .collect { resultEntities ->

@@ -40,13 +40,45 @@
     <!--    Question Card-->
     <string name="QC_option_required">Vyplňte možnost</string>
 
+    <!--    Auth Screen-->
+    <string name="AS_what_is_your_name">Jak vám máme říkat?</string>
+    <string name="AS_enter_username">Zadejte uživatelské jméno</string>
+    <string name="AS_continue">Pokračovat</string>
+    <string name="AS_error">Chyba: %1$s</string>
+    <string name="AS_network_error">Chyba sítě</string>
+    <string name="AS_enter_email">Zadejte email</string>
+    <string name="AS_connection_error">Chyba připojení</string>
+    <string name="AS_or">nebo</string>
+    <string name="AS_continue_with_google">Pokračovat s Google</string>
+    <string name="AS_looks_like_new_user">Vypadá to, že tu jste noví! Jak vám máme říkat?</string>
+    <string name="AS_back_to_email">Zpět na e-mail</string>
+    <string name="AS_check_email_title">Zkontrolujte si e-mail!</string>
+    <string name="AS_check_email_body">Poslali jsme vám přihlašovací odkaz na adresu\n%1$s\n\nStačí na něj kliknout a aplikace se sama přihlásí.</string>
+    <string name="AS_wrong_email">Zadal jsem špatný e-mail</string>
+
     <!--    Practice Screen-->
     <string name="PC_next_question">Další otázka</string>
     <string name="PC_finished_practice">Procvičování dokončeno</string>
     <string name="PC_to_question_list">Zpět na seznam</string>
     <string name="PC_start_practice">Procvičit znovu</string>
+    <string name="PC_time_out">Bohužel vám vypršel čas na procvičování</string>
+    <string name="PC_exit_practice">Opravdu si přejete odejít?</string>
+    <string name="PC_no">Ne</string>
+    <string name="PC_yes">Ano</string>
 
     <!--    Profile Screen-->
+    <string name="PS_view_profile">Zobrazit profil</string>
+    <string name="PS_sign_out">Odhlásit se</string>
+
+    <!--    Detail Profile Screen-->
+    <string name="DP_total_level">Celková úroveň</string>
+    <string name="DP_average_success">Průměrná úspěšnost napříč všemi tématy.</string>
+    <string name="DP_app_settings">Nastavení aplikace</string>
+    <string name="DP_change_name">Změnit jméno</string>
+    <string name="DP_notifications">Notifikace</string>
+    <string name="DP_privacy">Soukromí</string>
+    <string name="DP_delete_data">Smazat data</string>
+
     <plurals name="attempts_count">
         <item quantity="one">%d pokus</item>
         <item quantity="few">%d pokusy</item>

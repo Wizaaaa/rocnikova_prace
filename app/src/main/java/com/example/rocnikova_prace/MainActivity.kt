@@ -2,7 +2,6 @@ package com.example.rocnikova_prace
 
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
@@ -49,14 +48,11 @@ class MainActivity : ComponentActivity() {
                     lifecycleScope.launch(Dispatchers.IO) {
                         try {
                             authRepository.updateFcmToken(userId, token)
-                            Log.d("FCM", "Token úspěšně aktualizován při startu.")
                         } catch (e: Exception) {
-                            Log.e("FCM", "Chyba při aktualizaci tokenu: ${e.message}")
+                            e.printStackTrace()
                         }
                     }
                 }
-            } else {
-                Log.w("FCM", "Nepodařilo se získat FCM token", task.exception)
             }
         }
     }

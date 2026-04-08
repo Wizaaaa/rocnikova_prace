@@ -10,10 +10,8 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -42,7 +40,7 @@ fun PracticeScreen(
     val minutes = viewModel.timeLeft / 60
     val seconds = viewModel.timeLeft % 60
 
-    var showExitDialog by remember { mutableStateOf(false) }
+    val showExitDialog = remember { mutableStateOf(false) }
 
     LaunchedEffect(viewModel.practiceEnd.value) {
         if (viewModel.practiceEnd.value) {
@@ -52,7 +50,7 @@ fun PracticeScreen(
 
     BackHandler(enabled = !viewModel.practiceEnd.value) {
         viewModel.pauseTimer()
-        showExitDialog = true
+        showExitDialog.value = true
     }
 
 
@@ -134,7 +132,7 @@ fun PracticeScreen(
         if (viewModel.timeLeft <= 0 && !viewModel.practiceEnd.value) {
             DeleteDialog(
                 imageVector = Heroicons.Outline.FaceFrown,
-                text = "Bohužel vám vypšel čas na procvičování",
+                text = stringResource(R.string.PC_time_out),
                 dismissText = stringResource(R.string.PC_to_question_list),
                 confirmText = stringResource(R.string.PC_start_practice),
                 onDismissRequest = {
@@ -148,21 +146,20 @@ fun PracticeScreen(
                 centerButtons = true
             )
         }
-        if (showExitDialog) {
+        if (showExitDialog.value) {
             DeleteDialog(
                 imageVector = Heroicons.Outline.InformationCircle,
-                text = "Opravdu si přejete odejít?",
-                dismissText = "Ne",
-                confirmText = "Ano",
+                text = stringResource(R.string.PC_exit_practice),
+                dismissText = stringResource(R.string.PC_no),
+                confirmText = stringResource(R.string.PC_yes),
                 onDismissRequest = {
-                    showExitDialog = false
+                    showExitDialog.value = false
                     viewModel.startTimer()
                 },
                 onConfirmation = {
                     if (viewModel.answers.isNotEmpty()) {
                         viewModel.setPracticeEnd(false)
                     }
-
                     navController.popBackStack()
                 }
             )

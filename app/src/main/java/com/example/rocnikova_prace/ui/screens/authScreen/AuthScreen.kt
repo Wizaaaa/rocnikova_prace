@@ -25,10 +25,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.rocnikova_prace.MainScreen
+import com.example.rocnikova_prace.R
 import com.example.rocnikova_prace.ui.components.AuthButton
 import com.example.rocnikova_prace.ui.components.InformationCard
 import io.github.jan.supabase.auth.auth
@@ -75,6 +77,9 @@ fun AuthScreen(
         }
     }
 
+    val networkErrorText = stringResource(R.string.AS_network_error)
+    val errorTextTemplate = stringResource(R.string.AS_error)
+
     val googleSignIn = supabase.composeAuth.rememberSignInWithGoogle(
         onResult = { result ->
             when (result) {
@@ -84,15 +89,17 @@ fun AuthScreen(
                     }
                 }
                 is NativeSignInResult.Error -> {
-                    Toast.makeText(context, "Chyba: ${result.message}", Toast.LENGTH_LONG).show()
+                    Toast.makeText(context, errorTextTemplate.format(result.message), Toast.LENGTH_LONG).show()
                 }
                 is NativeSignInResult.ClosedByUser -> { }
                 is NativeSignInResult.NetworkError -> {
-                    Toast.makeText(context, "Chyba sítě", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(context, networkErrorText, Toast.LENGTH_SHORT).show()
                 }
             }
         }
     )
+
+    val connectionErrorText = stringResource(R.string.AS_connection_error)
 
     Column(
         modifier = Modifier.fillMaxSize().padding(16.dp),
@@ -101,13 +108,13 @@ fun AuthScreen(
     ) {
         when (currentStep) {
             // -----------------------------------------
-            // KROK 1: ZADÁNÍ E-MAILU
+            // STEP 1: ENTER EMAIL
             // -----------------------------------------
             AuthStep.ENTER_EMAIL -> {
                 InformationCard(
                     value = viewModel.email,
                     onValueChange = { viewModel.updateEmail(it) },
-                    label = "Zadejte email"
+                    label = stringResource(R.string.AS_enter_email)
                 )
 
                 Spacer(modifier = Modifier.height(16.dp))
@@ -130,12 +137,12 @@ fun AuthScreen(
                                     currentStep = AuthStep.REGISTER_NAME
                                 }
                             } catch (_: Exception) {
-                                Toast.makeText(context, "Chyba připojení", Toast.LENGTH_SHORT).show()
+                                Toast.makeText(context, connectionErrorText, Toast.LENGTH_SHORT).show()
                             }
                         }
                     },
                     enable = authState !is AuthState.Loading && viewModel.email.isNotBlank(),
-                    text = "Pokračovat",
+                    text = stringResource(R.string.AS_continue),
                     filled = true
                 )
 
@@ -146,7 +153,7 @@ fun AuthScreen(
                 ) {
                     HorizontalDivider(Modifier.weight(1f))
 
-                    Text(text = "nebo", modifier = Modifier.padding(horizontal = 16.dp), color = Color.Gray)
+                    Text(text = stringResource(R.string.AS_or), modifier = Modifier.padding(horizontal = 16.dp), color = Color.Gray)
 
                     HorizontalDivider(Modifier.weight(1f))
                 }
@@ -155,15 +162,15 @@ fun AuthScreen(
                 AuthButton(
                     onClick = { googleSignIn.startFlow() },
                     icon = true,
-                    text = "Continue with Google"
+                    text = stringResource(R.string.AS_continue_with_google)
                 )
             }
 
             // -----------------------------------------
-            // KROK 2: REGISTRACE JMÉNA (Pro nové uživatele)
+            // STEP 2: REGISTER NAME (For new users)
             // -----------------------------------------
             AuthStep.REGISTER_NAME -> {
-                Text("Vypadá to, že tu jste noví! Jak vám máme říkat?")
+                Text(stringResource(R.string.AS_looks_like_new_user))
                 Spacer(modifier = Modifier.height(16.dp))
 
                 AuthName(
@@ -177,21 +184,21 @@ fun AuthScreen(
 
                 Spacer(modifier = Modifier.height(16.dp))
                 TextButton(onClick = { currentStep = AuthStep.ENTER_EMAIL }) {
-                    Text("Zpět na e-mail")
+                    Text(stringResource(R.string.AS_back_to_email))
                 }
             }
 
             // -----------------------------------------
-            // KROK 3: ČEKÁNÍ NA KLIKNUTÍ V E-MAILU
+            // STEP 3: WAIT FOR EMAIL VERIFICATION
             // -----------------------------------------
             AuthStep.CHECK_EMAIL -> {
                 Text(
-                    text = "Zkontrolujte si e-mail!",
+                    text = stringResource(R.string.AS_check_email_title),
                     style = MaterialTheme.typography.titleLarge
                 )
                 Spacer(modifier = Modifier.height(8.dp))
                 Text(
-                    text = "Poslali jsme vám přihlašovací odkaz na adresu\n${viewModel.email}\n\nStačí na něj kliknout a aplikace se sama přihlásí.",
+                    text = stringResource(R.string.AS_check_email_body, viewModel.email),
                     textAlign = TextAlign.Center,
                     color = Color.Gray
                 )
@@ -199,7 +206,7 @@ fun AuthScreen(
                 Spacer(modifier = Modifier.height(24.dp))
 
                 TextButton(onClick = { currentStep = AuthStep.ENTER_EMAIL }) {
-                    Text("Zadal jsem špatný e-mail")
+                    Text(stringResource(R.string.AS_wrong_email))
                 }
             }
         }

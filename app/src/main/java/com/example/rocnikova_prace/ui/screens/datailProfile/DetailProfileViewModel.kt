@@ -15,7 +15,6 @@ import com.example.rocnikova_prace.data.model.GroupSummary
 import com.example.rocnikova_prace.data.repository.AuthRepository
 import com.example.rocnikova_prace.data.repository.QuestionRepository
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
 class DetailProfileViewModel(
@@ -39,7 +38,6 @@ class DetailProfileViewModel(
         private set
 
     private val _overviewData = MutableStateFlow<List<GroupSummary>>(emptyList())
-    val overviewData = _overviewData.asStateFlow()
 
     var totalProgress by mutableFloatStateOf(0f)
         private set
