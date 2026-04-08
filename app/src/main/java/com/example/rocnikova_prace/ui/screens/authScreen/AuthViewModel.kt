@@ -58,7 +58,7 @@ class AuthViewModel(
         viewModelScope.launch {
             _authState.value = AuthState.Loading
             try {
-                com.example.rocnikova_prace.data.remote.SupabaseClient.client.auth.signInWith(OTP) {
+                com.example.rocnikova_prace.data.remote.SupabaseClient.client.auth.signInWith(OTP, redirectUrl = "rocnikovka://login-callback") {
                     email = this@AuthViewModel.email
 
                     if (name.isNotBlank()) {
