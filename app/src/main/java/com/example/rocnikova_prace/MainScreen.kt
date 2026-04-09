@@ -122,6 +122,10 @@ fun MainScreen(
             val pagerState = rememberPagerState(initialPage = 1, pageCount = { pagerScreens.size })
             val scope = rememberCoroutineScope()
 
+            val profileScreenViewModel: ProfileScreenViewModel = viewModel(
+                factory = ViewModelFactory(repository, authRepository)
+            )
+
             BackHandler(enabled = pagerState.currentPage != 1) {
                 scope.launch {
                     pagerState.animateScrollToPage(1)
@@ -132,6 +136,7 @@ fun MainScreen(
                 bottomBar = {
                     NavBar(
                         selectedScreen = pagerScreens[pagerState.currentPage],
+                        avatarUrl = profileScreenViewModel.userAvatar,
                         onScreenSelected = { screen ->
                             val index = pagerScreens.indexOf(screen)
                             if (index != -1) {
@@ -172,10 +177,6 @@ fun MainScreen(
                             )
                         }
                         MainScreen.Profile -> {
-                            val profileScreenViewModel: ProfileScreenViewModel = viewModel(
-                                factory = ViewModelFactory(repository, authRepository)
-                            )
-
                             ProfileScreen(
                                 profileScreenViewModel = profileScreenViewModel,
                                 navController = navController

@@ -173,7 +173,6 @@ class PracticeScreenViewModel(
 
     fun addAnswer(answer: Boolean) {
         answers.add(answer)
-        saveResult()
     }
 
     fun updateQuestionAnswer(answer: String) {
@@ -232,6 +231,7 @@ class PracticeScreenViewModel(
             currentQuestionIndex++
         } else {
             practiceEnd.value = true
+            saveResult()
         }
     }
 

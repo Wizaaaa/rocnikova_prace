@@ -20,6 +20,7 @@ import com.example.rocnikova_prace.data.remote.dto.ResultDto
 import io.github.jan.supabase.auth.auth
 import io.github.jan.supabase.postgrest.from
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.emitAll
 import kotlinx.coroutines.flow.emptyFlow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flow
@@ -32,12 +33,13 @@ class QuestionRepository(
 ) {
     fun getAllGroups(): Flow<List<GroupEntity>> = flow {
         val currentUserId = supabase.auth.currentUserOrNull()?.id ?: return@flow
+
         val localData = groupDao.getAllGroups(currentUserId).first()
         emit(localData)
 
         try {
             val remoteDto = supabase.from("question_groups")
-                .select{
+                .select {
                     filter {
                         eq("user_id", currentUserId)
                     }
@@ -45,14 +47,12 @@ class QuestionRepository(
                 .decodeList<GroupDto>()
 
             val remoteEntities = remoteDto.map { it.toEntity() }
-
             groupDao.upsertGroups(remoteEntities)
-
-            val updatedData = groupDao.getAllGroups(currentUserId).first()
-            emit(updatedData)
         } catch (e: Exception) {
             e.printStackTrace()
         }
+
+        emitAll(groupDao.getAllGroups(currentUserId))
     }
 
     suspend fun getGroupById(id: String): GroupEntity? {
