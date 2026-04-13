@@ -12,7 +12,20 @@
           "package_name": "com.example.rocnikova_prace"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "953826581802-cgpfpntvmurgjgce8uqvre171cmsru51.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.rocnikova_prace",
+            "certificate_hash": "01a75ab1c6f0551c3d8410e2f56edf572e5aa6d0"
+          }
+        },
+        {
+          "client_id": "953826581802-jmc4gt8v447bjnt6d8k2uih32gnuq1qt.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
       "api_key": [
         {
           "current_key": "AIzaSyD5VBXEDg2_6oqYxpHf3Bpl_ipboHlYeP0"
@@ -20,7 +33,12 @@
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": []
+          "other_platform_oauth_client": [
+            {
+              "client_id": "953826581802-jmc4gt8v447bjnt6d8k2uih32gnuq1qt.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
         }
       }
     }

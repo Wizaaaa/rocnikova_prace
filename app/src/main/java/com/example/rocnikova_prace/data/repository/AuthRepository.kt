@@ -91,6 +91,40 @@ class AuthRepository(
         }
     }
 
+    suspend fun updateUsername(userId: String, name: String) {
+        withContext(Dispatchers.IO) {
+            try {
+                supabase.from("profiles").update(
+                    {
+                        set("name", name)
+                    }
+                ) {
+                    filter {
+                        eq("user_id", userId)
+                    }
+                }
+            } catch (e: Exception) {
+                throw e
+            }
+        }
+    }
+
+    suspend fun isUsernameTaken(name: String): Boolean {
+        return withContext(Dispatchers.IO) {
+            try {
+                val count = supabase.from("profiles").select {
+                    filter {
+                        eq("name", name)
+                    }
+                }.decodeList<ProfileDto>().size
+
+                count > 0
+            } catch (_: Exception) {
+                false
+            }
+        }
+    }
+
     suspend fun toggleNotifications(userId: String): Boolean {
         return withContext(Dispatchers.IO) {
             try {
