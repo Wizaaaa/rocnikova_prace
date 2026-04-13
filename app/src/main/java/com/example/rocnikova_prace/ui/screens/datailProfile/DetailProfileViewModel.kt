@@ -98,6 +98,23 @@ class DetailProfileViewModel(
             }
         }
     }
+
+    fun changeUsername(name: String) {
+        viewModelScope.launch {
+            try {
+                val isTaken = authRepository.isUsernameTaken(name)
+                if (isTaken) {
+                    Log.e("DetailProfile", "Tomuto uživateli už jméno náleží, vyberte prosím jiné.")
+                    return@launch
+                }
+
+                authRepository.updateUsername(userId, name)
+                userName = name
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+        }
+    }
 }
 
 class DetailProfileViewModelFactory(

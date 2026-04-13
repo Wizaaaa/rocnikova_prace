@@ -23,7 +23,14 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -50,6 +57,9 @@ fun DetailProfile(
     modifier: Modifier = Modifier
 ) {
     val totalProgress = viewModel.totalProgress
+
+    var showChangeNameDialog by remember { mutableStateOf(false) }
+    var newUsername by remember { mutableStateOf(viewModel.userName) }
 
     val context = LocalContext.current
 
@@ -92,6 +102,11 @@ fun DetailProfile(
                     )
                 }
                 Spacer(modifier = Modifier.height(12.dp))
+                Text(
+                    text = viewModel.userName,
+                    style = MaterialTheme.typography.titleLarge,
+                    fontWeight = FontWeight.Bold
+                )
                 Text(text = viewModel.mail, color = Color.Gray)
             }
         }
@@ -146,7 +161,14 @@ fun DetailProfile(
             Column(
                 modifier = Modifier.clip(RoundedCornerShape(16.dp))
             ) {
-                SettingsItem(icon = Heroicons.Outline.User, title = stringResource(R.string.DP_change_name))
+                SettingsItem(
+                    icon = Heroicons.Outline.User,
+                    title = stringResource(R.string.DP_change_name),
+                    onClick = {
+                        newUsername = viewModel.userName
+                        showChangeNameDialog = true
+                    }
+                )
                 SettingsItem(
                     icon = Heroicons.Outline.Bell,
                     title = stringResource(R.string.DP_notifications),
@@ -160,6 +182,39 @@ fun DetailProfile(
                 SettingsItem(icon = Heroicons.Outline.Trash, title = stringResource(R.string.DP_delete_data), isDanger = true)
             }
         }
+    }
+
+    if (showChangeNameDialog) {
+        AlertDialog(
+            onDismissRequest = { showChangeNameDialog = false },
+            title = { Text(stringResource(R.string.DP_change_name)) },
+            text = {
+                OutlinedTextField(
+                    value = newUsername,
+                    onValueChange = { newUsername = it },
+                    label = { Text("Nové jméno") },
+                    singleLine = true,
+                    modifier = Modifier.fillMaxWidth()
+                )
+            },
+            confirmButton = {
+                TextButton(
+                    onClick = {
+                        if (newUsername.isNotBlank() && newUsername != viewModel.userName) {
+                            viewModel.changeUsername(newUsername.trim())
+                        }
+                        showChangeNameDialog = false
+                    }
+                ) {
+                    Text("Uložit")
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = { showChangeNameDialog = false }) {
+                    Text("Zrušit")
+                }
+            }
+        )
     }
 }
 
