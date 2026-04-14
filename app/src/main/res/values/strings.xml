@@ -43,6 +43,7 @@
     <!--    Auth Screen-->
     <string name="AS_what_is_your_name">What should we call you?</string>
     <string name="AS_enter_username">Enter username</string>
+    <string name="AS_username_taken_error">This username is already taken, please choose another.</string>
     <string name="AS_continue">Continue</string>
     <string name="AS_error">Error: %1$s</string>
     <string name="AS_network_error">Network error</string>

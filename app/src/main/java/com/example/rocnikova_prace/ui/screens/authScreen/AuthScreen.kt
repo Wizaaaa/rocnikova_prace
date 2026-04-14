@@ -73,6 +73,11 @@ fun AuthScreen(
                 Toast.makeText(context, state.message, Toast.LENGTH_LONG).show()
                 viewModel.resetState()
             }
+            is AuthState.InvalidEmail -> {
+                Toast.makeText(context, state.message, Toast.LENGTH_LONG).show()
+                currentStep = AuthStep.ENTER_EMAIL
+                viewModel.resetState()
+            }
             else -> {  }
         }
     }
@@ -121,11 +126,16 @@ fun AuthScreen(
 
                 AuthButton(
                     onClick = {
+                        if (!android.util.Patterns.EMAIL_ADDRESS.matcher(viewModel.email.trim()).matches()) {
+                            Toast.makeText(context, "Zadali jste neplatný e-mail. Zkontrolujte překlepy a zavináč (@).", Toast.LENGTH_SHORT).show()
+                            return@AuthButton
+                        }
+
                         scope.launch {
                             try {
                                 val exists = supabase.postgrest.rpc(
                                     function = "check_email_exists",
-                                    parameters = mapOf("lookup_email" to viewModel.email)
+                                    parameters = mapOf("lookup_email" to viewModel.email.trim())
                                 ).decodeAs<Boolean>()
 
                                 if (exists) {
@@ -177,8 +187,11 @@ fun AuthScreen(
                     viewModel = viewModel,
                     authState = authState,
                     onClick = {
-                        viewModel.sendMagicLink()
-                        currentStep = AuthStep.CHECK_EMAIL
+                        viewModel.sendMagicLink(
+                            onSuccess = {
+                                currentStep = AuthStep.CHECK_EMAIL
+                            }
+                        )
                     }
                 )
 

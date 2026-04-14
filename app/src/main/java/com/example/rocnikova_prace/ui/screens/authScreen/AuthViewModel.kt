@@ -22,6 +22,7 @@ sealed class AuthState {
     object Loading: AuthState()
     object Success: AuthState()
     data class Error(val message: String): AuthState()
+    data class InvalidEmail(val message: String): AuthState()
 }
 
 class AuthViewModel(
@@ -30,10 +31,18 @@ class AuthViewModel(
     private val _authState = MutableStateFlow<AuthState>(AuthState.Idle)
     val authState: StateFlow<AuthState> = _authState.asStateFlow()
 
-    var email by mutableStateOf("")
+    var name by mutableStateOf("")
         private set
 
-    var name by mutableStateOf("")
+    var isNameTakenError by mutableStateOf(false)
+        private set
+
+    fun updateName(input: String) {
+        name = input
+        isNameTakenError = false
+    }
+
+    var email by mutableStateOf("")
         private set
 
     init {
@@ -54,10 +63,23 @@ class AuthViewModel(
         }
     }
 
-    fun sendMagicLink() {
+    fun sendMagicLink(onSuccess: () -> Unit) {
         viewModelScope.launch {
             _authState.value = AuthState.Loading
+
+            if (!android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
+                _authState.value = AuthState.InvalidEmail("Zadali jste neplatný e-mail. Jste si jisti, že vám nechybí zavináč?")
+                return@launch
+            }
+
             try {
+                val isTaken = authRepository.isUsernameTaken(name)
+                if (isTaken) {
+                    isNameTakenError = true
+                    _authState.value = AuthState.Idle
+                    return@launch
+                }
+
                 com.example.rocnikova_prace.data.remote.SupabaseClient.client.auth.signInWith(OTP, redirectUrl = "rocnikovka://login-callback") {
                     email = this@AuthViewModel.email
 
@@ -70,8 +92,18 @@ class AuthViewModel(
                     }
                 }
                 _authState.value = AuthState.Idle
+                onSuccess()
             } catch (e: Exception) {
-                _authState.value = AuthState.Error("Chyba při odesílání: ${e.message}")
+                val errorMsg = e.message ?: ""
+                if (errorMsg.contains("unique constraint", ignoreCase = true) ||
+                    errorMsg.contains("already exist", ignoreCase = true) ||
+                    errorMsg.contains("profiles_name_key", ignoreCase = true) ||
+                    errorMsg.contains("Unknown Error", ignoreCase = true)) {
+                    isNameTakenError = true
+                    _authState.value = AuthState.Idle
+                } else {
+                    _authState.value = AuthState.Error("Nastala chyba: ${errorMsg}")
+                }
             }
         }
     }
@@ -97,9 +129,5 @@ class AuthViewModel(
 
     fun updateEmail(value: String) {
         email = value
-    }
-
-    fun updateName(value: String) {
-        name = value
     }
 }
