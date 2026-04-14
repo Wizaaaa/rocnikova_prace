@@ -43,6 +43,7 @@
     <!--    Auth Screen-->
     <string name="AS_what_is_your_name">Jak vám máme říkat?</string>
     <string name="AS_enter_username">Zadejte uživatelské jméno</string>
+    <string name="AS_username_taken_error">Toto uživatelské jméno je již obsazené, vyberte prosím jiné.</string>
     <string name="AS_continue">Pokračovat</string>
     <string name="AS_error">Chyba: %1$s</string>
     <string name="AS_network_error">Chyba sítě</string>
