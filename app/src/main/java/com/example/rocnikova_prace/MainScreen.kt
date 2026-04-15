@@ -292,6 +292,7 @@ fun MainScreen(
             ) { padding ->
                 DetailProfile(
                     viewModel = viewModel,
+                    navController = navController,
                     modifier = Modifier.padding(padding)
                 )
             }
