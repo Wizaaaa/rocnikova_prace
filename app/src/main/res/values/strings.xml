@@ -77,8 +77,9 @@
     <string name="DP_app_settings">App settings</string>
     <string name="DP_change_name">Change name</string>
     <string name="DP_notifications">Notifications</string>
-    <string name="DP_privacy">Privacy</string>
-    <string name="DP_delete_data">Delete data</string>
+    <string name="DP_delete_profile">Delete profile</string>
+    <string name="save">Save</string>
+    <string name="cancel">Cancel</string>
 
     <plurals name="attempts_count">
         <item quantity="one">%d attempt</item>

@@ -77,8 +77,9 @@
     <string name="DP_app_settings">Nastavení aplikace</string>
     <string name="DP_change_name">Změnit jméno</string>
     <string name="DP_notifications">Notifikace</string>
-    <string name="DP_privacy">Soukromí</string>
-    <string name="DP_delete_data">Smazat data</string>
+    <string name="DP_delete_profile">Smazat profil</string>
+    <string name="save">Uložit</string>
+    <string name="cancel">Zrušit</string>
 
     <plurals name="attempts_count">
         <item quantity="one">%d pokus</item>

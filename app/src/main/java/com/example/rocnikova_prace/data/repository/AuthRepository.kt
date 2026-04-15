@@ -6,6 +6,7 @@ import com.example.rocnikova_prace.data.remote.dto.ProfileDto
 import io.github.jan.supabase.SupabaseClient
 import io.github.jan.supabase.auth.auth
 import io.github.jan.supabase.postgrest.from
+import io.github.jan.supabase.postgrest.postgrest
 import io.github.jan.supabase.storage.storage
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -103,6 +104,18 @@ class AuthRepository(
                         eq("user_id", userId)
                     }
                 }
+            } catch (e: Exception) {
+                throw e
+            }
+        }
+    }
+
+    suspend fun deleteUser() {
+        withContext(Dispatchers.IO) {
+            try {
+                supabase.postgrest.rpc("delete_my_account")
+
+                supabase.auth.signOut()
             } catch (e: Exception) {
                 throw e
             }

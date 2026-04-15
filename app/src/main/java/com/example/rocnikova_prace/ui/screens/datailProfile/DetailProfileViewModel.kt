@@ -14,8 +14,10 @@ import androidx.savedstate.SavedStateRegistryOwner
 import com.example.rocnikova_prace.data.model.GroupSummary
 import com.example.rocnikova_prace.data.repository.AuthRepository
 import com.example.rocnikova_prace.data.repository.QuestionRepository
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class DetailProfileViewModel(
     savedStateHandle: SavedStateHandle,
@@ -110,6 +112,19 @@ class DetailProfileViewModel(
 
                 authRepository.updateUsername(userId, name)
                 userName = name
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+        }
+    }
+
+    fun deleteUserProfile(onSuccess: () -> Unit) {
+        viewModelScope.launch {
+            try {
+                authRepository.deleteUser()
+                withContext(Dispatchers.Main) {
+                    onSuccess()
+                }
             } catch (e: Exception) {
                 e.printStackTrace()
             }

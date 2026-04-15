@@ -17,20 +17,18 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.material3.AlertDialog
-import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -41,25 +39,27 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
 import coil.compose.AsyncImage
+import com.example.rocnikova_prace.MainScreen
 import com.example.rocnikova_prace.R
 import com.woowla.compose.icon.collections.heroicons.Heroicons
 import com.woowla.compose.icon.collections.heroicons.heroicons.Outline
 import com.woowla.compose.icon.collections.heroicons.heroicons.outline.Bell
 import com.woowla.compose.icon.collections.heroicons.heroicons.outline.ChevronRight
-import com.woowla.compose.icon.collections.heroicons.heroicons.outline.ShieldCheck
 import com.woowla.compose.icon.collections.heroicons.heroicons.outline.Trash
 import com.woowla.compose.icon.collections.heroicons.heroicons.outline.User
 
 @Composable
 fun DetailProfile(
     viewModel: DetailProfileViewModel,
+    navController: NavController,
     modifier: Modifier = Modifier
 ) {
     val totalProgress = viewModel.totalProgress
 
-    var showChangeNameDialog by remember { mutableStateOf(false) }
-    var newUsername by remember { mutableStateOf(viewModel.userName) }
+    val showChangeNameDialog = remember { mutableStateOf(false) }
+    val newUsername = remember { mutableStateOf(viewModel.userName) }
 
     val context = LocalContext.current
 
@@ -165,8 +165,8 @@ fun DetailProfile(
                     icon = Heroicons.Outline.User,
                     title = stringResource(R.string.DP_change_name),
                     onClick = {
-                        newUsername = viewModel.userName
-                        showChangeNameDialog = true
+                        newUsername.value = viewModel.userName
+                        showChangeNameDialog.value = true
                     }
                 )
                 SettingsItem(
@@ -178,21 +178,32 @@ fun DetailProfile(
                         viewModel.changeNotificationsSettings()
                     }
                 )
-                SettingsItem(icon = Heroicons.Outline.ShieldCheck, title = stringResource(R.string.DP_privacy))
-                SettingsItem(icon = Heroicons.Outline.Trash, title = stringResource(R.string.DP_delete_data), isDanger = true)
+
+                SettingsItem(
+                    icon = Heroicons.Outline.Trash,
+                    title = stringResource(R.string.DP_delete_profile),
+                    isDanger = true,
+                    onClick = {
+                        viewModel.deleteUserProfile() {
+                            navController.navigate(MainScreen.AuthScreen.name) {
+                                popUpTo(0) { inclusive = true }
+                            }
+                        }
+                    }
+                )
             }
         }
     }
 
-    if (showChangeNameDialog) {
+    if (showChangeNameDialog.value) {
         AlertDialog(
-            onDismissRequest = { showChangeNameDialog = false },
+            onDismissRequest = { showChangeNameDialog.value = false },
             title = { Text(stringResource(R.string.DP_change_name)) },
             text = {
                 OutlinedTextField(
-                    value = newUsername,
-                    onValueChange = { newUsername = it },
-                    label = { Text("Nové jméno") },
+                    value = newUsername.value,
+                    onValueChange = { newUsername.value = it },
+                    label = { Text(stringResource(R.string.DP_change_name)) },
                     singleLine = true,
                     modifier = Modifier.fillMaxWidth()
                 )
@@ -200,18 +211,18 @@ fun DetailProfile(
             confirmButton = {
                 TextButton(
                     onClick = {
-                        if (newUsername.isNotBlank() && newUsername != viewModel.userName) {
-                            viewModel.changeUsername(newUsername.trim())
+                        if (newUsername.value.isNotBlank() && newUsername.value != viewModel.userName) {
+                            viewModel.changeUsername(newUsername.value.trim())
                         }
-                        showChangeNameDialog = false
+                        showChangeNameDialog.value = false
                     }
                 ) {
-                    Text("Uložit")
+                    Text(stringResource(R.string.save))
                 }
             },
             dismissButton = {
-                TextButton(onClick = { showChangeNameDialog = false }) {
-                    Text("Zrušit")
+                TextButton(onClick = { showChangeNameDialog.value = false }) {
+                    Text(stringResource(R.string.cancel))
                 }
             }
         )
