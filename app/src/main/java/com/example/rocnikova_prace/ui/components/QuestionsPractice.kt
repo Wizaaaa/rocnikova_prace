@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
@@ -22,6 +23,7 @@ import androidx.compose.ui.unit.dp
 import com.example.rocnikova_prace.R
 import com.example.rocnikova_prace.data.model.QuestionItem
 import com.example.rocnikova_prace.ui.screens.practiceScreen.PracticeScreenViewModel
+import com.example.rocnikova_prace.ui.theme.Dimens
 
 @Composable
 fun PracticeMultipleChoice(
@@ -140,10 +142,13 @@ private fun AnswerCard(
 
             val isReviewing = viewModel.answerError.isNotEmpty()
 
+            val successContainer = if (isSystemInDarkTheme()) Color(0xFF1B5E20) else Color(0xFFC8E6C9)
+            val errorContainer = if (isSystemInDarkTheme()) Color(0xFFB71C1C) else Color(0xFFFFCDD2)
+
             val backgroundColor = when {
-                isRed -> Color(0xFFFFCDD2)
-                isGreen -> Color(0xFFC8E6C9)
-                else -> Color.LightGray
+                isRed -> errorContainer
+                isGreen -> successContainer
+                else -> MaterialTheme.colorScheme.outlineVariant
             }
 
             Row(
@@ -162,7 +167,7 @@ private fun AnswerCard(
                     text = text,
                     modifier = Modifier
                         .weight(1f)
-                        .padding(start = 12.dp, top = 8.dp, bottom = 8.dp, end = 4.dp)
+                        .padding(start = 12.dp, top = Dimens.small, bottom = Dimens.small, end = Dimens.tiny)
                 )
 
                 Checkbox(

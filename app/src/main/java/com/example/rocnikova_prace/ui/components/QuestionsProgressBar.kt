@@ -1,9 +1,11 @@
 package com.example.rocnikova_prace.ui.components
 
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -27,6 +29,10 @@ fun QuestionsProgressBar(
         animationSpec = tween(durationMillis = 500, easing = LinearEasing)
     )
 
+    val outlineVariantColor = MaterialTheme.colorScheme.outlineVariant
+    val successColor = if (isSystemInDarkTheme()) Color(0xFF1B5E20) else Color(0xFFC8E6C9)
+    val errorColor = if (isSystemInDarkTheme()) Color(0xFFB71C1C) else Color(0xFFFFCDD2)
+
     Canvas(
         modifier = Modifier
             .fillMaxWidth()
@@ -35,18 +41,16 @@ fun QuestionsProgressBar(
     ) {
         val rectWidth = size.width / maxValue
 
-
         drawRoundRect(
             size = size,
-            color = Color.LightGray
+            color = outlineVariantColor
         )
 
         viewModel.answers.forEachIndexed { index, answer ->
             val segmentProgress = (animatedProgress - index).coerceIn(0f, 1f)
 
             val xOffset = rectWidth * index
-            val color = if (answer) Color.Green else Color.Red
-
+            val color = if (answer) successColor else errorColor
 
             drawRoundRect(
                 size = Size(

@@ -49,6 +49,7 @@ import com.woowla.compose.icon.collections.heroicons.Heroicons
 import com.woowla.compose.icon.collections.heroicons.heroicons.Outline
 import com.woowla.compose.icon.collections.heroicons.heroicons.outline.ArrowRight
 import com.woowla.compose.icon.collections.heroicons.heroicons.outline.ChevronRight
+import com.example.rocnikova_prace.ui.theme.Dimens
 
 @Composable
 fun ProfileScreen(
@@ -97,7 +98,7 @@ fun ProfileScreen(
                     Row(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .padding(horizontal = 16.dp, vertical = 24.dp)
+                            .padding(horizontal = Dimens.medium, vertical = Dimens.extraLarge)
                             .clickable {
                                 profileScreenViewModel.currentUserId?.let { uid ->
                                     navController.navigate("${MainScreen.DetailProfile.name}/$uid")
@@ -134,7 +135,7 @@ fun ProfileScreen(
                             }
                         }
 
-                        Spacer(modifier = Modifier.width(16.dp))
+                        Spacer(modifier = Modifier.width(Dimens.medium))
 
                         Column(modifier = Modifier.weight(1f)) {
                             Text(
@@ -145,14 +146,14 @@ fun ProfileScreen(
                             Text(
                                 text = stringResource(R.string.PS_view_profile),
                                 style = MaterialTheme.typography.bodyMedium,
-                                color = Color.Gray
+                                color = MaterialTheme.colorScheme.onSurfaceVariant
                             )
                         }
 
                         Icon(
                             imageVector = Heroicons.Outline.ChevronRight,
                             contentDescription = null,
-                            tint = Color.Gray
+                            tint = MaterialTheme.colorScheme.onSurfaceVariant
                         )
                     }
                 }
@@ -169,7 +170,7 @@ fun ProfileScreen(
                         colors = CardDefaults.elevatedCardColors(containerColor = MaterialTheme.colorScheme.surface),
                         modifier = Modifier
                             .fillMaxWidth()
-                            .padding(horizontal = 16.dp, vertical = 6.dp)
+                            .padding(horizontal = Dimens.medium, vertical = 6.dp)
                     ) {
                         Row(
                             modifier = Modifier
@@ -207,7 +208,7 @@ fun ProfileScreen(
                                         data.totalAttempts
                                     ),
                                     style = MaterialTheme.typography.bodySmall,
-                                    color = Color.Gray
+                                    color = MaterialTheme.colorScheme.onSurfaceVariant
                                 )
                             }
 
@@ -218,8 +219,8 @@ fun ProfileScreen(
                                 CircularProgressIndicator(
                                     progress = { 1f },
                                     modifier = Modifier.fillMaxSize(),
-                                    color = Color.LightGray.copy(alpha = 0.2f),
-                                    strokeWidth = 4.dp
+                                    color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.2f),
+                                    strokeWidth = Dimens.tiny
                                 )
 
                                 CircularProgressIndicator(
@@ -227,8 +228,8 @@ fun ProfileScreen(
                                     modifier = Modifier.fillMaxSize(),
                                     color = if (score >= 80) Color(0xFF4CAF50) else if (score >= 50) Color(
                                         0xFFFFC107
-                                    ) else Color(0xFFF44336),
-                                    strokeWidth = 4.dp
+                                    ) else MaterialTheme.colorScheme.error,
+                                    strokeWidth = Dimens.tiny
                                 )
 
                                 Text(
@@ -238,20 +239,20 @@ fun ProfileScreen(
                                 )
                             }
 
-                            Spacer(modifier = Modifier.width(8.dp))
+                            Spacer(modifier = Modifier.width(Dimens.small))
 
                             Icon(
                                 imageVector = Heroicons.Outline.ArrowRight,
                                 contentDescription = null,
-                                tint = Color.LightGray,
-                                modifier = Modifier.size(20.dp)
+                                tint = MaterialTheme.colorScheme.outlineVariant,
+                                modifier = Modifier.size(Dimens.large)
                             )
                         }
                     }
                 }
 
                 item {
-                    Spacer(modifier = Modifier.height(24.dp))
+                    Spacer(modifier = Modifier.height(Dimens.extraLarge))
                     TextButton(
                         onClick = {
                             profileScreenViewModel.signOut {
@@ -260,7 +261,7 @@ fun ProfileScreen(
                                 }
                             }
                         },
-                        modifier = Modifier.fillMaxWidth().padding(bottom = 32.dp),
+                        modifier = Modifier.fillMaxWidth().padding(bottom = Dimens.massive),
                         colors = ButtonDefaults.textButtonColors(contentColor = MaterialTheme.colorScheme.error)
                     ) {
                         Text(stringResource(R.string.PS_sign_out))

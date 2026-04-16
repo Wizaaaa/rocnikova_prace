@@ -23,7 +23,6 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
@@ -33,6 +32,7 @@ import com.example.rocnikova_prace.MainScreen
 import com.example.rocnikova_prace.R
 import com.example.rocnikova_prace.ui.components.AuthButton
 import com.example.rocnikova_prace.ui.components.InformationCard
+import com.example.rocnikova_prace.ui.theme.Dimens
 import io.github.jan.supabase.auth.auth
 import io.github.jan.supabase.auth.providers.builtin.OTP
 import io.github.jan.supabase.compose.auth.composable.NativeSignInResult
@@ -107,7 +107,7 @@ fun AuthScreen(
     val connectionErrorText = stringResource(R.string.AS_connection_error)
 
     Column(
-        modifier = Modifier.fillMaxSize().padding(16.dp),
+        modifier = Modifier.fillMaxSize().padding(Dimens.medium),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
@@ -122,7 +122,7 @@ fun AuthScreen(
                     label = stringResource(R.string.AS_enter_email)
                 )
 
-                Spacer(modifier = Modifier.height(16.dp))
+                Spacer(modifier = Modifier.height(Dimens.medium))
 
                 AuthButton(
                     onClick = {
@@ -163,7 +163,7 @@ fun AuthScreen(
                 ) {
                     HorizontalDivider(Modifier.weight(1f))
 
-                    Text(text = stringResource(R.string.AS_or), modifier = Modifier.padding(horizontal = 16.dp), color = Color.Gray)
+                    Text(text = stringResource(R.string.AS_or), modifier = Modifier.padding(horizontal = Dimens.medium), color = MaterialTheme.colorScheme.onSurfaceVariant)
 
                     HorizontalDivider(Modifier.weight(1f))
                 }
@@ -181,7 +181,7 @@ fun AuthScreen(
             // -----------------------------------------
             AuthStep.REGISTER_NAME -> {
                 Text(stringResource(R.string.AS_looks_like_new_user))
-                Spacer(modifier = Modifier.height(16.dp))
+                Spacer(modifier = Modifier.height(Dimens.medium))
 
                 AuthName(
                     viewModel = viewModel,
@@ -195,7 +195,7 @@ fun AuthScreen(
                     }
                 )
 
-                Spacer(modifier = Modifier.height(16.dp))
+                Spacer(modifier = Modifier.height(Dimens.medium))
                 TextButton(onClick = { currentStep = AuthStep.ENTER_EMAIL }) {
                     Text(stringResource(R.string.AS_back_to_email))
                 }
@@ -209,14 +209,14 @@ fun AuthScreen(
                     text = stringResource(R.string.AS_check_email_title),
                     style = MaterialTheme.typography.titleLarge
                 )
-                Spacer(modifier = Modifier.height(8.dp))
+                Spacer(modifier = Modifier.height(Dimens.small))
                 Text(
                     text = stringResource(R.string.AS_check_email_body, viewModel.email),
                     textAlign = TextAlign.Center,
-                    color = Color.Gray
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
 
-                Spacer(modifier = Modifier.height(24.dp))
+                Spacer(modifier = Modifier.height(Dimens.extraLarge))
 
                 TextButton(onClick = { currentStep = AuthStep.ENTER_EMAIL }) {
                     Text(stringResource(R.string.AS_wrong_email))

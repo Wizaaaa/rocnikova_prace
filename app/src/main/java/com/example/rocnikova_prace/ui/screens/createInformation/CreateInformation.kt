@@ -46,6 +46,7 @@ import com.woowla.compose.icon.collections.heroicons.heroicons.outline.ChevronDo
 import com.woowla.compose.icon.collections.heroicons.heroicons.outline.ChevronUp
 import com.woowla.compose.icon.collections.heroicons.heroicons.outline.FolderPlus
 import com.woowla.compose.icon.collections.heroicons.heroicons.outline.XMark
+import com.example.rocnikova_prace.ui.theme.Dimens
 
 @Composable
 fun CreateInformation(
@@ -111,7 +112,7 @@ fun CreateInformation(
                 }
             },
             modifier = Modifier
-                .padding(start = 20.dp, end = 20.dp)
+                .padding(start = Dimens.large, end = Dimens.large)
                 .shake(groupNameError, trigger = viewModel.validationErrorTrigger)
         )
 
@@ -129,7 +130,7 @@ fun CreateInformation(
                 Card(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(top = 20.dp, start = 20.dp, end = 20.dp)
+                        .padding(top = Dimens.large, start = Dimens.large, end = Dimens.large)
                 ) {
                     Box(modifier = Modifier.fillMaxWidth()) {
                         Column(
@@ -217,7 +218,7 @@ fun CreateInformation(
                             contentDescription = stringResource(R.string.CI_deleteQuestion),
                             modifier = Modifier
                                 .align(Alignment.TopEnd)
-                                .padding(4.dp)
+                                .padding(Dimens.tiny)
                                 .clip(RoundedCornerShape(50))
                                 .clickable {
                                     viewModel.removeQuestion(questionItem.id)
@@ -232,7 +233,7 @@ fun CreateInformation(
             icon = Heroicons.Outline.FolderPlus,
             text = R.string.new_question,
             onClick = { viewModel.addQuestion() },
-            modifier = Modifier.padding(start = 20.dp, end = 20.dp)
+            modifier = Modifier.padding(start = Dimens.large, end = Dimens.large)
         )
     }
 }

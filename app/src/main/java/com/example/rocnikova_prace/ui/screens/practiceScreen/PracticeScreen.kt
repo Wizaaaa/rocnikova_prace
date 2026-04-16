@@ -15,7 +15,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.rocnikova_prace.R
 import com.example.rocnikova_prace.data.local.toQuestionItem
@@ -25,6 +24,7 @@ import com.example.rocnikova_prace.ui.components.PracticeFillBlank
 import com.example.rocnikova_prace.ui.components.PracticeMultipleChoice
 import com.example.rocnikova_prace.ui.components.PracticeOpen
 import com.example.rocnikova_prace.ui.components.QuestionsProgressBar
+import com.example.rocnikova_prace.ui.theme.Dimens
 import com.woowla.compose.icon.collections.heroicons.Heroicons
 import com.woowla.compose.icon.collections.heroicons.heroicons.Outline
 import com.woowla.compose.icon.collections.heroicons.heroicons.outline.FaceFrown
@@ -61,7 +61,7 @@ fun PracticeScreen(
             horizontalAlignment = Alignment.CenterHorizontally,
             modifier = modifier
                 .fillMaxSize()
-                .padding(start = 20.dp, end = 20.dp, bottom = 20.dp)
+                .padding(start = Dimens.large, end = Dimens.large, bottom = Dimens.large)
         ) {
             LaunchedEffect(Unit) {
                 viewModel.startTimer()

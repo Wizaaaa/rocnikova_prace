@@ -17,6 +17,7 @@ import androidx.compose.ui.unit.dp
 import com.example.rocnikova_prace.R
 import com.example.rocnikova_prace.data.model.QuestionItem
 import com.example.rocnikova_prace.ui.screens.createInformation.CreateInformationViewModel
+import com.example.rocnikova_prace.ui.theme.Dimens
 
 
 @Composable
@@ -52,7 +53,7 @@ fun DrawMultipleChoice(
         },
         modifier = Modifier
             .fillMaxWidth()
-            .padding(start = 20.dp, end = 20.dp, bottom = 20.dp)
+            .padding(start = Dimens.large, end = Dimens.large, bottom = Dimens.large)
             .shake(isQuestionError, trigger = viewModel.validationErrorTrigger)
     )
 
@@ -162,7 +163,7 @@ private fun OpenFillQuestionCards(
         },
         modifier = Modifier
             .fillMaxWidth()
-            .padding(start = 20.dp, end = 20.dp)
+            .padding(start = Dimens.large, end = Dimens.large)
     )
 
     InformationCard(
@@ -183,6 +184,6 @@ private fun OpenFillQuestionCards(
         label = answerLabel,
         modifier = Modifier
             .fillMaxWidth()
-            .padding(start = 20.dp, end = 20.dp, bottom = 20.dp)
+            .padding(start = Dimens.large, end = Dimens.large, bottom = Dimens.large)
     )
 }

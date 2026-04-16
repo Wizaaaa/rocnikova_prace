@@ -7,12 +7,12 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.example.rocnikova_prace.MainScreen
 import com.example.rocnikova_prace.R
 import com.example.rocnikova_prace.ui.components.Cards
 import com.example.rocnikova_prace.ui.screens.authScreen.AuthViewModel
+import com.example.rocnikova_prace.ui.theme.Dimens
 import com.woowla.compose.icon.collections.heroicons.Heroicons
 import com.woowla.compose.icon.collections.heroicons.heroicons.Outline
 import com.woowla.compose.icon.collections.heroicons.heroicons.outline.AcademicCap
@@ -32,7 +32,7 @@ fun CreateScreen(
         verticalArrangement = Arrangement.Center,
         modifier = Modifier
             .fillMaxSize()
-            .padding(20.dp)
+            .padding(Dimens.large)
     ) {
         Cards(
             text = R.string.CS_new_questions,

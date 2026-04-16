@@ -16,6 +16,7 @@ import androidx.compose.ui.unit.dp
 import com.example.rocnikova_prace.R
 import com.example.rocnikova_prace.ui.components.AuthButton
 import com.example.rocnikova_prace.ui.components.InformationCard
+import com.example.rocnikova_prace.ui.theme.Dimens
 
 @Composable
 fun AuthName(
@@ -45,11 +46,11 @@ fun AuthName(
                 text = stringResource(R.string.AS_username_taken_error),
                 color = MaterialTheme.colorScheme.error,
                 style = MaterialTheme.typography.bodySmall,
-                modifier = Modifier.padding(top = 4.dp)
+                modifier = Modifier.padding(top = Dimens.tiny)
             )
         }
 
-        Spacer(modifier = Modifier.height(16.dp))
+        Spacer(modifier = Modifier.height(Dimens.medium))
 
         AuthButton(
             onClick = { onClick() },
