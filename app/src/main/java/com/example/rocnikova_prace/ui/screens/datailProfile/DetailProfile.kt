@@ -43,6 +43,7 @@ import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import com.example.rocnikova_prace.MainScreen
 import com.example.rocnikova_prace.R
+import com.example.rocnikova_prace.ui.theme.Dimens
 import com.woowla.compose.icon.collections.heroicons.Heroicons
 import com.woowla.compose.icon.collections.heroicons.heroicons.Outline
 import com.woowla.compose.icon.collections.heroicons.heroicons.outline.Bell
@@ -78,7 +79,7 @@ fun DetailProfile(
     )
 
     LazyColumn(
-        modifier = modifier.fillMaxSize().padding(16.dp),
+        modifier = modifier.fillMaxSize().padding(Dimens.medium),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         item {
@@ -107,25 +108,25 @@ fun DetailProfile(
                     style = MaterialTheme.typography.titleLarge,
                     fontWeight = FontWeight.Bold
                 )
-                Text(text = viewModel.mail, color = Color.Gray)
+                Text(text = viewModel.mail, color = MaterialTheme.colorScheme.onSurfaceVariant)
             }
         }
 
         item {
-            Spacer(modifier = Modifier.height(32.dp))
+            Spacer(modifier = Modifier.height(Dimens.massive))
             ElevatedCard(
                 modifier = Modifier.fillMaxWidth(),
-                shape = RoundedCornerShape(24.dp)
+                shape = RoundedCornerShape(Dimens.extraLarge)
             ) {
                 Row(
-                    modifier = Modifier.padding(24.dp),
+                    modifier = Modifier.padding(Dimens.extraLarge),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Box(modifier = Modifier.size(80.dp), contentAlignment = Alignment.Center) {
                         CircularProgressIndicator(
                             progress = { totalProgress / 100f },
                             modifier = Modifier.fillMaxSize(),
-                            strokeWidth = 8.dp,
+                            strokeWidth = Dimens.small,
                             color = MaterialTheme.colorScheme.primary,
                             trackColor = MaterialTheme.colorScheme.surfaceVariant
                         )
@@ -135,13 +136,13 @@ fun DetailProfile(
                             fontWeight = FontWeight.Bold
                         )
                     }
-                    Spacer(modifier = Modifier.width(24.dp))
+                    Spacer(modifier = Modifier.width(Dimens.extraLarge))
                     Column {
                         Text(text = stringResource(R.string.DP_total_level), fontWeight = FontWeight.Bold)
                         Text(
                             text = stringResource(R.string.DP_average_success),
                             style = MaterialTheme.typography.bodySmall,
-                            color = Color.Gray
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
                     }
                 }
@@ -149,17 +150,17 @@ fun DetailProfile(
         }
 
         item {
-            Spacer(modifier = Modifier.height(32.dp))
+            Spacer(modifier = Modifier.height(Dimens.massive))
             Text(
                 text = stringResource(R.string.DP_app_settings),
                 modifier = Modifier.fillMaxWidth(),
                 style = MaterialTheme.typography.labelLarge,
                 color = MaterialTheme.colorScheme.primary
             )
-            Spacer(modifier = Modifier.height(8.dp))
+            Spacer(modifier = Modifier.height(Dimens.small))
 
             Column(
-                modifier = Modifier.clip(RoundedCornerShape(16.dp))
+                modifier = Modifier.clip(RoundedCornerShape(Dimens.medium))
             ) {
                 SettingsItem(
                     icon = Heroicons.Outline.User,
@@ -184,7 +185,7 @@ fun DetailProfile(
                     title = stringResource(R.string.DP_delete_profile),
                     isDanger = true,
                     onClick = {
-                        viewModel.deleteUserProfile() {
+                        viewModel.deleteUserProfile {
                             navController.navigate(MainScreen.AuthScreen.name) {
                                 popUpTo(0) { inclusive = true }
                             }
@@ -247,16 +248,16 @@ private fun SettingsItem(
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(vertical = 12.dp, horizontal = 16.dp),
+                .padding(vertical = 12.dp, horizontal = Dimens.medium),
             verticalAlignment = Alignment.CenterVertically
         ) {
             Icon(
                 imageVector = icon,
                 contentDescription = null,
                 tint = color.copy(alpha = 0.7f),
-                modifier = Modifier.size(24.dp)
+                modifier = Modifier.size(Dimens.extraLarge)
             )
-            Spacer(modifier = Modifier.width(16.dp))
+            Spacer(modifier = Modifier.width(Dimens.medium))
             Text(
                 text = title,
                 style = MaterialTheme.typography.bodyLarge,
@@ -276,8 +277,8 @@ private fun SettingsItem(
                     Icon(
                         imageVector = Heroicons.Outline.ChevronRight,
                         contentDescription = null,
-                        tint = Color.LightGray,
-                        modifier = Modifier.size(20.dp)
+                        tint = MaterialTheme.colorScheme.outlineVariant,
+                        modifier = Modifier.size(Dimens.large)
                     )
                 }
             }

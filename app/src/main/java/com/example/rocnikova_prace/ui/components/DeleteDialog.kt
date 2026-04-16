@@ -17,6 +17,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import com.example.rocnikova_prace.ui.theme.Dimens
 
 @Composable
 fun DeleteDialog(
@@ -58,7 +59,7 @@ fun DeleteDialog(
                         Text(dismissText)
                     }
 
-                    Spacer(modifier = Modifier.width(8.dp))
+                    Spacer(modifier = Modifier.width(Dimens.small))
 
                     TextButton(onClick = onConfirmation) {
                         Text(confirmText)

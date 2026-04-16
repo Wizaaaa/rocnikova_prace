@@ -35,7 +35,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.rotate
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -45,6 +44,7 @@ import com.example.rocnikova_prace.R
 import com.example.rocnikova_prace.data.local.entities.GroupEntity
 import com.example.rocnikova_prace.ui.components.Cards
 import com.example.rocnikova_prace.ui.components.DeleteDialog
+import com.example.rocnikova_prace.ui.theme.Dimens
 import com.woowla.compose.icon.collections.heroicons.Heroicons
 import com.woowla.compose.icon.collections.heroicons.heroicons.Outline
 import com.woowla.compose.icon.collections.heroicons.heroicons.outline.Plus
@@ -95,7 +95,7 @@ fun QuestionsScreen(
                         val newId = java.util.UUID.randomUUID().toString()
                         navController.navigate("${MainScreen.CreateInformation.name}/$newId")
                     },
-                    modifier = Modifier.padding(start = 20.dp, end = 20.dp)
+                    modifier = Modifier.padding(start = Dimens.large, end = Dimens.large)
                 )
             }
         }
@@ -112,10 +112,10 @@ fun QuestionsScreen(
                 ) { group ->
                     Box {
                         ElevatedCard(
-                            elevation = CardDefaults.elevatedCardElevation(defaultElevation = 8.dp),
+                            elevation = CardDefaults.elevatedCardElevation(defaultElevation = Dimens.small),
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .padding(20.dp)
+                                .padding(Dimens.large)
                         ) {
                             Column(modifier = Modifier.padding(10.dp)) {
                                 Text(
@@ -154,7 +154,7 @@ fun QuestionsScreen(
                             contentDescription = "delete questions",
                             modifier = Modifier
                                 .align(Alignment.TopEnd)
-                                .padding(top = 24.dp, end = 24.dp)
+                                .padding(top = Dimens.extraLarge, end = Dimens.extraLarge)
                                 .clip(RoundedCornerShape(50))
                                 .clickable {
                                     setGroupToDelete(group)
@@ -176,7 +176,7 @@ fun QuestionsScreen(
                             Icon(
                                 imageVector = Heroicons.Outline.PlusCircle,
                                 contentDescription = stringResource(R.string.new_questions_group),
-                                tint = Color.LightGray,
+                                tint = MaterialTheme.colorScheme.outlineVariant,
                                 modifier = Modifier.size(48.dp)
                             )
                         }

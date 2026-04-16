@@ -26,19 +26,20 @@ import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.StrokeJoin
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.unit.dp
+import com.example.rocnikova_prace.ui.theme.Dimens
 
 @Composable
 fun ScoreChart(data: List<Float>) {
-    val lineColor = Color(0xFF4CAF50)
-    val pointColor = Color.White
-    val fillColorStart = Color(0xFF4CAF50).copy(alpha = 0.3f)
-    val fillColorEnd = Color(0xFF4CAF50).copy(alpha = 0.0f)
+    val lineColor = MaterialTheme.colorScheme.primary
+    val pointColor = MaterialTheme.colorScheme.surface
+    val fillColorStart = MaterialTheme.colorScheme.primary.copy(alpha = 0.3f)
+    val fillColorEnd = MaterialTheme.colorScheme.primary.copy(alpha = 0.0f)
 
     Column(
         modifier = Modifier
             .fillMaxWidth()
             .height(250.dp)
-            .padding(16.dp)
+            .padding(Dimens.medium)
     ) {
         Row(
             modifier = Modifier
@@ -55,7 +56,7 @@ fun ScoreChart(data: List<Float>) {
                     Text(
                         text = "$value",
                         style = MaterialTheme.typography.bodySmall,
-                        color = Color.Gray,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
                         modifier = Modifier.align(BiasAlignment(1f, bias))
                     )
                 }
@@ -78,7 +79,7 @@ fun ScoreChart(data: List<Float>) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(start = 45.dp, top = 8.dp),
+                .padding(start = 45.dp, top = Dimens.small),
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
             val maxLabels = 10
@@ -93,7 +94,7 @@ fun ScoreChart(data: List<Float>) {
                 Text(
                     text = if (finalVisibility) "${index + 1}" else "",
                     style = MaterialTheme.typography.labelSmall,
-                    color = Color.Gray
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
             }
         }
@@ -109,6 +110,8 @@ fun Graph(
     fillColorEnd: Color,
     modifier: Modifier = Modifier
 ) {
+    val gridLineColor = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f)
+
     Canvas(modifier = modifier.fillMaxSize()) {
         if (data.isEmpty()) return@Canvas
 
@@ -129,7 +132,7 @@ fun Graph(
             val y = (height - verticalPadding) - (percentage / maxDataVal * graphHeight)
 
             drawLine(
-                color = Color.LightGray.copy(alpha = 0.5f),
+                color = gridLineColor,
                 start = Offset(0f, y),
                 end = Offset(width, y),
                 strokeWidth = 1.dp.toPx(),

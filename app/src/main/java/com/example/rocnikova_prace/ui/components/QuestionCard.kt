@@ -18,6 +18,7 @@ import androidx.compose.ui.unit.dp
 import com.example.rocnikova_prace.R
 import com.example.rocnikova_prace.data.model.QuestionItem
 import com.example.rocnikova_prace.ui.screens.createInformation.CreateInformationViewModel
+import com.example.rocnikova_prace.ui.theme.Dimens
 
 @Composable
 fun QuestionCard(
@@ -62,7 +63,7 @@ fun QuestionCard(
             label = stringResource(R.string.enter_response),
             modifier = Modifier
                 .weight(1f)
-                .padding(start = 20.dp)
+                .padding(start = Dimens.large)
                 .shake(isTextError, trigger = viewModel.validationErrorTrigger)
         )
 

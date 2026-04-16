@@ -27,6 +27,7 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import com.example.rocnikova_prace.ui.theme.Dimens
 
 
 @Composable
@@ -40,7 +41,7 @@ fun Cards(
     val isPressed by interactionSource.collectIsPressedAsState()
 
     val elevation by animateDpAsState(
-        targetValue = if (isPressed) 2.dp else 8.dp,
+        targetValue = if (isPressed) 2.dp else Dimens.small,
         animationSpec = tween(150)
     )
 
@@ -62,7 +63,7 @@ fun Cards(
                 scaleX = scale,
                 scaleY = scale
             )
-            .padding(top = 20.dp, bottom = 20.dp),
+            .padding(top = Dimens.large, bottom = Dimens.large),
         elevation = CardDefaults.elevatedCardElevation(defaultElevation = elevation)
     ) {
         Row(
@@ -73,7 +74,7 @@ fun Cards(
             Icon(
                 imageVector = icon,
                 contentDescription = null,
-                modifier = Modifier.size(32.dp)
+                modifier = Modifier.size(Dimens.massive)
             )
 
             Spacer(modifier = Modifier.weight(1f))

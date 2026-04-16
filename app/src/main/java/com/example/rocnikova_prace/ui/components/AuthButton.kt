@@ -20,6 +20,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.rocnikova_prace.R
+import com.example.rocnikova_prace.ui.theme.Dimens
 
 @Composable
 fun AuthButton(
@@ -50,7 +51,7 @@ fun AuthButton(
                 Image(
                     painter = painterResource(R.drawable.ic_google),
                     contentDescription = "Google icon",
-                    modifier = Modifier.size(24.dp)
+                    modifier = Modifier.size(Dimens.extraLarge)
                 )
 
                 Spacer(Modifier.width(12.dp))

@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBar
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
@@ -33,6 +34,7 @@ import com.woowla.compose.icon.collections.heroicons.heroicons.outline.User
 import com.woowla.compose.icon.collections.heroicons.heroicons.solid.Folder
 import com.woowla.compose.icon.collections.heroicons.heroicons.solid.PlusCircle
 import com.woowla.compose.icon.collections.heroicons.heroicons.solid.User
+import com.example.rocnikova_prace.ui.theme.Dimens
 
 @Composable
 fun NavBar(
@@ -104,7 +106,7 @@ fun NavBarIcon(
                 model = avatarUrl,
                 contentDescription = contentDescription,
                 modifier = Modifier
-                    .size(32.dp)
+                    .size(Dimens.massive)
                     .clip(CircleShape)
                     .then(
                         if (active) Modifier.border(2.dp, iconColor, CircleShape)
@@ -117,7 +119,7 @@ fun NavBarIcon(
                 imageVector = if (active) imageVectorActive else imageVectorOutline,
                 contentDescription = contentDescription,
                 tint = iconColor,
-                modifier = Modifier.size(32.dp)
+                modifier = Modifier.size(Dimens.massive)
             )
         }
     }
@@ -126,7 +128,7 @@ fun NavBarIcon(
 @Composable
 private fun animateColor(active: Boolean): Color {
     val iconColor by animateColorAsState(
-        targetValue = if (active) Color.Blue else Color.Gray,
+        targetValue = if (active) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant,
         animationSpec = tween(durationMillis = 300)
     )
     return iconColor
