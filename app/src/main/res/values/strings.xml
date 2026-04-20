@@ -5,6 +5,11 @@
     <string name="CS_new_questions">Create new question list</string>
     <string name="CS_schools_questions">Select questions by school</string>
     <string name="CS_import_questions">Import questions from document</string>
+    <string name="CS_dialog_title">Enter topic</string>
+    <string name="CS_dialog_label">Enter a topic to generate questions&#8230;</string>
+    <string name="CS_dialog_submit">Submit</string>
+    <string name="CS_dialog_cancel">Cancel</string>
+    <string name="CS_dialog_loading">Generating questions from topic&#8230;</string>
 
     <string name="new_question">Create new question</string>
     <string name="new_questions_group">Create new question group</string>

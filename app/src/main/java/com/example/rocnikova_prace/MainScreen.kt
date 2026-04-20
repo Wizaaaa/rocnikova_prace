@@ -170,10 +170,19 @@ fun MainScreen(
                             val authViewModel: AuthViewModel = viewModel(
                                 factory = ViewModelFactory(repository, authRepository)
                             )
+                            val quizViewModel: QuizViewModel = viewModel(
+                                factory = ViewModelFactory(repository, authRepository)
+                            )
 
                             CreateScreen(
                                 navController = navController,
-                                authViewModel = authViewModel
+                                authViewModel = authViewModel,
+                                quizViewModel = quizViewModel,
+                                onNavigateToQuestions = {
+                                    scope.launch {
+                                        pagerState.animateScrollToPage(0)
+                                    }
+                                }
                             )
                         }
                         MainScreen.Profile -> {
