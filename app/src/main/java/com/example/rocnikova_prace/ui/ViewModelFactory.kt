@@ -10,6 +10,7 @@ import com.example.rocnikova_prace.ui.screens.graphScreen.GraphScreenViewModel
 import com.example.rocnikova_prace.ui.screens.practiceScreen.PracticeScreenViewModel
 import com.example.rocnikova_prace.ui.screens.profileScreen.ProfileScreenViewModel
 import com.example.rocnikova_prace.ui.screens.questionsScreen.GroupsViewModel
+import com.example.rocnikova_prace.QuizViewModel
 
 class ViewModelFactory(
     private val questionRepository: QuestionRepository,
@@ -36,6 +37,9 @@ class ViewModelFactory(
             }
             modelClass.isAssignableFrom(AuthViewModel::class.java) -> {
                 AuthViewModel(authRepository!!) as T
+            }
+            modelClass.isAssignableFrom(QuizViewModel::class.java) -> {
+                QuizViewModel(questionRepository) as T
             }
             else -> throw IllegalArgumentException("Unknown ViewModel class: ${modelClass.name}")
         }

@@ -5,6 +5,11 @@
     <string name="CS_new_questions">Vytvoř nový seznam otázek</string>
     <string name="CS_schools_questions">Vybrat otázky podle školy</string>
     <string name="CS_import_questions">Importovat otázky z dokumentu</string>
+    <string name="CS_dialog_title">Zadat téma</string>
+    <string name="CS_dialog_label">Zadej téma k vygenerování otázek&#8230;</string>
+    <string name="CS_dialog_submit">Odeslat</string>
+    <string name="CS_dialog_cancel">Zrušit</string>
+    <string name="CS_dialog_loading">Generuji otázky k tématu&#8230;</string>
 
     <string name="new_question">Vytvořit novou otázku</string>
     <string name="new_questions_group">Vytvořte novou skupinu otázek</string>
