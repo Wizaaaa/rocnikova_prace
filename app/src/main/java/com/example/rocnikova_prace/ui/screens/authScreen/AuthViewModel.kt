@@ -37,11 +37,6 @@ class AuthViewModel(
     var isNameTakenError by mutableStateOf(false)
         private set
 
-    fun updateName(input: String) {
-        name = input
-        isNameTakenError = false
-    }
-
     var email by mutableStateOf("")
         private set
 
@@ -121,6 +116,11 @@ class AuthViewModel(
                 }
             }
         }
+    }
+
+    fun updateName(input: String) {
+        name = input
+        isNameTakenError = false
     }
 
     fun resetState() {

@@ -13,6 +13,9 @@ data class GroupDto (
     val name: String,
     val description: String? = null,
 
+    @SerialName("is_global")
+    val isGlobal: Boolean = false,
+
     @SerialName("created_at")
     val createdAt: String? = null
 )

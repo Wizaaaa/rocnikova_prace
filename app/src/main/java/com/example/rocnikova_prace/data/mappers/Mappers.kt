@@ -13,6 +13,7 @@ fun GroupDto.toEntity(): GroupEntity {
         userId = this.userId,
         name = this.name,
         description = this.description,
+        isGlobal = this.isGlobal,
         createdAt = try {
             java.time.Instant.parse(this.createdAt).toEpochMilli()
         } catch (_: Exception) {
@@ -52,6 +53,7 @@ fun GroupEntity.toDto(): GroupDto {
         userId = this.userId,
         name = this.name,
         description = this.description,
+        isGlobal = this.isGlobal,
         createdAt = java.time.Instant.ofEpochMilli(this.createdAt).toString()
     )
 }

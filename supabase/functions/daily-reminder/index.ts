@@ -5,7 +5,7 @@ Deno.serve(async (req) => {
   // 1. Load JSON from Secrets
   const serviceAccount = JSON.parse(Deno.env.get('FIREBASE_SERVICE_ACCOUNT')!)
 
-  // 2. Create access token (Google OAuth2)
+  // 2. Google OAuth2
   const jwt = new JWT({
     email: serviceAccount.client_email,
     key: serviceAccount.private_key,
@@ -13,7 +13,7 @@ Deno.serve(async (req) => {
   })
   const tokens = await jwt.authorize()
 
-  // 3. Initialize Supabase to get user tokens
+  // 3. Initialize Supabase to get tokens
   const supabase = createClient(
     Deno.env.get('SUPABASE_URL')!,
     Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!
@@ -25,7 +25,7 @@ Deno.serve(async (req) => {
     .eq('notifications_enabled', true)
     .not('fcm_token', 'is', null)
 
-  // 4. Send notification via HTTP v1 API
+  // 4. Send notification
   const projectId = serviceAccount.project_id
   const url = `https://fcm.googleapis.com/v1/projects/${projectId}/messages:send`
 
