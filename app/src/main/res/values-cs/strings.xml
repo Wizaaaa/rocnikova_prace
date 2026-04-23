@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">rocnikova_prace</string>
+    <string name="app_name">QuizRem</string>
 
     <!--    CreateScreen-->
     <string name="CS_new_questions">Vytvoř nový seznam otázek</string>
@@ -10,6 +10,10 @@
     <string name="CS_dialog_submit">Odeslat</string>
     <string name="CS_dialog_cancel">Zrušit</string>
     <string name="CS_dialog_loading">Generuji otázky k tématu&#8230;</string>
+    <string name="CS_school_dialog_title">Vyberte školu</string>
+    <string name="CS_school_spse_mb">Střední průmyslová škola Mladá Boleslav</string>
+    <string name="CS_subject_dialog_title">Vyberte předmět</string>
+    <string name="CS_subject_programming">Programování</string>
 
     <string name="new_question">Vytvořit novou otázku</string>
     <string name="new_questions_group">Vytvořte novou skupinu otázek</string>
@@ -54,6 +58,7 @@
     <string name="AS_network_error">Chyba sítě</string>
     <string name="AS_enter_email">Zadejte email</string>
     <string name="AS_connection_error">Chyba připojení</string>
+    <string name="AS_invalid_email_error">Zadali jste neplatný e-mail. Zkontrolujte překlepy a zavináč (@).</string>
     <string name="AS_or">nebo</string>
     <string name="AS_continue_with_google">Pokračovat s Google</string>
     <string name="AS_looks_like_new_user">Vypadá to, že tu jste noví! Jak vám máme říkat?</string>

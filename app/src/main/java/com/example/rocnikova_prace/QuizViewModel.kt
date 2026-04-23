@@ -18,21 +18,27 @@ import org.json.JSONObject
 import java.io.OutputStreamWriter
 import java.net.HttpURLConnection
 import java.net.URL
+import java.util.Locale
 import java.util.UUID
 
 class QuizViewModel(private val repository: QuestionRepository) : ViewModel() {
     private val _isLoading = MutableStateFlow(false)
     val isLoading: StateFlow<Boolean> = _isLoading.asStateFlow()
 
+    companion object {
+        private const val PROGRAMMING_GROUP_ID_EN = "900ea6f4-57fc-4d55-b8bb-f36b7626db2a"
+        private const val PROGRAMMING_GROUP_ID_CS = "bbb630e3-4149-466c-b42b-5c5af0414304"
+    }
+
     fun createQuizNotes(userNotes: String, onSuccess: (String) -> Unit) {
         val apiKey = BuildConfig.GEMINI_API_KEY
 
-        val languageInfo = java.util.Locale.getDefault().language
+        val languageInfo = Locale.getDefault().language
         val isCzech = languageInfo == "cs" || languageInfo == "sk"
 
         val prompt = if (isCzech) {
             """
-            Jsi zkušený učitel. Vytvoř aspoň 20 kvízových otázek na následující téma.
+            Jsi zkušený učitel. Vytvoř aspoň 40 kvízových otázek na následující téma.
             Vymysli také vhodný a výstižný název pro tento kvíz.
             Odpověď MUSÍ být výhradně v platném JSON formátu (objekt bez Markdown bloku, žádný další text).
             
@@ -63,14 +69,14 @@ class QuizViewModel(private val repository: QuestionRepository) : ViewModel() {
                 }
               ]
             }
-            Mluv pouze česky a buď stručný. Vytvoř aspoň 20 otázek.
+            Mluv pouze česky a buď stručný. Vytvoř aspoň 40 otázek.
             
             Zadané téma:
             $userNotes
         """.trimIndent()
         } else {
             """
-            You are an experienced teacher. Create at least 20 quiz questions on the following topic.
+            You are an experienced teacher. Create at least 40 quiz questions on the following topic.
             Also invent a suitable and descriptive title for this quiz.
             The response MUST be exclusively in valid JSON format (an object without Markdown block, no other text).
             
@@ -101,7 +107,7 @@ class QuizViewModel(private val repository: QuestionRepository) : ViewModel() {
                 }
               ]
             }
-            Speak only English and be concise. Create at least 20 questions.
+            Speak only English and be concise. Create at least 40 questions.
             
             Topic:
             $userNotes
@@ -235,6 +241,29 @@ class QuizViewModel(private val repository: QuestionRepository) : ViewModel() {
             } catch (e: Exception) {
                 _isLoading.value = false
                 e.printStackTrace()
+            }
+        }
+    }
+
+    fun importSchoolQuestions(onSuccess: () -> Unit, onError: (String) -> Unit = {}) {
+        _isLoading.value = true
+
+        viewModelScope.launch {
+            try {
+                val languageCode = Locale.getDefault().language.lowercase(Locale.ROOT)
+                val targetGroupId = if (languageCode == "cs" || languageCode == "sk") {
+                    PROGRAMMING_GROUP_ID_CS
+                } else {
+                    PROGRAMMING_GROUP_ID_EN
+                }
+
+                repository.importGlobalGroupById(targetGroupId)
+                _isLoading.value = false
+                onSuccess()
+            } catch (e: Exception) {
+                _isLoading.value = false
+                e.printStackTrace()
+                onError(e.message ?: "Import failed")
             }
         }
     }

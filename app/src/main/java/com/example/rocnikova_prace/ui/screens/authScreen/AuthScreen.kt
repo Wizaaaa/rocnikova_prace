@@ -105,6 +105,7 @@ fun AuthScreen(
     )
 
     val connectionErrorText = stringResource(R.string.AS_connection_error)
+    val invalidEmailText = stringResource(R.string.AS_invalid_email_error)
 
     Column(
         modifier = Modifier.fillMaxSize().padding(Dimens.medium),
@@ -127,7 +128,7 @@ fun AuthScreen(
                 AuthButton(
                     onClick = {
                         if (!android.util.Patterns.EMAIL_ADDRESS.matcher(viewModel.email.trim()).matches()) {
-                            Toast.makeText(context, "Zadali jste neplatný e-mail. Zkontrolujte překlepy a zavináč (@).", Toast.LENGTH_SHORT).show()
+                            Toast.makeText(context, invalidEmailText, Toast.LENGTH_SHORT).show()
                             return@AuthButton
                         }
 

@@ -43,6 +43,8 @@ fun CreateScreen(
 ) {
     val isLoading by quizViewModel.isLoading.collectAsState()
     val showImportDialog = remember { mutableStateOf(false) }
+    val showSchoolDialog = remember { mutableStateOf(false) }
+    val showSubjectDialog = remember { mutableStateOf(false) }
     var userNotes by remember { mutableStateOf("") }
 
     LaunchedEffect(Unit) {
@@ -80,7 +82,7 @@ fun CreateScreen(
             Cards(
                 text = R.string.CS_schools_questions,
                 icon = Heroicons.Outline.AcademicCap,
-                onClick = {  }
+                onClick = { showSchoolDialog.value = true }
             )
 
             Cards(
@@ -89,6 +91,54 @@ fun CreateScreen(
                 onClick = { showImportDialog.value = true }
             )
         }
+    }
+
+    if (showSchoolDialog.value) {
+        AlertDialog(
+            onDismissRequest = { showSchoolDialog.value = false },
+            title = { Text(stringResource(R.string.CS_school_dialog_title)) },
+            text = {
+                TextButton(
+                    onClick = {
+                        showSchoolDialog.value = false
+                        showSubjectDialog.value = true
+                    }
+                ) {
+                    Text(stringResource(R.string.CS_school_spse_mb))
+                }
+            },
+            confirmButton = {},
+            dismissButton = {
+                TextButton(onClick = { showSchoolDialog.value = false }) {
+                    Text(stringResource(R.string.CS_dialog_cancel))
+                }
+            }
+        )
+    }
+
+    if (showSubjectDialog.value) {
+        AlertDialog(
+            onDismissRequest = { showSubjectDialog.value = false },
+            title = { Text(stringResource(R.string.CS_subject_dialog_title)) },
+            text = {
+                TextButton(
+                    onClick = {
+                        showSubjectDialog.value = false
+                        quizViewModel.importSchoolQuestions(
+                            onSuccess = { onNavigateToQuestions() }
+                        )
+                    }
+                ) {
+                    Text(stringResource(R.string.CS_subject_programming))
+                }
+            },
+            confirmButton = {},
+            dismissButton = {
+                TextButton(onClick = { showSubjectDialog.value = false }) {
+                    Text(stringResource(R.string.CS_dialog_cancel))
+                }
+            }
+        )
     }
 
     if (showImportDialog.value) {

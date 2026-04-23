@@ -24,6 +24,8 @@ import kotlinx.coroutines.flow.emitAll
 import kotlinx.coroutines.flow.emptyFlow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flow
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 
 class QuestionRepository(
     private val questionDao: QuestionDao,
@@ -31,6 +33,38 @@ class QuestionRepository(
     private val resultDao: ResultDao,
     private val supabase: io.github.jan.supabase.SupabaseClient = SupabaseClient.client
 ) {
+    @Serializable
+    private data class GlobalGroupTemplateDto(
+        val id: String,
+        @SerialName("user_id")
+        val userId: String? = null,
+        val name: String,
+        val description: String? = null,
+        @SerialName("created_at")
+        val createdAt: String? = null,
+        @SerialName("is_global")
+        val isGlobal: Boolean = false
+    )
+
+    @Serializable
+    private data class TemplateQuestionDto(
+        val id: String? = null,
+        @SerialName("group_id")
+        val groupId: String? = null,
+        @SerialName("user_id")
+        val userId: String? = null,
+        val type: String,
+        val data: String
+    )
+
+    @Serializable
+    private data class UserSavedGroupDto(
+        @SerialName("user_id")
+        val userId: String,
+        @SerialName("group_id")
+        val groupId: String
+    )
+
     fun getAllGroups(): Flow<List<GroupEntity>> = flow {
         val currentUserId = supabase.auth.currentUserOrNull()?.id ?: return@flow
 
@@ -112,6 +146,66 @@ class QuestionRepository(
             throw e
         }
     }
+
+    suspend fun importGlobalGroupById(groupId: String): String {
+        val currentUserId = supabase.auth.currentUserOrNull()?.id
+            ?: throw Exception("Uživatel není přihlášen!")
+
+        val sourceGroup = supabase.from("question_groups")
+            .select {
+                filter {
+                    eq("id", groupId)
+                    eq("is_global", true)
+                }
+            }
+            .decodeList<GlobalGroupTemplateDto>()
+            .firstOrNull()
+            ?: throw Exception("Globální skupina '$groupId' nebyla nalezena.")
+
+        val newGroupId = java.util.UUID.randomUUID().toString()
+        val clonedGroup = GroupEntity(
+            id = newGroupId,
+            userId = currentUserId,
+            name = sourceGroup.name,
+            description = sourceGroup.description,
+            isGlobal = false
+        )
+
+        saveGroup(clonedGroup)
+
+        val templateQuestions = supabase.from("questions")
+            .select {
+                filter { eq("group_id", sourceGroup.id) }
+            }
+            .decodeList<TemplateQuestionDto>()
+
+        templateQuestions.forEach { template ->
+            val clonedQuestion = QuestionEntity(
+                id = java.util.UUID.randomUUID().toString(),
+                groupId = newGroupId,
+                userId = currentUserId,
+                type = template.type,
+                data = template.data
+            )
+
+            supabase.from("questions").upsert(clonedQuestion.toDto())
+            questionDao.insert(clonedQuestion)
+        }
+
+        try {
+            supabase.from("user_saved_groups").upsert(
+                UserSavedGroupDto(
+                    userId = currentUserId,
+                    groupId = sourceGroup.id
+                )
+            )
+        } catch (_: Exception) {
+            // Vazba je doplnkova; import skupiny a otazek nesmi spadnout pri jeji chybe.
+        }
+
+        return newGroupId
+    }
+
     fun getTestResultsStream(groupId: String): Flow<List<ResultEntity>> = flow {
         val currentUserId = supabase.auth.currentUserOrNull()?.id ?: return@flow
         val localData = resultDao.getAllForGroup(groupId, currentUserId).first()

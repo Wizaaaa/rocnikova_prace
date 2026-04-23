@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">rocnikova_prace</string>
+    <string name="app_name">QuizRem</string>
 
     <!--    CreateScreen-->
     <string name="CS_new_questions">Create new question list</string>
@@ -10,6 +10,10 @@
     <string name="CS_dialog_submit">Submit</string>
     <string name="CS_dialog_cancel">Cancel</string>
     <string name="CS_dialog_loading">Generating questions from topic&#8230;</string>
+    <string name="CS_school_dialog_title">Select school</string>
+    <string name="CS_school_spse_mb">Secondary Technical School Mlada Boleslav</string>
+    <string name="CS_subject_dialog_title">Select subject</string>
+    <string name="CS_subject_programming">Programming</string>
 
     <string name="new_question">Create new question</string>
     <string name="new_questions_group">Create new question group</string>
@@ -54,6 +58,7 @@
     <string name="AS_network_error">Network error</string>
     <string name="AS_enter_email">Enter email</string>
     <string name="AS_connection_error">Connection error</string>
+    <string name="AS_invalid_email_error">You entered an invalid email address. Check for typos and the at sign (@).</string>
     <string name="AS_or">or</string>
     <string name="AS_continue_with_google">Continue with Google</string>
     <string name="AS_looks_like_new_user">Looks like you are new here! What should we call you?</string>
